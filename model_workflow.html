@@ -1,0 +1,2247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 7 – Model Workflow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #020810;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #020810;
+        font-family: "Raleway", sans-serif;
+      }
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 50;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(30, 70, 160, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(30, 70, 160, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .bg-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 80% 65% at 65% 55%,
+          rgba(60, 30, 180, 0.12) 0%,
+          transparent 65%
+        );
+      }
+
+      .header {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .layer-badge {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 4px;
+      }
+      .badge-line {
+        display: inline-block;
+        width: 22px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .slide-title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 23px;
+        line-height: 1.05;
+        color: #f2efe8;
+      }
+      .slide-title em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 15px;
+        color: #b090ff;
+        display: block;
+        margin-top: 1px;
+      }
+      .header-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 10.5px;
+        line-height: 1.6;
+        color: rgba(175, 160, 128, 0.55);
+        max-width: 380px;
+        text-align: right;
+      }
+      .header-desc b {
+        color: rgba(200, 185, 155, 0.76);
+        font-weight: 500;
+      }
+      .h-rule {
+        position: absolute;
+        top: 94px;
+        left: 52px;
+        right: 52px;
+        height: 1px;
+        z-index: 10;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.3) 20%,
+          rgba(201, 168, 76, 0.5) 50%,
+          rgba(201, 168, 76, 0.3) 80%,
+          transparent
+        );
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.4s forwards;
+      }
+
+      .main {
+        position: absolute;
+        top: 102px;
+        left: 52px;
+        right: 52px;
+        bottom: 12px;
+        display: flex;
+        gap: 14px;
+      }
+      .workflow-panel {
+        flex: 0 0 390px;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      .workflow-panel svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .chart-panel {
+        flex: 1 1 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* chart cards */
+      .chart-card {
+        border-radius: 12px;
+        border: 1px solid rgba(130, 90, 255, 0.18);
+        background: linear-gradient(160deg, #08081e 0%, #050412 100%);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        opacity: 0;
+      }
+      .chart-card.top {
+        flex: 0 0 44%;
+        animation: fadeUp 0.7s ease 1.9s forwards;
+      }
+      .chart-card.bot {
+        flex: 1 1 0;
+        animation: fadeUp 0.7s ease 2.1s forwards;
+      }
+      .chart-title {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        padding: 9px 14px 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .chart-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .chart-sub {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 9px;
+        color: rgba(180, 160, 240, 0.55);
+        padding: 0 14px 6px;
+        line-height: 1.5;
+      }
+      .chart-sub b {
+        color: rgba(200, 180, 255, 0.75);
+        font-weight: 500;
+      }
+      .chart-vis {
+        flex: 1;
+        min-height: 0;
+        padding: 0 12px 10px;
+        position: relative;
+      }
+      .chart-vis canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes nodeIn {
+        from {
+          opacity: 0;
+          transform: translateY(16px) scale(0.88);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+
+      <div class="header">
+        <div>
+          <div class="layer-badge">
+            <span class="badge-line"></span>Layer 03 · Model Workflow<span
+              class="badge-line"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="slide-title">
+            Model Lifecycle Pipeline<em
+              >From selection to deployment — and the revenue impact</em
+            >
+          </h2>
+        </div>
+        <div class="header-desc">
+          <b>Speed + Tokens = Revenue.</b> A retail agentic chatbot responding
+          in &lt;0.01s with 5,000+ token context drives faster purchases, higher
+          satisfaction and measurable top-line growth.
+        </div>
+      </div>
+      <div class="h-rule"></div>
+
+      <div class="main">
+        <!-- ══════════════════════════════════
+         WORKFLOW SVG — compact, all nodes visible
+         viewBox 0 0 390 596 mapped to panel
+    ══════════════════════════════════ -->
+        <div class="workflow-panel">
+          <svg
+            viewBox="0 0 390 596"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <linearGradient id="gP" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3A1A78" />
+                <stop offset="100%" stop-color="#200E50" />
+              </linearGradient>
+              <linearGradient id="gPS" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#200E50" />
+                <stop offset="100%" stop-color="#120830" />
+              </linearGradient>
+              <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1A3A8E" />
+                <stop offset="100%" stop-color="#0E2060" />
+              </linearGradient>
+              <linearGradient id="gBS" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#102870" />
+                <stop offset="100%" stop-color="#081840" />
+              </linearGradient>
+              <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0E4A2A" />
+                <stop offset="100%" stop-color="#082018" />
+              </linearGradient>
+              <linearGradient id="gGS" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#0A3820" />
+                <stop offset="100%" stop-color="#061410" />
+              </linearGradient>
+              <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#004858" />
+                <stop offset="100%" stop-color="#002030" />
+              </linearGradient>
+              <linearGradient id="gCS" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#003848" />
+                <stop offset="100%" stop-color="#001820" />
+              </linearGradient>
+              <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5A3800" />
+                <stop offset="100%" stop-color="#2E1C00" />
+              </linearGradient>
+              <linearGradient id="gAS" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#442A00" />
+                <stop offset="100%" stop-color="#1E1000" />
+              </linearGradient>
+              <marker
+                id="arr"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto"
+              >
+                <path
+                  d="M2 2L8 5L2 8"
+                  fill="none"
+                  stroke="#7040FF"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </marker>
+              <marker
+                id="arrG"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto"
+              >
+                <path
+                  d="M2 2L8 5L2 8"
+                  fill="none"
+                  stroke="#20C870"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </marker>
+              <marker
+                id="arrC"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto"
+              >
+                <path
+                  d="M2 2L8 5L2 8"
+                  fill="none"
+                  stroke="#20C0E0"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </marker>
+              <marker
+                id="arrA"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto"
+              >
+                <path
+                  d="M2 2L8 5L2 8"
+                  fill="none"
+                  stroke="#E0A000"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </marker>
+              <radialGradient id="pkt" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#C090FF" />
+                <stop offset="100%" stop-color="#8040FF" stop-opacity="0" />
+              </radialGradient>
+              <!-- animation paths -->
+              <path id="p1" d="M195 46 L195 76" />
+              <path id="p2" d="M195 118 L195 148" />
+              <path id="p3" d="M195 190 L195 220" />
+              <path id="p4" d="M195 262 L195 292" />
+              <path id="p5" d="M195 334 L195 364" />
+              <path id="p6" d="M195 406 L195 438" />
+            </defs>
+
+            <!-- stage rail -->
+            <line
+              x1="14"
+              y1="10"
+              x2="14"
+              y2="586"
+              stroke="rgba(201,168,76,0.12)"
+              stroke-width="1"
+            />
+
+            <!-- ── CONNECTOR LINES ── -->
+            <!-- Models → LLM -->
+            <line
+              x1="168"
+              y1="46"
+              x2="130"
+              y2="78"
+              stroke="#7040FF"
+              stroke-width="1.4"
+              marker-end="url(#arr)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Models → SLM -->
+            <line
+              x1="222"
+              y1="46"
+              x2="260"
+              y2="78"
+              stroke="#7040FF"
+              stroke-width="1.4"
+              marker-end="url(#arr)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- LLM + SLM → Training -->
+            <line
+              x1="140"
+              y1="112"
+              x2="175"
+              y2="150"
+              stroke="#7040FF"
+              stroke-width="1.4"
+              marker-end="url(#arr)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="250"
+              y1="112"
+              x2="215"
+              y2="150"
+              stroke="#7040FF"
+              stroke-width="1.4"
+              marker-end="url(#arr)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Training → Dataset -->
+            <line
+              x1="195"
+              y1="188"
+              x2="195"
+              y2="220"
+              stroke="#5060D0"
+              stroke-width="1.4"
+              marker-end="url(#arr)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Dataset → Evaluation -->
+            <line
+              x1="195"
+              y1="260"
+              x2="195"
+              y2="292"
+              stroke="#20C870"
+              stroke-width="1.4"
+              marker-end="url(#arrG)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Evaluation → Inference -->
+            <line
+              x1="195"
+              y1="332"
+              x2="195"
+              y2="364"
+              stroke="#20C0E0"
+              stroke-width="1.4"
+              marker-end="url(#arrC)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Inference → Post-Training -->
+            <line
+              x1="195"
+              y1="404"
+              x2="195"
+              y2="438"
+              stroke="#E0A000"
+              stroke-width="1.4"
+              marker-end="url(#arrA)"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- Post-Training → leaf nodes -->
+            <line
+              x1="155"
+              y1="476"
+              x2="90"
+              y2="510"
+              stroke="#E0A000"
+              stroke-width="1.2"
+              marker-end="url(#arrA)"
+              stroke-dasharray="5,3"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="195"
+              y1="478"
+              x2="195"
+              y2="510"
+              stroke="#E0A000"
+              stroke-width="1.2"
+              marker-end="url(#arrA)"
+              stroke-dasharray="5,3"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="235"
+              y1="476"
+              x2="300"
+              y2="510"
+              stroke="#E0A000"
+              stroke-width="1.2"
+              marker-end="url(#arrA)"
+              stroke-dasharray="5,3"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+
+            <!-- data packets -->
+            <circle r="4.5" fill="url(#pkt)">
+              <animateMotion dur="3.2s" repeatCount="indefinite" begin=".4s">
+                <mpath xlink:href="#p1" />
+              </animateMotion>
+            </circle>
+            <circle r="4" fill="url(#pkt)" opacity=".7">
+              <animateMotion dur="3.2s" repeatCount="indefinite" begin="1.6s">
+                <mpath xlink:href="#p3" />
+              </animateMotion>
+            </circle>
+            <circle r="3.5" fill="#30D890" opacity=".85">
+              <animateMotion dur="3.2s" repeatCount="indefinite" begin="2.2s">
+                <mpath xlink:href="#p4" />
+              </animateMotion>
+            </circle>
+            <circle r="3.5" fill="#E0B000" opacity=".85">
+              <animateMotion dur="3.2s" repeatCount="indefinite" begin="2.8s">
+                <mpath xlink:href="#p5" />
+              </animateMotion>
+            </circle>
+
+            <!-- ══ NODE 1: MODELS (3D oval) ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 0.3s forwards">
+              <ellipse
+                cx="195"
+                cy="32"
+                rx="78"
+                ry="17"
+                fill="#10063A"
+                opacity=".6"
+              />
+              <rect x="117" y="16" width="156" height="16" fill="url(#gP)" />
+              <ellipse cx="117" cy="24" rx="12" ry="8" fill="url(#gPS)" />
+              <ellipse
+                cx="273"
+                cy="24"
+                rx="12"
+                ry="8"
+                fill="#160840"
+                opacity=".7"
+              />
+              <ellipse
+                cx="195"
+                cy="16"
+                rx="78"
+                ry="17"
+                fill="#3A2080"
+                stroke="#7050D0"
+                stroke-width="1.2"
+              />
+              <ellipse
+                cx="195"
+                cy="16"
+                rx="58"
+                ry="11"
+                fill="none"
+                stroke="rgba(190,160,255,0.20)"
+                stroke-width=".7"
+              />
+              <text
+                x="195"
+                y="20.5"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#C8A8FF"
+                letter-spacing="2"
+              >
+                MODELS
+              </text>
+              <circle cx="195" cy="16" r="3" fill="#A080FF" opacity=".7">
+                <animate
+                  attributeName="opacity"
+                  values=".7;1;.7"
+                  dur="2s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+              <text
+                x="14"
+                y="22"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(160,130,255,0.45)"
+                letter-spacing="1"
+              >
+                SELECT
+              </text>
+              <line
+                x1="12"
+                y1="44"
+                x2="18"
+                y2="44"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 2L: LLM ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 0.5s forwards">
+              <rect
+                x="78"
+                y="112"
+                width="94"
+                height="22"
+                rx="3"
+                fill="#060412"
+                opacity=".5"
+              />
+              <polygon
+                points="172,78 180,73 180,108 172,112"
+                fill="url(#gPS)"
+                stroke="#0C0828"
+                stroke-width=".4"
+              />
+              <polygon
+                points="78,78 172,78 180,73 86,73"
+                fill="#1E1060"
+                stroke="#4030A0"
+                stroke-width=".6"
+              />
+              <rect
+                x="78"
+                y="78"
+                width="94"
+                height="34"
+                rx="3"
+                fill="url(#gP)"
+                stroke="#5030B0"
+                stroke-width="1"
+              />
+              <rect
+                x="81"
+                y="81"
+                width="88"
+                height="28"
+                rx="2"
+                fill="none"
+                stroke="rgba(160,120,255,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="125"
+                y="97"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#B898F8"
+                letter-spacing="1"
+              >
+                LLM
+              </text>
+              <text
+                x="125"
+                y="107"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(160,130,230,0.62)"
+              >
+                Large Language
+              </text>
+              <circle cx="162" cy="86" r="2.5" fill="#A060FF" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="1.8s"
+                  repeatCount="indefinite"
+                  begin=".3s"
+                />
+              </circle>
+              <text
+                x="14"
+                y="96"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(160,130,255,0.40)"
+                letter-spacing="1"
+              >
+                ARCH
+              </text>
+              <line
+                x1="12"
+                y1="116"
+                x2="18"
+                y2="116"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 2R: SLM ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 0.6s forwards">
+              <rect
+                x="218"
+                y="112"
+                width="94"
+                height="22"
+                rx="3"
+                fill="#060412"
+                opacity=".5"
+              />
+              <polygon
+                points="312,78 320,73 320,108 312,112"
+                fill="url(#gPS)"
+                stroke="#0C0828"
+                stroke-width=".4"
+              />
+              <polygon
+                points="218,78 312,78 320,73 226,73"
+                fill="#1E1060"
+                stroke="#4030A0"
+                stroke-width=".6"
+              />
+              <rect
+                x="218"
+                y="78"
+                width="94"
+                height="34"
+                rx="3"
+                fill="url(#gP)"
+                stroke="#5030B0"
+                stroke-width="1"
+              />
+              <rect
+                x="221"
+                y="81"
+                width="88"
+                height="28"
+                rx="2"
+                fill="none"
+                stroke="rgba(160,120,255,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="265"
+                y="97"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#B898F8"
+                letter-spacing="1"
+              >
+                SLM
+              </text>
+              <text
+                x="265"
+                y="107"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(160,130,230,0.62)"
+              >
+                Small Language
+              </text>
+              <circle cx="302" cy="86" r="2.5" fill="#A060FF" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="1.8s"
+                  repeatCount="indefinite"
+                  begin=".7s"
+                />
+              </circle>
+            </g>
+
+            <!-- ══ NODE 3: TRAINING ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 0.75s forwards">
+              <rect
+                x="110"
+                y="186"
+                width="170"
+                height="22"
+                rx="3"
+                fill="#040A1E"
+                opacity=".5"
+              />
+              <polygon
+                points="280,150 290,145 290,182 280,186"
+                fill="url(#gBS)"
+                stroke="#081428"
+                stroke-width=".4"
+              />
+              <polygon
+                points="110,150 280,150 290,145 120,145"
+                fill="#162460"
+                stroke="#2A3C90"
+                stroke-width=".6"
+              />
+              <rect
+                x="110"
+                y="150"
+                width="170"
+                height="36"
+                rx="3"
+                fill="url(#gB)"
+                stroke="#2A4AA0"
+                stroke-width="1"
+              />
+              <rect
+                x="113"
+                y="153"
+                width="164"
+                height="30"
+                rx="2"
+                fill="none"
+                stroke="rgba(80,130,220,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="169"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#80B0FF"
+                letter-spacing="1.5"
+              >
+                TRAINING
+              </text>
+              <text
+                x="195"
+                y="180"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(100,160,240,0.62)"
+              >
+                Pre-training on large corpora
+              </text>
+              <circle cx="268" cy="158" r="2.5" fill="#4090FF" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="2s"
+                  repeatCount="indefinite"
+                  begin=".2s"
+                />
+              </circle>
+              <circle cx="258" cy="158" r="2.5" fill="#00D0FF" opacity=".7">
+                <animate
+                  attributeName="opacity"
+                  values=".7;.3;.7"
+                  dur="2s"
+                  repeatCount="indefinite"
+                  begin=".9s"
+                />
+              </circle>
+              <text
+                x="14"
+                y="168"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(80,130,220,0.40)"
+                letter-spacing="1"
+              >
+                TRAIN
+              </text>
+              <line
+                x1="12"
+                y1="188"
+                x2="18"
+                y2="188"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 4: DATASET ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 0.95s forwards">
+              <rect
+                x="110"
+                y="258"
+                width="170"
+                height="22"
+                rx="3"
+                fill="#040A1E"
+                opacity=".5"
+              />
+              <polygon
+                points="280,222 290,217 290,254 280,258"
+                fill="url(#gBS)"
+                stroke="#081428"
+                stroke-width=".4"
+              />
+              <polygon
+                points="110,222 280,222 290,217 120,217"
+                fill="#162460"
+                stroke="#2A3C90"
+                stroke-width=".6"
+              />
+              <rect
+                x="110"
+                y="222"
+                width="170"
+                height="36"
+                rx="3"
+                fill="url(#gB)"
+                stroke="#2A4AA0"
+                stroke-width="1"
+              />
+              <rect
+                x="113"
+                y="225"
+                width="164"
+                height="30"
+                rx="2"
+                fill="none"
+                stroke="rgba(80,130,220,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="241"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#80B0FF"
+                letter-spacing="1.5"
+              >
+                DATASET
+              </text>
+              <text
+                x="195"
+                y="252"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(100,160,240,0.62)"
+              >
+                Training data + your org database
+              </text>
+              <!-- annotation -->
+              <line
+                x1="290"
+                y1="240"
+                x2="320"
+                y2="240"
+                stroke="#2A4AA0"
+                stroke-width=".7"
+                stroke-dasharray="3,2"
+                opacity=".5"
+              />
+              <rect
+                x="322"
+                y="230"
+                width="60"
+                height="20"
+                rx="3"
+                fill="#080F28"
+                stroke="#1A3060"
+                stroke-width=".6"
+              />
+              <text
+                x="352"
+                y="239"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7"
+                fill="rgba(100,160,255,0.75)"
+              >
+                Your data
+              </text>
+              <text
+                x="352"
+                y="247"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7"
+                fill="rgba(100,160,255,0.70)"
+              >
+                plugs here
+              </text>
+              <text
+                x="14"
+                y="240"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(80,130,220,0.40)"
+                letter-spacing="1"
+              >
+                DATA
+              </text>
+              <line
+                x1="12"
+                y1="260"
+                x2="18"
+                y2="260"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 5: EVALUATION ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 1.15s forwards">
+              <rect
+                x="110"
+                y="330"
+                width="170"
+                height="22"
+                rx="3"
+                fill="#020E06"
+                opacity=".5"
+              />
+              <polygon
+                points="280,294 290,289 290,326 280,330"
+                fill="url(#gGS)"
+                stroke="#041008"
+                stroke-width=".4"
+              />
+              <polygon
+                points="110,294 280,294 290,289 120,289"
+                fill="#0A2814"
+                stroke="#185028"
+                stroke-width=".6"
+              />
+              <rect
+                x="110"
+                y="294"
+                width="170"
+                height="36"
+                rx="3"
+                fill="url(#gG)"
+                stroke="#1A5030"
+                stroke-width="1"
+              />
+              <rect
+                x="113"
+                y="297"
+                width="164"
+                height="30"
+                rx="2"
+                fill="none"
+                stroke="rgba(40,160,80,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="313"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#60D890"
+                letter-spacing="1.5"
+              >
+                EVALUATION
+              </text>
+              <text
+                x="195"
+                y="324"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(60,180,100,0.62)"
+              >
+                Benchmarks · MMLU · HumanEval
+              </text>
+              <circle cx="268" cy="302" r="2.5" fill="#30D870" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="1.6s"
+                  repeatCount="indefinite"
+                  begin=".4s"
+                />
+              </circle>
+              <circle cx="258" cy="302" r="2.5" fill="#00FF80" opacity=".7">
+                <animate
+                  attributeName="opacity"
+                  values=".7;.3;.7"
+                  dur="1.6s"
+                  repeatCount="indefinite"
+                  begin="1.0s"
+                />
+              </circle>
+              <text
+                x="14"
+                y="312"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(40,180,100,0.40)"
+                letter-spacing="1"
+              >
+                EVAL
+              </text>
+              <line
+                x1="12"
+                y1="332"
+                x2="18"
+                y2="332"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 6: INFERENCE ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 1.35s forwards">
+              <rect
+                x="110"
+                y="402"
+                width="170"
+                height="22"
+                rx="3"
+                fill="#02080E"
+                opacity=".5"
+              />
+              <polygon
+                points="280,366 290,361 290,398 280,402"
+                fill="url(#gCS)"
+                stroke="#041018"
+                stroke-width=".4"
+              />
+              <polygon
+                points="110,366 280,366 290,361 120,361"
+                fill="#042030"
+                stroke="#0A4050"
+                stroke-width=".6"
+              />
+              <rect
+                x="110"
+                y="366"
+                width="170"
+                height="36"
+                rx="3"
+                fill="url(#gC)"
+                stroke="#146070"
+                stroke-width="1"
+              />
+              <rect
+                x="113"
+                y="369"
+                width="164"
+                height="30"
+                rx="2"
+                fill="none"
+                stroke="rgba(0,160,200,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="385"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="11"
+                font-weight="600"
+                fill="#40D0F0"
+                letter-spacing="1.5"
+              >
+                INFERENCE
+              </text>
+              <text
+                x="195"
+                y="396"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(30,170,210,0.62)"
+              >
+                vLLM · TGI · Triton · API serving
+              </text>
+              <circle cx="268" cy="374" r="2.5" fill="#00D0F0" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="1.4s"
+                  repeatCount="indefinite"
+                  begin=".6s"
+                />
+              </circle>
+              <text
+                x="14"
+                y="384"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(30,170,210,0.40)"
+                letter-spacing="1"
+              >
+                DEPLOY
+              </text>
+              <line
+                x1="12"
+                y1="404"
+                x2="18"
+                y2="404"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ NODE 7: POST-TRAINING (AMBER — fully visible) ══ -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 1.55s forwards">
+              <rect
+                x="110"
+                y="474"
+                width="170"
+                height="22"
+                rx="3"
+                fill="#080400"
+                opacity=".5"
+              />
+              <polygon
+                points="280,438 290,433 290,470 280,474"
+                fill="url(#gAS)"
+                stroke="#100800"
+                stroke-width=".4"
+              />
+              <polygon
+                points="110,438 280,438 290,433 120,433"
+                fill="#241000"
+                stroke="#503000"
+                stroke-width=".6"
+              />
+              <rect
+                x="110"
+                y="438"
+                width="170"
+                height="36"
+                rx="3"
+                fill="url(#gA)"
+                stroke="#7A4800"
+                stroke-width="1"
+              />
+              <rect
+                x="113"
+                y="441"
+                width="164"
+                height="30"
+                rx="2"
+                fill="none"
+                stroke="rgba(180,120,0,0.18)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="457"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="10"
+                font-weight="600"
+                fill="#F0B040"
+                letter-spacing="1"
+              >
+                POST-TRAINING
+              </text>
+              <text
+                x="195"
+                y="468"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="300"
+                fill="rgba(200,140,20,0.62)"
+              >
+                Fine-Tuning &amp; Domain Adaptation
+              </text>
+              <circle cx="268" cy="446" r="2.5" fill="#E0A000" opacity=".9">
+                <animate
+                  attributeName="opacity"
+                  values=".9;.4;.9"
+                  dur="2s"
+                  repeatCount="indefinite"
+                  begin=".2s"
+                />
+              </circle>
+              <circle cx="258" cy="446" r="2.5" fill="#FFD040" opacity=".7">
+                <animate
+                  attributeName="opacity"
+                  values=".7;.3;.7"
+                  dur="2s"
+                  repeatCount="indefinite"
+                  begin=".9s"
+                />
+              </circle>
+              <text
+                x="14"
+                y="456"
+                font-family="'Cinzel',serif"
+                font-size="6"
+                fill="rgba(200,140,20,0.40)"
+                letter-spacing="1"
+              >
+                ADAPT
+              </text>
+              <line
+                x1="12"
+                y1="476"
+                x2="18"
+                y2="476"
+                stroke="rgba(201,168,76,0.25)"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- ══ LEAF NODES: SFT · DPO · RLHF
+             Layout: pill at y=510, abbrev centred in pill,
+             full name in a separate label band BELOW each pill
+             so nothing overlaps
+        ══ -->
+
+            <!-- SFT pill -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 1.8s forwards">
+              <!-- 3D pill -->
+              <ellipse
+                cx="68"
+                cy="524"
+                rx="56"
+                ry="13"
+                fill="#080400"
+                opacity=".5"
+              />
+              <rect x="12" y="508" width="112" height="13" fill="url(#gA)" />
+              <ellipse
+                cx="12"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="url(#gAS)"
+                opacity=".8"
+              />
+              <ellipse
+                cx="124"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="#281400"
+                opacity=".6"
+              />
+              <ellipse
+                cx="68"
+                cy="508"
+                rx="56"
+                ry="13"
+                fill="#7A4800"
+                stroke="#C07000"
+                stroke-width="1"
+              />
+              <!-- abbrev inside pill -->
+              <text
+                x="68"
+                y="517"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="9.5"
+                font-weight="700"
+                fill="#FFDA70"
+                letter-spacing="1"
+              >
+                SFT
+              </text>
+              <!-- full label band below pill, fixed width, no overlap -->
+              <rect
+                x="8"
+                y="525"
+                width="120"
+                height="26"
+                rx="3"
+                fill="rgba(90,50,0,0.55)"
+                stroke="rgba(180,110,0,0.25)"
+                stroke-width=".6"
+              />
+              <text
+                x="68"
+                y="534"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="600"
+                fill="rgba(255,200,80,0.92)"
+              >
+                Supervised
+              </text>
+              <text
+                x="68"
+                y="545"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="400"
+                fill="rgba(230,165,40,0.78)"
+              >
+                Fine-Tuning
+              </text>
+            </g>
+
+            <!-- DPO pill -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 1.95s forwards">
+              <ellipse
+                cx="195"
+                cy="524"
+                rx="56"
+                ry="13"
+                fill="#080400"
+                opacity=".5"
+              />
+              <rect x="139" y="508" width="112" height="13" fill="url(#gA)" />
+              <ellipse
+                cx="139"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="url(#gAS)"
+                opacity=".8"
+              />
+              <ellipse
+                cx="251"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="#281400"
+                opacity=".6"
+              />
+              <ellipse
+                cx="195"
+                cy="508"
+                rx="56"
+                ry="13"
+                fill="#7A4800"
+                stroke="#C07000"
+                stroke-width="1"
+              />
+              <text
+                x="195"
+                y="517"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="9.5"
+                font-weight="700"
+                fill="#FFDA70"
+                letter-spacing="1"
+              >
+                DPO
+              </text>
+              <rect
+                x="135"
+                y="525"
+                width="120"
+                height="26"
+                rx="3"
+                fill="rgba(90,50,0,0.55)"
+                stroke="rgba(180,110,0,0.25)"
+                stroke-width=".6"
+              />
+              <text
+                x="195"
+                y="534"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="600"
+                fill="rgba(255,200,80,0.92)"
+              >
+                Direct Preference
+              </text>
+              <text
+                x="195"
+                y="545"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="400"
+                fill="rgba(230,165,40,0.78)"
+              >
+                Optimisation
+              </text>
+            </g>
+
+            <!-- RLHF pill -->
+            <g style="opacity: 0; animation: nodeIn 0.5s ease 2.1s forwards">
+              <ellipse
+                cx="322"
+                cy="524"
+                rx="56"
+                ry="13"
+                fill="#080400"
+                opacity=".5"
+              />
+              <rect x="266" y="508" width="112" height="13" fill="url(#gA)" />
+              <ellipse
+                cx="266"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="url(#gAS)"
+                opacity=".8"
+              />
+              <ellipse
+                cx="378"
+                cy="514.5"
+                rx="9"
+                ry="6.5"
+                fill="#281400"
+                opacity=".6"
+              />
+              <ellipse
+                cx="322"
+                cy="508"
+                rx="56"
+                ry="13"
+                fill="#7A4800"
+                stroke="#C07000"
+                stroke-width="1"
+              />
+              <text
+                x="322"
+                y="517"
+                text-anchor="middle"
+                font-family="'Cinzel',serif"
+                font-size="9.5"
+                font-weight="700"
+                fill="#FFDA70"
+                letter-spacing="1"
+              >
+                RLHF
+              </text>
+              <rect
+                x="262"
+                y="525"
+                width="120"
+                height="26"
+                rx="3"
+                fill="rgba(90,50,0,0.55)"
+                stroke="rgba(180,110,0,0.25)"
+                stroke-width=".6"
+              />
+              <text
+                x="322"
+                y="534"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="600"
+                fill="rgba(255,200,80,0.92)"
+              >
+                Reinforcement Learning
+              </text>
+              <text
+                x="322"
+                y="545"
+                text-anchor="middle"
+                font-family="'Raleway',sans-serif"
+                font-size="7.5"
+                font-weight="400"
+                fill="rgba(230,165,40,0.78)"
+              >
+                Human Feedback
+              </text>
+            </g>
+
+            <!-- colour legend bottom -->
+            <rect
+              x="10"
+              y="558"
+              width="8"
+              height="8"
+              rx="1"
+              fill="#5030B0"
+              opacity=".8"
+            />
+            <text
+              x="22"
+              y="565"
+              font-family="'Raleway',sans-serif"
+              font-size="7"
+              fill="rgba(160,130,230,0.55)"
+            >
+              Base
+            </text>
+            <rect
+              x="60"
+              y="558"
+              width="8"
+              height="8"
+              rx="1"
+              fill="#1A5030"
+              opacity=".8"
+            />
+            <text
+              x="72"
+              y="565"
+              font-family="'Raleway',sans-serif"
+              font-size="7"
+              fill="rgba(60,180,100,0.55)"
+            >
+              Evaluate
+            </text>
+            <rect
+              x="120"
+              y="558"
+              width="8"
+              height="8"
+              rx="1"
+              fill="#004858"
+              opacity=".8"
+            />
+            <text
+              x="132"
+              y="565"
+              font-family="'Raleway',sans-serif"
+              font-size="7"
+              fill="rgba(30,170,210,0.55)"
+            >
+              Deploy
+            </text>
+            <rect
+              x="184"
+              y="558"
+              width="8"
+              height="8"
+              rx="1"
+              fill="#5A3800"
+              opacity=".8"
+            />
+            <text
+              x="196"
+              y="565"
+              font-family="'Raleway',sans-serif"
+              font-size="7"
+              fill="rgba(200,140,20,0.55)"
+            >
+              Fine-Tune
+            </text>
+          </svg>
+        </div>
+
+        <!-- ══ CHARTS PANEL ══ -->
+        <div class="chart-panel">
+          <!-- CHART 1: Throughput vs Tokens bar chart -->
+          <div class="chart-card top">
+            <div class="chart-title" style="color: #a080ff">
+              <div class="chart-dot" style="background: #8040ff"></div>
+              Token Throughput by Model
+            </div>
+            <div class="chart-sub">
+              How many words (tokens) a model generates per second — the higher the
+              speed (throughput), the faster your product responds to users.
+              <b>Fine-tuned SLMs generate more words/sec than large LLMs</b>
+              while matching quality on specific tasks.
+            </div>
+            <div class="chart-vis"><canvas id="chart1"></canvas></div>
+          </div>
+
+          <!-- CHART 2: Speed + Tokens + Revenue — all 3 dimensions -->
+          <div class="chart-card bot">
+            <div class="chart-title" style="color: #ffb040">
+              <div class="chart-dot" style="background: #e09000"></div>
+              Speed · Tokens · Revenue — The Retail Chatbot Story
+            </div>
+            <div class="chart-sub">
+              As the chatbot handles
+              <b>more words per conversation</b> (x-axis), response time drops
+              toward <b>&lt;0.01s</b> (blue), revenue climbs (gold) and customer
+              satisfaction rises (green) — showing the compounding ROI of a
+              high-throughput agentic model.
+            </div>
+            <div class="chart-vis"><canvas id="chart2"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+      setTimeout(() => {
+        /* ── CHART 1: Token Throughput Bar — LLM vs SLM ── */
+        const c1 = document.getElementById("chart1").getContext("2d");
+
+        // Custom plugin to draw LLM / SLM bracket annotations above bars
+        const groupBracketPlugin = {
+          id: "groupBracket",
+          afterDraw(chart) {
+            const ctx = chart.ctx;
+            const meta = chart.getDatasetMeta(0);
+            if (!meta.data.length) return;
+
+            const llmBars = [meta.data[0], meta.data[1], meta.data[2]]; // first 3
+            const slmBars = [meta.data[3], meta.data[4]]; // last 2
+
+            const drawGroup = (bars, label, colour) => {
+              if (!bars[0] || !bars[bars.length - 1]) return;
+              const x1 = bars[0].x - bars[0].width / 2;
+              const x2 =
+                bars[bars.length - 1].x + bars[bars.length - 1].width / 2;
+              const y = chart.chartArea.top - 6;
+              const mx = (x1 + x2) / 2;
+
+              ctx.save();
+              ctx.strokeStyle = colour;
+              ctx.lineWidth = 1.2;
+              ctx.setLineDash([]);
+
+              // horizontal line
+              ctx.beginPath();
+              ctx.moveTo(x1 + 4, y);
+              ctx.lineTo(x2 - 4, y);
+              ctx.stroke();
+              // left tick
+              ctx.beginPath();
+              ctx.moveTo(x1 + 4, y);
+              ctx.lineTo(x1 + 4, y + 5);
+              ctx.stroke();
+              // right tick
+              ctx.beginPath();
+              ctx.moveTo(x2 - 4, y);
+              ctx.lineTo(x2 - 4, y + 5);
+              ctx.stroke();
+
+              // label pill
+              ctx.font = "bold 8px monospace";
+              ctx.textAlign = "center";
+              const w = ctx.measureText(label).width + 12;
+              ctx.fillStyle = colour.replace("1)", "0.18)");
+              ctx.beginPath();
+              ctx.roundRect(mx - w / 2, y - 12, w, 12, 3);
+              ctx.fill();
+              ctx.fillStyle = colour;
+              ctx.fillText(label, mx, y - 3);
+              ctx.restore();
+            };
+
+            drawGroup(
+              llmBars,
+              "◆ LLM  (Large Language Models)",
+              "rgba(160,120,255,1)",
+            );
+            drawGroup(
+              slmBars,
+              "◆ SLM  (Small / Fine-tuned)",
+              "rgba(0,220,180,1)",
+            );
+
+            // value labels on top of each bar
+            ctx.save();
+            ctx.font = "bold 8px monospace";
+            ctx.textAlign = "center";
+            meta.data.forEach((bar, i) => {
+              const v = chart.data.datasets[0].data[i];
+              ctx.fillStyle =
+                i < 3 ? "rgba(200,170,255,0.85)" : "rgba(0,240,200,0.85)";
+              ctx.fillText(
+                v >= 1000 ? (v / 1000).toFixed(1) + "K" : v,
+                bar.x,
+                bar.y - 5,
+              );
+            });
+            ctx.restore();
+          },
+        };
+
+        new Chart(c1, {
+          type: "bar",
+          plugins: [groupBracketPlugin],
+          data: {
+            labels: [
+              "GPT-4o",
+              "Claude 3.5",
+              "Llama3 70B",
+              "Mistral 7B",
+              "Phi-3 3.8B",
+            ],
+            datasets: [
+              {
+                label: "Words generated per second",
+                data: [60, 120, 100, 150, 150],
+                // LLM = purple shades, SLM = teal/green shades
+                backgroundColor: [
+                  "rgba(128,64,255,0.78)",
+                  "rgba(110,80,245,0.78)",
+                  "rgba(80,120,255,0.78)",
+                  "rgba(0,200,160,0.82)",
+                  "rgba(0,220,180,0.82)",
+                ],
+                borderColor: [
+                  "rgba(160,100,255,1)",
+                  "rgba(140,110,255,1)",
+                  "rgba(100,150,255,1)",
+                  "rgba(20,240,190,1)",
+                  "rgba(0,255,210,1)",
+                ],
+                borderWidth: 1.5,
+                borderRadius: 5,
+                borderSkipped: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { top: 30 } }, // space for bracket annotations
+            animation: {
+              delay: (ctx) => ctx.dataIndex * 180 + 2000,
+              duration: 700,
+              easing: "easeOutQuart",
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: "rgba(8,4,28,.95)",
+                titleColor: "#C8A8FF",
+                bodyColor: "rgba(200,180,255,.8)",
+                borderColor: "rgba(120,80,255,.35)",
+                borderWidth: 1,
+                callbacks: {
+                  label: (ctx) => {
+                    const type = ctx.dataIndex < 3 ? " [LLM]" : " [SLM]";
+                    return ` ${ctx.raw.toLocaleString()} words / sec${type}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "rgba(160,130,230,.70)",
+                  font: { family: "monospace", size: 8.5 },
+                },
+                grid: { color: "rgba(80,50,180,.08)" },
+                border: { color: "rgba(80,50,180,.18)" },
+              },
+              y: {
+                ticks: {
+                  color: "rgba(160,130,230,.65)",
+                  font: { family: "monospace", size: 8 },
+                  callback: (v) =>
+                    v >= 1000 ? (v / 1000).toFixed(1) + "K" : v,
+                },
+                grid: { color: "rgba(80,50,180,.09)" },
+                border: { color: "rgba(80,50,180,.18)" },
+                title: {
+                  display: true,
+                  text: "Output speed (words/sec)",
+                  color: "rgba(160,130,220,.60)",
+                  font: { family: "monospace", size: 8 },
+                },
+              },
+            },
+          },
+        });
+
+        /* ── CHART 2: Speed + Tokens → Revenue — all 3 dimensions ── */
+        const c2 = document.getElementById("chart2").getContext("2d");
+
+        // X axis: how many words the chatbot context can hold per session
+        const ctxWords = [
+          20, 40, 60, 80, 100, 120, 140, 160, 180, 200,
+        ];
+
+        // Dataset 1 — Revenue Index (baseline 100 = old bot)
+        const revenueAgent = [100, 108, 116, 126, 136, 147, 158, 168, 179, 192];
+        // Dataset 2 — Response Latency in ms (drops as model is optimised for speed)
+        // At 500w context it's slow (180ms), at 5000w with agentic routing it's <10ms
+        const latencyMs = [180, 145, 118, 92, 72, 54, 38, 24, 14, 8];
+        // Dataset 3 — CSAT score %
+        const csatScore = [61, 67, 73, 79, 84, 88, 91, 94, 97, 99];
+        // Dataset 4 — Baseline flat (slow legacy bot)
+        const revenueBaseline = [
+          100, 101, 102, 102, 103, 103, 104, 104, 105, 105,
+        ];
+
+        const gradGold = c2.createLinearGradient(0, 0, 0, 240);
+        gradGold.addColorStop(0, "rgba(255,168,40,0.40)");
+        gradGold.addColorStop(1, "rgba(255,168,40,0.02)");
+
+        const gradGreen = c2.createLinearGradient(0, 0, 0, 240);
+        gradGreen.addColorStop(0, "rgba(0,210,140,0.28)");
+        gradGreen.addColorStop(1, "rgba(0,210,140,0.02)");
+
+        const gradBlue = c2.createLinearGradient(0, 0, 0, 240);
+        gradBlue.addColorStop(0, "rgba(80,160,255,0.22)");
+        gradBlue.addColorStop(1, "rgba(80,160,255,0.02)");
+
+        new Chart(c2, {
+          type: "line",
+          data: {
+            labels: ctxWords.map((t) => t + "w"),
+            datasets: [
+              {
+                label: "Revenue Index",
+                data: revenueAgent,
+                borderColor: "#FFB040",
+                backgroundColor: gradGold,
+                borderWidth: 2.5,
+                tension: 0.42,
+                fill: true,
+                pointRadius: [0, 0, 0, 0, 0, 0, 0, 0, 0, 5],
+                pointBackgroundColor: "#FFD060",
+                pointBorderColor: "#FF7000",
+                pointBorderWidth: 2,
+                yAxisID: "y",
+                order: 2,
+              },
+              {
+                label: "Response Speed (ms)",
+                data: latencyMs,
+                borderColor: "#5090FF",
+                backgroundColor: gradBlue,
+                borderWidth: 2,
+                tension: 0.42,
+                fill: false,
+                pointRadius: [0, 0, 0, 0, 0, 0, 0, 0, 0, 5],
+                pointBackgroundColor: "#80B8FF",
+                pointBorderColor: "#2060D0",
+                pointBorderWidth: 2,
+                yAxisID: "y3",
+                order: 1,
+              },
+              {
+                label: "Customer Satisfaction %",
+                data: csatScore,
+                borderColor: "#30D890",
+                backgroundColor: gradGreen,
+                borderWidth: 2,
+                tension: 0.42,
+                fill: true,
+                pointRadius: [0, 0, 0, 0, 0, 0, 0, 0, 0, 5],
+                pointBackgroundColor: "#60FFB0",
+                pointBorderColor: "#00A060",
+                pointBorderWidth: 2,
+                yAxisID: "y2",
+                order: 3,
+              },
+              {
+                label: "Legacy Bot (baseline)",
+                data: revenueBaseline,
+                borderColor: "rgba(160,130,200,0.45)",
+                backgroundColor: "transparent",
+                borderWidth: 1.2,
+                borderDash: [5, 4],
+                tension: 0.2,
+                fill: false,
+                pointRadius: 0,
+                yAxisID: "y",
+                order: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { delay: 2300, duration: 1100, easing: "easeOutQuart" },
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: {
+                display: true,
+                position: "top",
+                align: "center",
+                labels: {
+                  color: "rgba(210,185,255,.75)",
+                  font: { family: "monospace", size: 7.5 },
+                  boxWidth: 10,
+                  padding: 10,
+                  usePointStyle: true,
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(8,4,28,.96)",
+                titleColor: "#FFD080",
+                bodyColor: "rgba(220,200,160,.82)",
+                borderColor: "rgba(200,140,20,.35)",
+                borderWidth: 1,
+                callbacks: {
+                  title: (items) => `Context window: ${items[0].label}`,
+                  label: (ctx) => {
+                    if (ctx.datasetIndex === 0)
+                      return ` 💰 Revenue Index: ${ctx.raw}`;
+                    if (ctx.datasetIndex === 1)
+                      return ` ⚡ Response time: ${ctx.raw}ms`;
+                    if (ctx.datasetIndex === 2)
+                      return ` 😊 Satisfaction: ${ctx.raw}%`;
+                    return ` ⬜ Legacy baseline: ${ctx.raw}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "rgba(200,165,80,.70)",
+                  font: { family: "monospace", size: 7.5 },
+                },
+                grid: { color: "rgba(120,80,20,.08)" },
+                border: { color: "rgba(120,80,20,.18)" },
+                title: {
+                  display: true,
+                  text: "Words per conversation (context window)",
+                  color: "rgba(180,145,55,.52)",
+                  font: { family: "monospace", size: 7.5 },
+                },
+              },
+              y: {
+                position: "left",
+                ticks: {
+                  color: "rgba(200,160,70,.65)",
+                  font: { family: "monospace", size: 7.5 },
+                },
+                grid: { color: "rgba(120,80,20,.09)" },
+                border: { color: "rgba(120,80,20,.18)" },
+                title: {
+                  display: true,
+                  text: "Revenue Index",
+                  color: "rgba(220,160,40,.55)",
+                  font: { family: "monospace", size: 7.5 },
+                },
+                min: 90,
+                max: 205,
+              },
+              y2: {
+                position: "right",
+                ticks: {
+                  color: "rgba(40,190,120,.62)",
+                  font: { family: "monospace", size: 7.5 },
+                  callback: (v) => v + "%",
+                },
+                grid: { drawOnChartArea: false },
+                border: { color: "rgba(20,140,80,.18)" },
+                title: {
+                  display: true,
+                  text: "CSAT %",
+                  color: "rgba(30,170,105,.52)",
+                  font: { family: "monospace", size: 7.5 },
+                },
+                min: 50,
+                max: 112,
+              },
+              y3: {
+                position: "right",
+                display: false, // hidden axis — latency just needs a scale, not labels
+                min: 0,
+                max: 300,
+              },
+            },
+          },
+        });
+
+        // Annotate key moments after render
+        setTimeout(() => {
+          const chart = Chart.getChart("chart2");
+          if (!chart) return;
+          const ctx = chart.ctx;
+          const revenueDataset = chart.getDatasetMeta(0);
+          const latencyDataset = chart.getDatasetMeta(1);
+          if (!revenueDataset.data[9] || !latencyDataset.data[9]) return;
+
+          ctx.save();
+
+          // — "< 0.01s" speed callout at last latency point —
+          const lx = latencyDataset.data[9].x;
+          const ly = latencyDataset.data[9].y;
+          ctx.font = "bold 8px monospace";
+          ctx.fillStyle = "rgba(100,170,255,0.90)";
+          ctx.textAlign = "right";
+          ctx.fillText("⚡ <0.01s", lx - 6, ly - 7);
+
+          // — Revenue endpoint callout —
+          const rx = revenueDataset.data[9].x;
+          const ry = revenueDataset.data[9].y;
+          ctx.fillStyle = "rgba(255,200,60,0.88)";
+          ctx.textAlign = "right";
+          ctx.fillText("+92% Revenue", rx - 6, ry - 7);
+
+          // — Vertical "sweet zone" band from index 6 to 8 —
+          const x6 = revenueDataset.data[6].x;
+          const x8 = revenueDataset.data[8].x;
+          ctx.fillStyle = "rgba(255,190,50,0.06)";
+          ctx.fillRect(
+            x6,
+            chart.chartArea.top,
+            x8 - x6,
+            chart.chartArea.bottom - chart.chartArea.top,
+          );
+          ctx.strokeStyle = "rgba(255,190,50,0.22)";
+          ctx.setLineDash([3, 3]);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x6, chart.chartArea.top);
+          ctx.lineTo(x6, chart.chartArea.bottom);
+          ctx.moveTo(x8, chart.chartArea.top);
+          ctx.lineTo(x8, chart.chartArea.bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.font = "bold 7px monospace";
+          ctx.fillStyle = "rgba(255,200,60,0.65)";
+          ctx.textAlign = "center";
+          ctx.fillText("optimal zone", (x6 + x8) / 2, chart.chartArea.top + 10);
+
+          ctx.restore();
+        }, 3800);
+      }, 400);
+    </script>
+  </body>
+</html>

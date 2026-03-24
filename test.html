@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>AI Webinar | Intelligent Systems Presentation</title>
+
+    <!-- Reveal.js core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/reveal.js@4.4.0/dist/reveal.css"
+    />
+    <!-- Modern dark theme with elegant accents -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/reveal.js@4.4.0/dist/theme/black.css"
+    />
+
+    <!-- Google Fonts: modern sans-serif for UI elements -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome 6 (free icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* Global reset & base */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+        overflow: hidden;
+        background: #0a0c10;
+      }
+
+      /* Reveal overrides for fullscreen iframes and beautiful slide fill */
+      .reveal {
+        height: 100vh;
+        width: 100%;
+        background: radial-gradient(circle at 20% 30%, #0b1120, #03050b);
+      }
+
+      .reveal .slides {
+        text-align: left;
+      }
+
+      /* Remove default padding/margin so iframes can breathe */
+      .reveal .slides section {
+        padding: 0 !important;
+        margin: 0 !important;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* iframe styling — perfect full-bleed embedding */
+      .reveal .slides section iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: #0a0c10;
+        box-shadow: none;
+        display: block;
+      }
+
+      /* Placeholder slide styling — modern glassmorphic cards */
+      .placeholder-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(15, 25, 45, 0.85),
+          rgba(5, 10, 25, 0.9)
+        );
+        backdrop-filter: blur(2px);
+        padding: 2rem;
+        border-radius: 0;
+        animation: fadeScale 0.6s ease-out;
+      }
+
+      .placeholder-content i {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(120deg, #64ffda, #a855f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+      }
+
+      .placeholder-content h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #ffffff, #c084fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: -0.02em;
+      }
+
+      .placeholder-content p {
+        font-size: 1.3rem;
+        color: #b9c7d9;
+        max-width: 70%;
+        margin-top: 0.5rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border-top: 1px solid rgba(100, 255, 218, 0.3);
+        padding-top: 1.2rem;
+      }
+
+      @keyframes fadeScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.96);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ----- CUSTOM NAVIGATION BUTTONS (beautiful & minimal) ----- */
+      .nav-btn {
+        position: fixed;
+        bottom: 28px;
+        background: rgba(12, 20, 30, 0.75);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(100, 255, 218, 0.35);
+        border-radius: 60px;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        color: #eef5ff;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+      }
+
+      .nav-btn i {
+        font-size: 1.2rem;
+        transition: transform 0.2s ease;
+      }
+
+      .nav-btn:hover {
+        background: rgba(30, 45, 65, 0.9);
+        border-color: #64ffda;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(0, 0, 0, 0.4);
+      }
+
+      .nav-btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-prev {
+        left: 28px;
+      }
+
+      .btn-next {
+        right: 28px;
+      }
+
+      /* Slide indicator (beautiful pill) */
+      .slide-counter {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(12px);
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-family: "Inter", monospace;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        color: #c2e9ff;
+        border: 1px solid rgba(100, 255, 218, 0.4);
+        z-index: 1000;
+        pointer-events: none;
+        white-space: nowrap;
+        background: rgba(5, 10, 20, 0.7);
+      }
+
+      .slide-counter span {
+        color: #64ffda;
+        font-weight: 700;
+        margin: 0 2px;
+      }
+
+      /* responsive adjustments */
+      @media (max-width: 640px) {
+        .nav-btn {
+          padding: 8px 18px;
+          font-size: 0.8rem;
+          bottom: 18px;
+        }
+        .nav-btn i {
+          font-size: 1rem;
+        }
+        .slide-counter {
+          bottom: 20px;
+          font-size: 0.75rem;
+          padding: 5px 14px;
+        }
+        .placeholder-content h2 {
+          font-size: 2rem;
+        }
+        .placeholder-content p {
+          font-size: 1rem;
+          max-width: 85%;
+        }
+        .placeholder-content i {
+          font-size: 3.5rem;
+        }
+      }
+
+      /* subtle glow on active state for buttons */
+      .nav-btn:focus-visible {
+        outline: 2px solid #64ffda;
+        outline-offset: 2px;
+      }
+
+      /* Hide default Reveal controls to avoid duplication */
+      .reveal .controls {
+        display: none !important;
+      }
+
+      /* progress bar keep for aesthetic but recolor */
+      .reveal .progress {
+        background: rgba(30, 40, 60, 0.5);
+        height: 4px;
+      }
+
+      .reveal .progress span {
+        background: linear-gradient(90deg, #64ffda, #a855f7);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- ========== ACTUAL CONTENT SLIDES (IFRAME EMBEDS) ========== -->
+        <!-- Slide 1: Introduction Cover -->
+        <section>
+          <iframe
+            src="introduction_cover.html"
+            title="Introduction Cover"
+          ></iframe>
+        </section>
+
+        <!-- Slide 2: Then vs Now -->
+        <section>
+          <iframe src="then_now.html" title="Then & Now"></iframe>
+        </section>
+
+        <!-- Slide 3: Infrastructure Layer -->
+        <section>
+          <iframe
+            src="infrastructure_layer.html"
+            title="Infrastructure Layer"
+          ></iframe>
+        </section>
+
+        <!-- Slide 4: Data Layer -->
+        <section>
+          <iframe src="data_layer.html" title="Data Layer"></iframe>
+        </section>
+
+        <!-- Slide 5: Model Layer -->
+        <section>
+          <iframe src="model_layer.html" title="Model Layer"></iframe>
+        </section>
+
+        <!-- Slide 6: Model Workflow -->
+        <section>
+          <iframe src="model_workflow.html" title="Model Workflow"></iframe>
+        </section>
+
+        <!-- Slide 7: Orchestration Layer -->
+        <section>
+          <iframe
+            src="orchestration_layer.html"
+            title="Orchestration Layer"
+          ></iframe>
+        </section>
+
+        <!-- Slide 8: AI Lifecycle -->
+        <section>
+          <iframe
+            src="ai_lifecycle.html"
+            title="AI Lifecycle Management"
+          ></iframe>
+        </section>
+
+        <!-- ========== BEAUTIFUL PLACEHOLDER SLIDES (Total slides: 16) ========== -->
+        <!-- Slide 9: Advanced AI Governance -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-shield-haltered"></i>
+            <h2>AI Governance & Ethics</h2>
+            <p>
+              Responsible frameworks · Bias mitigation · Transparent AI
+              pipelines
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 10: Scalable LLM Deployment -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <h2>LLM Orchestration at Scale</h2>
+            <p>Inference optimization · Edge deployment · Cost-aware routing</p>
+          </div>
+        </section>
+
+        <!-- Slide 11: Real‑world Use Cases -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-chart-line"></i>
+            <h2>Industry Breakthroughs</h2>
+            <p>
+              Healthcare · Finance · Generative AI assistants & autonomous
+              agents
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 12: Cost Optimization Strategies -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-coins"></i>
+            <h2>AI Cost Efficiency</h2>
+            <p>
+              Fine‑tuning economics · Model distillation · Serverless inference
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 13: Responsible AI & Safety -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-lock"></i>
+            <h2>Safety & Alignment</h2>
+            <p>Adversarial robustness · Guardrails · Continuous red-teaming</p>
+          </div>
+        </section>
+
+        <!-- Slide 14: MLOps & Monitoring -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-chart-simple"></i>
+            <h2>MLOps & Observability</h2>
+            <p>Drift detection · Performance metrics · Automated retraining</p>
+          </div>
+        </section>
+
+        <!-- Slide 15: Future of AI Agents -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-robot"></i>
+            <h2>Autonomous AI Agents</h2>
+            <p>Multi‑agent systems · Tool use · Self‑improving workflows</p>
+          </div>
+        </section>
+
+        <!-- Slide 16: Q&A + Discussion -->
+        <section>
+          <div class="placeholder-content">
+            <i class="fas fa-comments"></i>
+            <h2>Q&A & Closing Insights</h2>
+            <p>Interactive session · Roadmap · Next‑gen AI adoption</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Reveal.js library -->
+    <script src="https://unpkg.com/reveal.js@4.4.0/dist/reveal.js"></script>
+
+    <script>
+      (function () {
+        // Initialize Reveal with elegant settings
+        // We disable default controls because we have custom navigation buttons
+        // Keyboard navigation (arrow keys) remains active for power users.
+        Reveal.initialize({
+          hash: true, // Enable slide URLs
+          controls: false, // Hide default arrows (we use floating buttons)
+          progress: true, // Show progress bar (beautiful gradient)
+          transition: "slide", // Smooth slide transitions
+          transitionSpeed: "default",
+          backgroundTransition: "fade",
+          center: false, // We use full height sections, center false allows custom alignment
+          width: "100%",
+          height: "100%",
+          margin: 0,
+          minScale: 0.2,
+          maxScale: 2.0,
+          keyboard: true, // Allow left/right arrows
+          touch: true,
+          loop: false,
+          slideNumber: false, // We use our own custom counter
+          help: true,
+          fragments: true,
+          embedded: false,
+          autoAnimate: true,
+        });
+
+        // Wait for Reveal to be fully ready
+        Reveal.addEventListener("ready", function (event) {
+          initCustomNavigation();
+          updateSlideCounter();
+        });
+
+        // When slide changes, update the custom counter
+        Reveal.addEventListener("slidechanged", function (event) {
+          updateSlideCounter();
+        });
+
+        // Function to update the custom slide indicator (Current / Total)
+        function updateSlideCounter() {
+          const totalSlides = document.querySelectorAll(
+            ".reveal .slides > section",
+          ).length;
+          const currentSlideIndex = Reveal.getIndices().h + 1; // h is zero-based horizontal index
+          const counterElem = document.getElementById("slide-counter-value");
+          const totalElem = document.getElementById("total-slide-value");
+          if (counterElem && totalElem) {
+            counterElem.innerText = currentSlideIndex;
+            totalElem.innerText = totalSlides;
+          }
+        }
+
+        // Build custom navigation buttons and inject into DOM
+        function initCustomNavigation() {
+          // Avoid duplicate buttons
+          if (document.querySelector(".custom-nav-container")) return;
+
+          // Create Previous Button
+          const prevBtn = document.createElement("button");
+          prevBtn.className = "nav-btn btn-prev";
+          prevBtn.setAttribute("aria-label", "Previous slide");
+          prevBtn.innerHTML =
+            '<i class="fas fa-chevron-left"></i><span>Prev</span>';
+
+          // Create Next Button
+          const nextBtn = document.createElement("button");
+          nextBtn.className = "nav-btn btn-next";
+          nextBtn.setAttribute("aria-label", "Next slide");
+          nextBtn.innerHTML =
+            '<span>Next</span><i class="fas fa-chevron-right"></i>';
+
+          // Create elegant slide counter pill
+          const counterPill = document.createElement("div");
+          counterPill.className = "slide-counter";
+          counterPill.innerHTML =
+            '<i class="fas fa-sliders-h" style="margin-right: 8px; font-size: 0.75rem;"></i> Slide <span id="slide-counter-value">1</span> / <span id="total-slide-value">0</span>';
+
+          document.body.appendChild(prevBtn);
+          document.body.appendChild(nextBtn);
+          document.body.appendChild(counterPill);
+
+          // Set total slides in counter
+          const totalSlides = document.querySelectorAll(
+            ".reveal .slides > section",
+          ).length;
+          const totalSpan = document.getElementById("total-slide-value");
+          if (totalSpan) totalSpan.innerText = totalSlides;
+
+          // Event handlers with smooth navigation
+          prevBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            Reveal.prev();
+          });
+
+          nextBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            Reveal.next();
+          });
+
+          // Optional: keyboard hint indicator (no double navigation)
+          // Also attach a subtle ripple effect on buttons (CSS handles)
+
+          // Add small tooltip on hover using title
+          prevBtn.title = "Previous slide (←)";
+          nextBtn.title = "Next slide (→)";
+
+          // When slide index changes, update counter again (extra safety)
+          Reveal.addEventListener("slidechanged", () => updateSlideCounter());
+          updateSlideCounter();
+        }
+
+        // If Reveal already initialized before adding event? But we call inside ready.
+        // Fallback: If reveal has already initialized before script fully loads? ensure.
+        if (Reveal.isReady()) {
+          initCustomNavigation();
+          updateSlideCounter();
+        } else {
+          // already inside ready event - but safe double call won't hurt.
+          Reveal.addEventListener("ready", () => {
+            if (!document.querySelector(".nav-btn")) {
+              initCustomNavigation();
+            }
+            updateSlideCounter();
+          });
+        }
+      })();
+    </script>
+
+    <!-- Additional subtle floating glow effect for interactive slides -->
+    <style>
+      /* enhance placeholder hover effect (just for delight) */
+      .placeholder-content {
+        transition: all 0.2s ease;
+      }
+      .reveal .slides section:hover .placeholder-content {
+        transform: scale(1.01);
+        background: linear-gradient(
+          135deg,
+          rgba(25, 40, 70, 0.9),
+          rgba(8, 12, 28, 0.95)
+        );
+      }
+      /* custom scrollbar (not needed but adds elegance) */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0f1a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2c3e5c;
+        border-radius: 8px;
+      }
+      /* Make iframes blend with dark bg while loading */
+      iframe {
+        background-color: #03050b;
+      }
+    </style>
+  </body>
+</html>

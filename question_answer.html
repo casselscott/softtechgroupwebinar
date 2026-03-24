@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 15 – Q&A</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #02040c;
+      }
+
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 90;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+
+      canvas {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* subtle radial bg */
+      .bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background: radial-gradient(
+          ellipse 70% 70% at 50% 50%,
+          #080620 0%,
+          #02040c 65%
+        );
+      }
+
+      /* ── HEADER ── */
+      .hdr {
+        position: absolute;
+        top: 32px;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        text-align: center;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.2s forwards;
+      }
+      .eyebrow {
+        font-family: "Cinzel", serif;
+        font-size: 8.5px;
+        letter-spacing: 0.52em;
+        text-transform: uppercase;
+        color: rgba(201, 168, 76, 0.6);
+        display: block;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 44px;
+        color: #f2efe4;
+        letter-spacing: -0.01em;
+        line-height: 1;
+      }
+      .title span {
+        color: #c9a84c;
+      }
+
+      /* ── BUBBLES ── */
+      .bubbles {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+      }
+
+      /* Q bubble */
+      .bubble-q {
+        width: 310px;
+        height: 290px;
+        border-radius: 50% 50% 50% 12px / 50% 50% 50% 12px;
+        background: linear-gradient(
+          140deg,
+          #5bc8ff 0%,
+          #2e9fe8 40%,
+          #1a78d0 100%
+        );
+        box-shadow:
+          0 0 0 6px rgba(91, 200, 255, 0.18),
+          0 24px 80px rgba(30, 120, 220, 0.55),
+          inset 0 -18px 40px rgba(10, 60, 140, 0.3),
+          inset 4px 8px 28px rgba(255, 255, 255, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transform: translateY(-30px) rotate(-4deg);
+        opacity: 0;
+        animation: bubbleInL 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+        z-index: 12;
+      }
+      /* tail for Q bubble */
+      .bubble-q::after {
+        content: "";
+        position: absolute;
+        bottom: -28px;
+        left: 44px;
+        width: 38px;
+        height: 38px;
+        background: linear-gradient(135deg, #2e9fe8, #1a78d0);
+        border-radius: 0 0 0 28px;
+        box-shadow: inset -3px -3px 10px rgba(10, 60, 140, 0.3);
+      }
+      /* highlight sheen Q */
+      .bubble-q::before {
+        content: "";
+        position: absolute;
+        top: 18px;
+        left: 30px;
+        width: 80px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        transform: rotate(-30deg);
+      }
+
+      /* A bubble */
+      .bubble-a {
+        width: 270px;
+        height: 250px;
+        border-radius: 50% 50% 12px 50% / 50% 50% 12px 50%;
+        background: linear-gradient(
+          140deg,
+          #8b7fff 0%,
+          #6655ee 40%,
+          #4c3edc 100%
+        );
+        box-shadow:
+          0 0 0 6px rgba(140, 130, 255, 0.18),
+          0 24px 80px rgba(80, 60, 220, 0.55),
+          inset 0 -18px 40px rgba(30, 20, 120, 0.3),
+          inset 4px 8px 28px rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transform: translateY(20px) rotate(5deg);
+        margin-left: -50px;
+        opacity: 0;
+        animation: bubbleInR 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.72s forwards;
+        z-index: 11;
+      }
+      /* tail for A bubble (bottom right) */
+      .bubble-a::after {
+        content: "";
+        position: absolute;
+        bottom: -22px;
+        right: 42px;
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #6655ee, #4c3edc);
+        border-radius: 0 0 24px 0;
+        box-shadow: inset 3px -3px 10px rgba(30, 20, 120, 0.3);
+      }
+      /* highlight sheen A */
+      .bubble-a::before {
+        content: "";
+        position: absolute;
+        top: 16px;
+        left: 28px;
+        width: 68px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(-25deg);
+      }
+
+      /* Letters inside bubbles */
+      .letter {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.92);
+        position: relative;
+        z-index: 2;
+        text-shadow:
+          2px 4px 12px rgba(0, 0, 0, 0.35),
+          -1px -1px 0 rgba(255, 255, 255, 0.25);
+        user-select: none;
+      }
+      .letter-q {
+        font-size: 130px;
+        line-height: 1;
+        margin-top: 8px;
+      }
+      .letter-a {
+        font-size: 110px;
+        line-height: 1;
+        margin-top: 6px;
+      }
+
+      /* ── FOOTER TEXT ── */
+      .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        text-align: center;
+        padding-bottom: 32px;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 1.2s forwards;
+      }
+      .footer-main {
+        font-family: "Cinzel", serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+      }
+      .footer-sub {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-size: 14px;
+        color: rgba(201, 168, 76, 0.65);
+        letter-spacing: 0.04em;
+      }
+
+      /* ── SOFT TECH BADGE ── */
+      .badge {
+        position: absolute;
+        bottom: 28px;
+        right: 48px;
+        z-index: 20;
+        text-align: right;
+        opacity: 0;
+        animation: fadeIn 0.6s ease 1.5s forwards;
+      }
+      .badge-name {
+        font-family: "Cinzel", serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(201, 168, 76, 0.65);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+      .badge-rule {
+        width: 48px;
+        height: 1px;
+        background: rgba(201, 168, 76, 0.35);
+        margin: 5px 0 0 auto;
+      }
+
+      /* ── FLOATING DOTS ── */
+      .dots {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes bubbleInL {
+        from {
+          opacity: 0;
+          transform: translateY(-30px) rotate(-4deg) scale(0.72);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(-30px) rotate(-4deg) scale(1);
+        }
+      }
+      @keyframes bubbleInR {
+        from {
+          opacity: 0;
+          transform: translateY(20px) rotate(5deg) scale(0.72);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(20px) rotate(5deg) scale(1);
+        }
+      }
+      @keyframes floatBubbleQ {
+        0%,
+        100% {
+          transform: translateY(-30px) rotate(-4deg);
+        }
+        50% {
+          transform: translateY(-42px) rotate(-4deg);
+        }
+      }
+      @keyframes floatBubbleA {
+        0%,
+        100% {
+          transform: translateY(20px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(10px) rotate(5deg);
+        }
+      }
+      @keyframes dotPulse {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.5);
+        }
+      }
+
+      /* floating after entrance */
+      .bubble-q.floating {
+        animation:
+          bubbleInL 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards,
+          floatBubbleQ 5s ease-in-out 1.5s infinite;
+      }
+      .bubble-a.floating {
+        animation:
+          bubbleInR 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.72s forwards,
+          floatBubbleA 6s ease-in-out 1.8s infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg"></div>
+      <canvas id="c" width="1280" height="720"></canvas>
+
+      <!-- floating decorative dots SVG -->
+      <svg
+        class="dots"
+        viewBox="0 0 1280 720"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <!-- scattered dots left -->
+        <circle cx="112" cy="220" r="5" fill="#2E9FE8" opacity=".35">
+          <animate
+            attributeName="opacity"
+            values=".35;.80;.35"
+            dur="2.8s"
+            repeatCount="indefinite"
+            begin="0s"
+          />
+        </circle>
+        <circle cx="180" cy="380" r="3.5" fill="#2E9FE8" opacity=".25">
+          <animate
+            attributeName="opacity"
+            values=".25;.65;.25"
+            dur="3.2s"
+            repeatCount="indefinite"
+            begin=".6s"
+          />
+        </circle>
+        <circle cx="80" cy="490" r="4.5" fill="#6655EE" opacity=".28">
+          <animate
+            attributeName="opacity"
+            values=".28;.70;.28"
+            dur="4s"
+            repeatCount="indefinite"
+            begin="1.2s"
+          />
+        </circle>
+        <circle cx="240" cy="140" r="3" fill="#C9A84C" opacity=".30">
+          <animate
+            attributeName="opacity"
+            values=".30;.75;.30"
+            dur="2.5s"
+            repeatCount="indefinite"
+            begin=".4s"
+          />
+        </circle>
+        <circle cx="150" cy="580" r="6" fill="#2E9FE8" opacity=".18">
+          <animate
+            attributeName="opacity"
+            values=".18;.50;.18"
+            dur="5s"
+            repeatCount="indefinite"
+            begin="1.8s"
+          />
+        </circle>
+        <!-- scattered dots right -->
+        <circle cx="1168" cy="240" r="5" fill="#6655EE" opacity=".35">
+          <animate
+            attributeName="opacity"
+            values=".35;.80;.35"
+            dur="3s"
+            repeatCount="indefinite"
+            begin=".3s"
+          />
+        </circle>
+        <circle cx="1100" cy="400" r="3.5" fill="#2E9FE8" opacity=".28">
+          <animate
+            attributeName="opacity"
+            values=".28;.68;.28"
+            dur="3.5s"
+            repeatCount="indefinite"
+            begin=".9s"
+          />
+        </circle>
+        <circle cx="1200" cy="520" r="4" fill="#C9A84C" opacity=".28">
+          <animate
+            attributeName="opacity"
+            values=".28;.72;.28"
+            dur="2.9s"
+            repeatCount="indefinite"
+            begin=".5s"
+          />
+        </circle>
+        <circle cx="1050" cy="150" r="3" fill="#6655EE" opacity=".22">
+          <animate
+            attributeName="opacity"
+            values=".22;.60;.22"
+            dur="4.2s"
+            repeatCount="indefinite"
+            begin="1.5s"
+          />
+        </circle>
+        <circle cx="1230" cy="350" r="5.5" fill="#2E9FE8" opacity=".18">
+          <animate
+            attributeName="opacity"
+            values=".18;.48;.18"
+            dur="5.5s"
+            repeatCount="indefinite"
+            begin="2.0s"
+          />
+        </circle>
+        <!-- small stars/sparkles -->
+        <text
+          x="96"
+          y="310"
+          font-size="12"
+          fill="rgba(201,168,76,.40)"
+          text-anchor="middle"
+          style="animation: dotPulse 3s ease-in-out infinite"
+        >
+          ✦
+        </text>
+        <text
+          x="1186"
+          y="470"
+          font-size="10"
+          fill="rgba(201,168,76,.35)"
+          text-anchor="middle"
+          style="animation: dotPulse 3.5s ease-in-out infinite 0.8s"
+        >
+          ✦
+        </text>
+        <text
+          x="300"
+          y="600"
+          font-size="8"
+          fill="rgba(91,200,255,.35)"
+          text-anchor="middle"
+          style="animation: dotPulse 4s ease-in-out infinite 1.2s"
+        >
+          ✦
+        </text>
+        <text
+          x="990"
+          y="130"
+          font-size="9"
+          fill="rgba(140,130,255,.35)"
+          text-anchor="middle"
+          style="animation: dotPulse 2.8s ease-in-out infinite 0.4s"
+        >
+          ✦
+        </text>
+      </svg>
+
+      <!-- HEADER -->
+      <div class="hdr">
+        <span class="eyebrow">Soft Tech Group · AI Webinar</span>
+        <div class="title">Questions <span>&amp;</span> Answers</div>
+      </div>
+
+      <!-- BUBBLES -->
+      <div class="bubbles" id="bubbles">
+        <div class="bubble-q" id="bq">
+          <span class="letter letter-q">Q</span>
+        </div>
+        <div class="bubble-a" id="ba">
+          <span class="letter letter-a">A</span>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <div class="footer-main">
+          Thank you for Attending this Webinar<br />We'd love to hear from you
+        </div>
+        <div class="footer-sub">
+          Ask anything about AI, our work, or how we can help your organisation
+        </div>
+      </div>
+
+      <!-- BADGE -->
+      <div class="badge">
+        <div class="badge-name">Soft Tech Group</div>
+        <div class="badge-name">Email: info@softtechgroup.com</div>
+        <div class="badge-rule"></div>
+      </div>
+    </div>
+
+    <script>
+      // Stars
+      const cv = document.getElementById("c"),
+        ctx = cv.getContext("2d");
+      for (let i = 0; i < 200; i++) {
+        const x = Math.random() * 1280,
+          y = Math.random() * 720,
+          r = Math.random() * 0.7 + 0.1,
+          op = Math.random() * 0.32 + 0.04;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${210 + Math.floor(Math.random() * 45)},${210 + Math.floor(Math.random() * 45)},255,${op})`;
+        ctx.fill();
+      }
+
+      // Start float animation after entrance completes
+      setTimeout(() => {
+        document.getElementById("bq").classList.add("floating");
+        document.getElementById("ba").classList.add("floating");
+      }, 1600);
+    </script>
+  </body>
+</html>

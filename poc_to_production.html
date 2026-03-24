@@ -1,0 +1,1679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 13 – POC to Production</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;1,700&family=Raleway:wght@200;300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #030509;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        font-family: "Raleway", sans-serif;
+      }
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 90;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+
+      /* Background: subtle dark scene with atmospheric depth */
+      .bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background: #030509;
+      }
+      .bg-glow-l {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 480px;
+        height: 100%;
+        z-index: 0;
+        background: radial-gradient(
+          ellipse at 0% 60%,
+          rgba(30, 80, 200, 0.14) 0%,
+          transparent 70%
+        );
+      }
+      .bg-glow-r {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 480px;
+        height: 100%;
+        z-index: 0;
+        background: radial-gradient(
+          ellipse at 100% 60%,
+          rgba(180, 130, 10, 0.16) 0%,
+          transparent 70%
+        );
+      }
+      .stars {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* Header */
+      .hdr {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 30;
+        padding: 0 48px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .badge {
+        font-family: "Cinzel", serif;
+        font-size: 7.5px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 3px;
+      }
+      .bl {
+        display: inline-block;
+        width: 18px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .ttl {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 22px;
+        color: #f2efe4;
+        line-height: 1.1;
+      }
+      .ttl em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.92);
+        display: block;
+        margin-top: 2px;
+      }
+      .sub {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.88);
+        line-height: 1.58;
+        text-align: right;
+        max-width: 370px;
+        padding-top: 4px;
+      }
+      .sub b {
+        font-style: normal;
+        font-weight: 700;
+        color: #f5d470;
+      }
+
+      .hrule {
+        position: absolute;
+        top: 90px;
+        left: 48px;
+        right: 48px;
+        height: 1px;
+        z-index: 20;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.28) 20%,
+          rgba(201, 168, 76, 0.5) 50%,
+          rgba(201, 168, 76, 0.28) 80%,
+          transparent
+        );
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.4s forwards;
+      }
+
+      /* Main canvas */
+      .main {
+        position: absolute;
+        top: 96px;
+        left: 0;
+        right: 0;
+        bottom: 52px;
+        z-index: 10;
+      }
+      .main svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* Finale */
+      .finale {
+        position: absolute;
+        bottom: 8px;
+        left: 48px;
+        right: 48px;
+        height: 44px;
+        z-index: 50;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          rgba(6, 4, 18, 0) 0%,
+          rgba(8, 5, 22, 0.94) 12%,
+          rgba(12, 8, 28, 0.97) 50%,
+          rgba(8, 5, 22, 0.94) 88%,
+          rgba(6, 4, 18, 0) 100%
+        );
+        border: 1px solid rgba(201, 168, 76, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        opacity: 0;
+        animation: finaleIn 1s cubic-bezier(0.22, 1, 0.36, 1) 5s forwards;
+      }
+      .finale::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(201, 168, 76, 0.05) 50%,
+          transparent
+        );
+      }
+      .fdiamond {
+        width: 7px;
+        height: 7px;
+        border: 1.5px solid #c9a84c;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .fl {
+        height: 1px;
+        width: 44px;
+        flex-shrink: 0;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .fl.r {
+        background: linear-gradient(
+          to left,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .ft {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.96);
+        text-align: center;
+        line-height: 1.3;
+      }
+      .ft strong {
+        font-family: "Cinzel", serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 12.5px;
+        color: #d4a843;
+        letter-spacing: 0.06em;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes finaleIn {
+        0% {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        65% {
+          opacity: 1;
+          transform: translateY(-2px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes riseIn {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+          filter: brightness(0.2);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: brightness(1);
+        }
+      }
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes flowDash {
+        to {
+          stroke-dashoffset: -32;
+        }
+      }
+      @keyframes orbPulse {
+        0%,
+        100% {
+          opacity: 0.75;
+          r: 8;
+        }
+        50% {
+          opacity: 0.3;
+          r: 5;
+        }
+      }
+      @keyframes shimmerBar {
+        0% {
+          x: -220;
+        }
+        100% {
+          x: 1500;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg"></div>
+      <div class="bg-glow-l"></div>
+      <div class="bg-glow-r"></div>
+      <canvas class="stars" id="stars" width="1280" height="720"></canvas>
+
+      <div class="hdr">
+        <div>
+          <div class="badge">
+            <span class="bl"></span>AI Execution · Deployment Lifecycle<span
+              class="bl"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="ttl">
+            Proof of Concept → Production<em
+              >Turning AI ideas into enterprise-grade systems</em
+            >
+          </h2>
+        </div>
+        <p class="sub">
+          Most AI projects never make it to production.
+          <br /><b>Soft Tech Group</b> takes ideas from whiteboard to live,<br />production
+          systems.. weeks.
+        </p>
+      </div>
+      <div class="hrule"></div>
+
+      <div class="main">
+        <svg
+          viewBox="0 0 1280 572"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <filter id="gA">
+              <feGaussianBlur stdDeviation="7" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="gM">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="gS">
+              <feGaussianBlur stdDeviation="1.5" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <!-- Isometric ground plane gradient (dark to slightly lighter) -->
+            <linearGradient id="groundG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0A0C18" stop-opacity="1" />
+              <stop offset="100%" stop-color="#050608" stop-opacity="1" />
+            </linearGradient>
+            <!-- Grid line gradient for depth -->
+            <linearGradient id="gridFade" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4060C0" stop-opacity="0" />
+              <stop offset="30%" stop-color="#4060C0" stop-opacity=".18" />
+              <stop offset="70%" stop-color="#C9A84C" stop-opacity=".18" />
+              <stop offset="100%" stop-color="#00C8E0" stop-opacity="0" />
+            </linearGradient>
+            <!-- pillar face gradients per stage -->
+            <linearGradient id="p1f" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0D1E50" />
+              <stop offset="100%" stop-color="#06102A" />
+            </linearGradient>
+            <linearGradient id="p2f" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#082244" />
+              <stop offset="100%" stop-color="#041220" />
+            </linearGradient>
+            <linearGradient id="p3f" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#082C20" />
+              <stop offset="100%" stop-color="#041610" />
+            </linearGradient>
+            <linearGradient id="p4f" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1C1A04" />
+              <stop offset="100%" stop-color="#0E0E02" />
+            </linearGradient>
+            <linearGradient id="p5f" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#021820" />
+              <stop offset="100%" stop-color="#010C10" />
+            </linearGradient>
+            <!-- Glowing top cap gradient for Production -->
+            <radialGradient id="goldCap" cx="50%" cy="100%" r="80%">
+              <stop offset="0%" stop-color="#00E8FF" stop-opacity=".45" />
+              <stop offset="100%" stop-color="#C9A84C" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- ══════════════════════════════════════════
+         ISOMETRIC GROUND GRID
+    ══════════════════════════════════════════ -->
+          <!-- Ground plane base -->
+          <polygon
+            points="60,490 1220,490 1252,540 28,540"
+            fill="url(#groundG)"
+          />
+          <!-- Horizontal grid lines (perspective) -->
+          <line
+            x1="60"
+            y1="490"
+            x2="1220"
+            y2="490"
+            stroke="url(#gridFade)"
+            stroke-width=".8"
+          />
+          <line
+            x1="50"
+            y1="505"
+            x2="1228"
+            y2="505"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".70"
+          />
+          <line
+            x1="38"
+            y1="520"
+            x2="1238"
+            y2="520"
+            stroke="url(#gridFade)"
+            stroke-width=".5"
+            opacity=".45"
+          />
+          <!-- Vertical grid lines (perspective) -->
+          <line
+            x1="190"
+            y1="490"
+            x2="183"
+            y2="540"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".45"
+          />
+          <line
+            x1="430"
+            y1="490"
+            x2="424"
+            y2="540"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".45"
+          />
+          <line
+            x1="640"
+            y1="490"
+            x2="636"
+            y2="540"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".50"
+          />
+          <line
+            x1="850"
+            y1="490"
+            x2="848"
+            y2="540"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".45"
+          />
+          <line
+            x1="1090"
+            y1="490"
+            x2="1092"
+            y2="540"
+            stroke="url(#gridFade)"
+            stroke-width=".6"
+            opacity=".45"
+          />
+
+          <!-- ══════════════════════════════════════════
+         CONNECTOR BEAMS between pillars
+         Glowing horizontal bars at pillar-top level
+    ══════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: fadeIn 0.5s ease 2.8s forwards">
+            <!-- beam 1→2 -->
+            <rect
+              x="200"
+              y="344"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#3060C0"
+              opacity=".40"
+            />
+            <rect
+              x="200"
+              y="344"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#6090FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.55;0"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <!-- beam 2→3 -->
+            <rect
+              x="440"
+              y="304"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#1890A0"
+              opacity=".40"
+            />
+            <rect
+              x="440"
+              y="304"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#30D0E0"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.55;0"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin="1.0s"
+              />
+            </rect>
+            <!-- beam 3→4 -->
+            <rect
+              x="680"
+              y="254"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#20A060"
+              opacity=".40"
+            />
+            <rect
+              x="680"
+              y="254"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#40E090"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.55;0"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin="1.5s"
+              />
+            </rect>
+            <!-- beam 4→5 -->
+            <rect
+              x="920"
+              y="204"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#008090"
+              opacity=".40"
+            />
+            <rect
+              x="920"
+              y="204"
+              width="200"
+              height="4"
+              rx="2"
+              fill="#00E8FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.55;0"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin="2.0s"
+              />
+            </rect>
+            <!-- animated energy packet along each beam -->
+            <circle r="5" fill="#80B0FF" filter="url(#gS)" opacity=".90">
+              <animateMotion dur="2s" repeatCount="indefinite" begin="3.0s">
+                <mpath xlink:href="#b1" />
+              </animateMotion>
+            </circle>
+            <circle r="5" fill="#40D8F0" filter="url(#gS)" opacity=".88">
+              <animateMotion dur="2s" repeatCount="indefinite" begin="3.5s">
+                <mpath xlink:href="#b2" />
+              </animateMotion>
+            </circle>
+            <circle r="5" fill="#50E8A0" filter="url(#gS)" opacity=".88">
+              <animateMotion dur="2s" repeatCount="indefinite" begin="4.0s">
+                <mpath xlink:href="#b3" />
+              </animateMotion>
+            </circle>
+            <circle r="5" fill="#00E8FF" filter="url(#gS)" opacity=".88">
+              <animateMotion dur="2s" repeatCount="indefinite" begin="4.5s">
+                <mpath xlink:href="#b4" />
+              </animateMotion>
+            </circle>
+            <defs>
+              <path id="b1" d="M200 346 L400 346" />
+              <path id="b2" d="M440 306 L640 306" />
+              <path id="b3" d="M680 256 L880 256" />
+              <path id="b4" d="M920 206 L1120 206" />
+            </defs>
+          </g>
+
+          <!-- ══════════════════════════════════════════
+         STAGE PILLARS
+         5 pillars with isometric 3D faces
+         Heights: 140, 180, 230, 280, 330
+         All bottom at y=490 (ground level)
+    ══════════════════════════════════════════ -->
+
+          <!-- ── PILLAR 1: DISCOVER  x=80 top=350 h=140 ── -->
+          <g
+            style="
+              opacity: 0;
+              animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s
+                forwards;
+            "
+          >
+            <!-- right face (dark shade) -->
+            <polygon
+              points="200,350 216,340 216,490 200,490"
+              fill="#04081C"
+              stroke="#0A1030"
+              stroke-width=".5"
+              opacity=".90"
+            />
+            <!-- top face (lighter) -->
+            <polygon
+              points="80,350 200,350 216,340 96,340"
+              fill="#182650"
+              stroke="#2438A0"
+              stroke-width=".6"
+              opacity=".88"
+            />
+            <!-- front face -->
+            <rect
+              x="80"
+              y="350"
+              width="120"
+              height="140"
+              fill="url(#p1f)"
+              stroke="#2840A0"
+              stroke-width="1.2"
+            />
+            <!-- colour top stripe -->
+            <rect
+              x="80"
+              y="350"
+              width="120"
+              height="5"
+              fill="#5070E0"
+              opacity=".80"
+            />
+            <!-- scan sweep -->
+            <rect
+              x="80"
+              y="-200"
+              width="120"
+              height="10"
+              fill="rgba(80,110,220,.10)"
+            >
+              <animate
+                attributeName="y"
+                values="350;490;350"
+                dur="4s"
+                repeatCount="indefinite"
+                begin=".3s"
+              />
+            </rect>
+            <!-- icon: magnifying glass / search -->
+            <circle
+              cx="140"
+              cy="394"
+              r="18"
+              fill="#0A142A"
+              stroke="#3050C0"
+              stroke-width="1.2"
+            />
+            <circle
+              cx="137"
+              cy="391"
+              r="7"
+              fill="none"
+              stroke="#6080E0"
+              stroke-width="1.8"
+              opacity=".85"
+            />
+            <line
+              x1="142"
+              y1="396"
+              x2="148"
+              y2="402"
+              stroke="#6080E0"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity=".85"
+            />
+            <!-- stage number -->
+            <text
+              x="92"
+              y="366"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(80,130,255,.55)"
+              letter-spacing=".5"
+            >
+              01
+            </text>
+            <!-- title -->
+            <text
+              x="140"
+              y="424"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10.5"
+              font-weight="700"
+              fill="#7090FF"
+            >
+              CONCEPT
+            </text>
+            <!-- divider -->
+            <line
+              x1="90"
+              y1="432"
+              x2="190"
+              y2="432"
+              stroke="rgba(60,90,220,.25)"
+              stroke-width=".7"
+            />
+            <!-- bullets (3 tight lines) -->
+            <text
+              x="90"
+              y="445"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Use case validation
+            </text>
+            <text
+              x="90"
+              y="457"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Data feasibility
+            </text>
+            <text
+              x="90"
+              y="469"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Model benchmarks
+            </text>
+            <!-- isometric base shadow -->
+            <polygon
+              points="80,490 200,490 216,500 96,500"
+              fill="#020408"
+              opacity=".70"
+            />
+          </g>
+
+          <!-- ── PILLAR 2: BUILD  x=320 top=310 h=180 ── -->
+          <g
+            style="
+              opacity: 0;
+              animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.52s
+                forwards;
+            "
+          >
+            <polygon
+              points="440,310 456,300 456,490 440,490"
+              fill="#030A12"
+              stroke="#081828"
+              stroke-width=".5"
+              opacity=".90"
+            />
+            <polygon
+              points="320,310 440,310 456,300 336,300"
+              fill="#102030"
+              stroke="#182C48"
+              stroke-width=".6"
+              opacity=".88"
+            />
+            <rect
+              x="320"
+              y="310"
+              width="120"
+              height="180"
+              fill="url(#p2f)"
+              stroke="#1870B0"
+              stroke-width="1.2"
+            />
+            <rect
+              x="320"
+              y="310"
+              width="120"
+              height="5"
+              fill="#2090D0"
+              opacity=".80"
+            />
+            <rect
+              x="320"
+              y="-200"
+              width="120"
+              height="10"
+              fill="rgba(30,140,200,.10)"
+            >
+              <animate
+                attributeName="y"
+                values="310;490;310"
+                dur="4.5s"
+                repeatCount="indefinite"
+                begin=".7s"
+              />
+            </rect>
+            <!-- icon: database / stack -->
+            <circle
+              cx="380"
+              cy="355"
+              r="18"
+              fill="#06141E"
+              stroke="#1880C0"
+              stroke-width="1.2"
+            />
+            <!-- DB cylinder inside circle -->
+            <ellipse
+              cx="380"
+              cy="350"
+              rx="9"
+              ry="3.5"
+              fill="#1068A0"
+              stroke="#28A0D8"
+              stroke-width=".9"
+            />
+            <rect x="371" y="350" width="18" height="8" fill="#0A3060" />
+            <ellipse
+              cx="380"
+              cy="358"
+              rx="9"
+              ry="3.5"
+              fill="#0A3060"
+              stroke="#186090"
+              stroke-width=".7"
+            />
+            <ellipse
+              cx="380"
+              cy="362"
+              rx="9"
+              ry="3.5"
+              fill="#1068A0"
+              stroke="#28A0D8"
+              stroke-width=".9"
+              opacity=".80"
+            />
+            <rect x="371" y="362" width="18" height="6" fill="#081E40" />
+            <ellipse
+              cx="380"
+              cy="368"
+              rx="9"
+              ry="3.5"
+              fill="#081E40"
+              stroke="#104870"
+              stroke-width=".7"
+            />
+            <text
+              x="332"
+              y="326"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(30,150,210,.55)"
+              letter-spacing=".5"
+            >
+              02
+            </text>
+            <text
+              x="380"
+              y="390"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10.5"
+              font-weight="700"
+              fill="#40C8F0"
+            >
+              BUILD
+            </text>
+            <line
+              x1="330"
+              y1="398"
+              x2="430"
+              y2="398"
+              stroke="rgba(20,120,180,.25)"
+              stroke-width=".7"
+            />
+            <text
+              x="330"
+              y="411"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Data pipelines
+            </text>
+            <text
+              x="330"
+              y="423"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Model training
+            </text>
+            <text
+              x="330"
+              y="435"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              RLHF alignment
+            </text>
+            <text
+              x="330"
+              y="447"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Vector stores
+            </text>
+            <polygon
+              points="320,490 440,490 456,500 336,500"
+              fill="#020408"
+              opacity=".70"
+            />
+          </g>
+
+          <!-- ── PILLAR 3: INTEGRATE  x=560 top=260 h=230 ── -->
+          <g
+            style="
+              opacity: 0;
+              animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.79s
+                forwards;
+            "
+          >
+            <polygon
+              points="680,260 696,250 696,490 680,490"
+              fill="#040E0A"
+              stroke="#081A12"
+              stroke-width=".5"
+              opacity=".90"
+            />
+            <polygon
+              points="560,260 680,260 696,250 576,250"
+              fill="#0E2820"
+              stroke="#162E28"
+              stroke-width=".6"
+              opacity=".88"
+            />
+            <rect
+              x="560"
+              y="260"
+              width="120"
+              height="230"
+              fill="url(#p3f)"
+              stroke="#18A060"
+              stroke-width="1.2"
+            />
+            <rect
+              x="560"
+              y="260"
+              width="120"
+              height="5"
+              fill="#20C870"
+              opacity=".80"
+            />
+            <rect
+              x="560"
+              y="-200"
+              width="120"
+              height="10"
+              fill="rgba(20,180,100,.10)"
+            >
+              <animate
+                attributeName="y"
+                values="260;490;260"
+                dur="5s"
+                repeatCount="indefinite"
+                begin="1.1s"
+              />
+            </rect>
+            <!-- icon: circuit / connect -->
+            <circle
+              cx="620"
+              cy="305"
+              r="18"
+              fill="#071810"
+              stroke="#1A9858"
+              stroke-width="1.2"
+            />
+            <!-- circuit icon inside -->
+            <line
+              x1="610"
+              y1="300"
+              x2="620"
+              y2="300"
+              stroke="#30E080"
+              stroke-width="1.5"
+              opacity=".80"
+            />
+            <line
+              x1="620"
+              y1="300"
+              x2="630"
+              y2="300"
+              stroke="#30E080"
+              stroke-width="1.5"
+              opacity=".80"
+            />
+            <line
+              x1="620"
+              y1="296"
+              x2="620"
+              y2="314"
+              stroke="#30E080"
+              stroke-width="1.5"
+              opacity=".80"
+            />
+            <circle
+              cx="620"
+              cy="298"
+              r="3.5"
+              fill="#40F090"
+              opacity=".90"
+              filter="url(#gS)"
+            >
+              <animate
+                attributeName="opacity"
+                values=".90;.30;.90"
+                dur="1.5s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            <circle cx="610" cy="300" r="2.5" fill="#20D070" opacity=".80">
+              <animate
+                attributeName="opacity"
+                values=".80;.25;.80"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </circle>
+            <circle cx="630" cy="300" r="2.5" fill="#20D070" opacity=".80">
+              <animate
+                attributeName="opacity"
+                values=".80;.25;.80"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin="1.0s"
+              />
+            </circle>
+            <circle cx="620" cy="314" r="2.5" fill="#20D070" opacity=".70">
+              <animate
+                attributeName="opacity"
+                values=".70;.20;.70"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".3s"
+              />
+            </circle>
+            <text
+              x="572"
+              y="276"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(25,180,100,.55)"
+              letter-spacing=".5"
+            >
+              03
+            </text>
+            <text
+              x="620"
+              y="338"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10.5"
+              font-weight="700"
+              fill="#40E888"
+            >
+              INTEGRATE
+            </text>
+            <line
+              x1="570"
+              y1="346"
+              x2="670"
+              y2="346"
+              stroke="rgba(20,160,80,.25)"
+              stroke-width=".7"
+            />
+            <text
+              x="570"
+              y="359"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              API &amp; MCP setup
+            </text>
+            <text
+              x="570"
+              y="371"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Agent orchestration
+            </text>
+            <text
+              x="570"
+              y="383"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              RAG pipelines
+            </text>
+            <text
+              x="570"
+              y="395"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              UI/Chat build
+            </text>
+            <text
+              x="570"
+              y="407"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Auth &amp; security
+            </text>
+            <polygon
+              points="560,490 680,490 696,500 576,500"
+              fill="#020408"
+              opacity=".70"
+            />
+          </g>
+
+          <!-- ── PILLAR 4: SCALE  x=800 top=210 h=280 ── -->
+          <g
+            style="
+              opacity: 0;
+              animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.06s
+                forwards;
+            "
+          >
+            <polygon
+              points="920,210 936,200 936,490 920,490"
+              fill="#0C0C02"
+              stroke="#181808"
+              stroke-width=".5"
+              opacity=".90"
+            />
+            <polygon
+              points="800,210 920,210 936,200 816,200"
+              fill="#201E06"
+              stroke="#302C08"
+              stroke-width=".6"
+              opacity=".88"
+            />
+            <rect
+              x="800"
+              y="210"
+              width="120"
+              height="280"
+              fill="url(#p4f)"
+              stroke="#A09010"
+              stroke-width="1.2"
+            />
+            <rect
+              x="800"
+              y="210"
+              width="120"
+              height="5"
+              fill="#D0B010"
+              opacity=".80"
+            />
+            <rect
+              x="800"
+              y="-200"
+              width="120"
+              height="10"
+              fill="rgba(180,160,20,.10)"
+            >
+              <animate
+                attributeName="y"
+                values="210;490;210"
+                dur="4.2s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <!-- icon: rocket -->
+            <circle
+              cx="860"
+              cy="255"
+              r="18"
+              fill="#131000"
+              stroke="#A09010"
+              stroke-width="1.2"
+            />
+            <!-- rocket body -->
+            <path
+              d="M860 240 Q866 241 868 250 L867 263 L853 263 L852 250 Q854 241 860 240Z"
+              fill="#909010"
+              stroke="#E0C020"
+              stroke-width=".9"
+            />
+            <circle
+              cx="860"
+              cy="250"
+              r="3"
+              fill="#001020"
+              stroke="#50C0FF"
+              stroke-width="1"
+            />
+            <!-- fins -->
+            <path
+              d="M852 257 L846 265 L852 262Z"
+              fill="#707010"
+              opacity=".80"
+            />
+            <path
+              d="M868 257 L874 265 L868 262Z"
+              fill="#707010"
+              opacity=".80"
+            />
+            <!-- exhaust flame -->
+            <ellipse
+              cx="860"
+              cy="266"
+              rx="4"
+              ry="6"
+              fill="#FF7010"
+              opacity=".88"
+              filter="url(#gS)"
+            >
+              <animate
+                attributeName="ry"
+                values="6;9;5;8;6"
+                dur="1.1s"
+                repeatCount="indefinite"
+              />
+            </ellipse>
+            <text
+              x="812"
+              y="226"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(180,160,20,.55)"
+              letter-spacing=".5"
+            >
+              04
+            </text>
+            <text
+              x="860"
+              y="290"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10.5"
+              font-weight="700"
+              fill="#E0C030"
+            >
+              SCALE
+            </text>
+            <line
+              x1="810"
+              y1="298"
+              x2="910"
+              y2="298"
+              stroke="rgba(160,140,20,.25)"
+              stroke-width=".7"
+            />
+            <text
+              x="810"
+              y="311"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Kubernetes deploy
+            </text>
+            <text
+              x="810"
+              y="323"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Load balancing
+            </text>
+            <text
+              x="810"
+              y="335"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Cost optimisation
+            </text>
+            <text
+              x="810"
+              y="347"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              CI/CD pipelines
+            </text>
+            <text
+              x="810"
+              y="359"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.80)"
+            >
+              Latency tuning
+            </text>
+            <polygon
+              points="800,490 920,490 936,500 816,500"
+              fill="#020408"
+              opacity=".70"
+            />
+          </g>
+
+          <!-- ── PILLAR 5: PRODUCTION  x=1040 top=160 h=330 — TALLEST / GOLD ── -->
+          <g
+            style="
+              opacity: 0;
+              animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.33s
+                forwards;
+            "
+          >
+            <!-- outer gold glow behind pillar -->
+            <rect
+              x="1035"
+              y="155"
+              width="130"
+              height="340"
+              rx="4"
+              fill="#00C8E0"
+              opacity=".07"
+              filter="url(#gM)"
+            />
+            <polygon
+              points="1160,160 1176,150 1176,490 1160,490"
+              fill="#001018"
+              stroke="#002030"
+              stroke-width=".5"
+              opacity=".90"
+            />
+            <polygon
+              points="1040,160 1160,160 1176,150 1056,150"
+              fill="#001820"
+              stroke="#003040"
+              stroke-width=".6"
+              opacity=".88"
+            />
+            <rect
+              x="1040"
+              y="160"
+              width="120"
+              height="330"
+              fill="url(#p5f)"
+              stroke="#00C8E0"
+              stroke-width="1.6"
+            />
+            <!-- animated gold shimmer top stripe -->
+            <rect
+              x="1040"
+              y="160"
+              width="120"
+              height="6"
+              fill="url(#goldTopBar)"
+              opacity=".90"
+            />
+            <defs>
+              <linearGradient id="goldTopBar" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#006878" />
+                <stop offset="50%" stop-color="#00E8FF" />
+                <stop offset="100%" stop-color="#006878" />
+              </linearGradient>
+            </defs>
+            <!-- shimmer sweep on production pillar -->
+            <clipPath id="prodClip">
+              <rect x="1040" y="160" width="120" height="330" />
+            </clipPath>
+            <rect
+              x="-220"
+              y="160"
+              width="90"
+              height="330"
+              fill="rgba(245,212,112,.06)"
+              transform="skewX(-25)"
+              clip-path="url(#prodClip)"
+            >
+              <animate
+                attributeName="x"
+                values="-220;1280"
+                dur="3.5s"
+                repeatCount="indefinite"
+                begin="2.0s"
+              />
+            </rect>
+            <rect
+              x="1040"
+              y="-200"
+              width="120"
+              height="10"
+              fill="rgba(201,168,76,.12)"
+              clip-path="url(#prodClip)"
+            >
+              <animate
+                attributeName="y"
+                values="160;490;160"
+                dur="3.5s"
+                repeatCount="indefinite"
+                begin=".1s"
+              />
+            </rect>
+            <!-- icon: crown star — gold glowing -->
+            <circle
+              cx="1100"
+              cy="205"
+              r="22"
+              fill="#1A1000"
+              stroke="#00C8E0"
+              stroke-width="1.5"
+            />
+            <circle
+              cx="1100"
+              cy="205"
+              r="16"
+              fill="#100C00"
+              stroke="#008090"
+              stroke-width=".8"
+              opacity=".50"
+            />
+            <!-- 6-point star -->
+            <polygon
+              points="1100,188 1103.6,197 1113.5,197 1105.5,203 1108.5,213 1100,207 1091.5,213 1094.5,203 1086.5,197 1096.4,197"
+              fill="#00C8E0"
+              stroke="#80F8FF"
+              stroke-width=".8"
+              filter="url(#gS)"
+            >
+              <animate
+                attributeName="opacity"
+                values="1;.55;1"
+                dur="2s"
+                repeatCount="indefinite"
+              />
+            </polygon>
+            <text
+              x="1052"
+              y="178"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(0,200,224,.65)"
+              letter-spacing=".5"
+            >
+              05
+            </text>
+            <text
+              x="1100"
+              y="242"
+              text-anchor="middle"
+              font-family="'Cinzel Decorative',serif"
+              font-size="13"
+              font-weight="900"
+              fill="#00E8FF"
+              filter="url(#gA)"
+            >
+              LIVE
+            </text>
+            <text
+              x="1100"
+              y="258"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="11"
+              font-weight="700"
+              fill="#00C8E0"
+            >
+              PRODUCTION
+            </text>
+            <line
+              x1="1050"
+              y1="266"
+              x2="1150"
+              y2="266"
+              stroke="rgba(0,200,224,.30)"
+              stroke-width=".8"
+            />
+            <text
+              x="1050"
+              y="279"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.85)"
+            >
+              Real-time AI serving
+            </text>
+            <text
+              x="1050"
+              y="291"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.85)"
+            >
+              Monitoring &amp; alerts
+            </text>
+            <text
+              x="1050"
+              y="303"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.85)"
+            >
+              Model refresh loops
+            </text>
+            <text
+              x="1050"
+              y="315"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.85)"
+            >
+              99.9% uptime SLA
+            </text>
+            <text
+              x="1050"
+              y="327"
+              font-family="'Raleway',sans-serif"
+              font-size="7.5"
+              fill="rgba(255,255,255,.85)"
+            >
+              24/7 support
+            </text>
+            <!-- gold cap glow overlay -->
+            <rect
+              x="1040"
+              y="160"
+              width="120"
+              height="80"
+              fill="url(#goldCap)"
+              opacity=".45"
+            />
+            <polygon
+              points="1040,490 1160,490 1176,500 1056,500"
+              fill="#020408"
+              opacity=".70"
+            />
+          </g>
+
+          <!-- duration chips removed -->
+
+          <!-- stat strip removed -->
+        </svg>
+      </div>
+
+      <div class="finale">
+        <div class="fl r"></div>
+        <div class="fdiamond"></div>
+        <div class="fl r" style="width: 20px"></div>
+        <p class="ft">
+          <strong>Soft Tech Group</strong> takes every AI initiative from
+          whiteboard to
+          <em>live, enterprise-grade production</em>
+        </p>
+        <div class="fl" style="width: 20px"></div>
+        <div class="fdiamond"></div>
+        <div class="fl"></div>
+      </div>
+    </div>
+
+    <script>
+      const c = document.getElementById("stars"),
+        ctx = c.getContext("2d");
+      for (let i = 0; i < 220; i++) {
+        const x = Math.random() * 1280,
+          y = Math.random() * 720,
+          r = Math.random() * 0.8 + 0.12,
+          op = Math.random() * 0.35 + 0.05;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${210 + Math.floor(Math.random() * 45)},${210 + Math.floor(Math.random() * 45)},255,${op})`;
+        ctx.fill();
+      }
+      for (let i = 0; i < 18; i++) {
+        const x = Math.random() * 1280,
+          y = Math.random() * 720;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5 + 0.2})`;
+        ctx.fill();
+      }
+    </script>
+  </body>
+</html>

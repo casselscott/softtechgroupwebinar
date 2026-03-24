@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 11B – Live AI Demos</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #020810;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #020810;
+      }
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 50;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(30, 70, 160, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(30, 70, 160, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .bg-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            ellipse 42% 40% at 27% 50%,
+            rgba(0, 80, 255, 0.09) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 42% 40% at 75% 50%,
+            rgba(80, 0, 200, 0.09) 0%,
+            transparent 70%
+          );
+      }
+
+      /* ── HEADER ── */
+      .header {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        padding: 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .layer-badge {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 3px;
+      }
+      .badge-line {
+        display: inline-block;
+        width: 22px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .slide-title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 21px;
+        line-height: 1.05;
+        color: #f2efe8;
+      }
+      .slide-title em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 14px;
+        color: #7eb3f5;
+        display: block;
+        margin-top: 1px;
+      }
+      .header-right {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 10px;
+        color: rgba(175, 160, 128, 0.5);
+        text-align: right;
+        max-width: 340px;
+        line-height: 1.6;
+      }
+      .header-right b {
+        color: rgba(200, 185, 155, 0.7);
+        font-weight: 500;
+      }
+
+      /* ── 2×2 GRID ── */
+      .demo-grid {
+        position: absolute;
+        top: 88px;
+        left: 20px;
+        right: 20px;
+        bottom: 54px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        z-index: 10;
+      }
+
+      /* ── CARD ── */
+      .card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #020810;
+        opacity: 0;
+      }
+      .card:nth-child(1) {
+        animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.28s forwards;
+      }
+      .card:nth-child(2) {
+        animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.46s forwards;
+      }
+      .card:nth-child(3) {
+        animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.64s forwards;
+      }
+      .card:nth-child(4) {
+        animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.82s forwards;
+      }
+
+      /* per-card accent colours */
+      .card:nth-child(1) {
+        border: 1px solid rgba(80, 160, 255, 0.22);
+      }
+      .card:nth-child(2) {
+        border: 1px solid rgba(0, 200, 160, 0.22);
+      }
+      .card:nth-child(3) {
+        border: 1px solid rgba(200, 120, 255, 0.22);
+      }
+      .card:nth-child(4) {
+        border: 1px solid rgba(255, 160, 40, 0.22);
+      }
+
+      /* glow flash on entry */
+      .card:nth-child(1)::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        border: 1.5px solid rgba(80, 160, 255, 0.65);
+        opacity: 0;
+        animation: glowFlash 0.6s ease 0.68s forwards;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .card:nth-child(2)::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        border: 1.5px solid rgba(0, 200, 160, 0.65);
+        opacity: 0;
+        animation: glowFlash 0.6s ease 0.86s forwards;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .card:nth-child(3)::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        border: 1.5px solid rgba(200, 120, 255, 0.65);
+        opacity: 0;
+        animation: glowFlash 0.6s ease 1.04s forwards;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .card:nth-child(4)::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        border: 1.5px solid rgba(255, 160, 40, 0.65);
+        opacity: 0;
+        animation: glowFlash 0.6s ease 1.22s forwards;
+        pointer-events: none;
+        z-index: 30;
+      }
+
+      /* video */
+      .card video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* scanlines */
+      .card .scan {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 3px,
+          rgba(0, 0, 0, 0.05) 3px,
+          rgba(0, 0, 0, 0.05) 4px
+        );
+      }
+
+      /* corner brackets */
+      .card .ctL,
+      .card .ctR,
+      .card .cbL,
+      .card .cbR {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        z-index: 8;
+        pointer-events: none;
+      }
+      .card .ctL {
+        top: 8px;
+        left: 8px;
+        border-top: 2px solid;
+        border-left: 2px solid;
+      }
+      .card .ctR {
+        top: 8px;
+        right: 8px;
+        border-top: 2px solid;
+        border-right: 2px solid;
+      }
+      .card .cbL {
+        bottom: 8px;
+        left: 8px;
+        border-bottom: 2px solid;
+        border-left: 2px solid;
+      }
+      .card .cbR {
+        bottom: 8px;
+        right: 8px;
+        border-bottom: 2px solid;
+        border-right: 2px solid;
+      }
+      .card:nth-child(1) .ctL,
+      .card:nth-child(1) .ctR,
+      .card:nth-child(1) .cbL,
+      .card:nth-child(1) .cbR {
+        border-color: rgba(80, 160, 255, 0.5);
+      }
+      .card:nth-child(2) .ctL,
+      .card:nth-child(2) .ctR,
+      .card:nth-child(2) .cbL,
+      .card:nth-child(2) .cbR {
+        border-color: rgba(0, 200, 160, 0.5);
+      }
+      .card:nth-child(3) .ctL,
+      .card:nth-child(3) .ctR,
+      .card:nth-child(3) .cbL,
+      .card:nth-child(3) .cbR {
+        border-color: rgba(200, 120, 255, 0.5);
+      }
+      .card:nth-child(4) .ctL,
+      .card:nth-child(4) .ctR,
+      .card:nth-child(4) .cbL,
+      .card:nth-child(4) .cbR {
+        border-color: rgba(255, 160, 40, 0.5);
+      }
+
+      /* LIVE pill */
+      .live {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        font-family: monospace;
+        font-size: 7px;
+        color: rgba(255, 255, 255, 0.72);
+        z-index: 9;
+        letter-spacing: 0.06em;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        animation: livePulse 1.5s ease-in-out infinite;
+      }
+      .card:nth-child(1) .live-dot {
+        background: #60a8ff;
+        box-shadow: 0 0 6px #60a8ff;
+      }
+      .card:nth-child(2) .live-dot {
+        background: #00d8a8;
+        box-shadow: 0 0 6px #00d8a8;
+      }
+      .card:nth-child(3) .live-dot {
+        background: #d080ff;
+        box-shadow: 0 0 6px #d080ff;
+      }
+      .card:nth-child(4) .live-dot {
+        background: #ffb030;
+        box-shadow: 0 0 6px #ffb030;
+      }
+
+      /* INFO CARD — floats over bottom portion of video */
+      .info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        background: linear-gradient(
+          to top,
+          rgba(2, 6, 16, 0.97) 0%,
+          rgba(2, 6, 16, 0.88) 55%,
+          rgba(2, 6, 16, 0.3) 82%,
+          transparent 100%
+        );
+        padding: 28px 14px 10px;
+      }
+      .demo-num {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 3px;
+      }
+      .card:nth-child(1) .demo-num {
+        color: #60a8ff;
+      }
+      .card:nth-child(2) .demo-num {
+        color: #00d8a8;
+      }
+      .card:nth-child(3) .demo-num {
+        color: #d080ff;
+      }
+      .card:nth-child(4) .demo-num {
+        color: #ffb030;
+      }
+
+      .demo-title {
+        font-family: "Cinzel", serif;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #f0ede4;
+        display: block;
+        margin-bottom: 4px;
+        line-height: 1.25;
+      }
+      .demo-tag {
+        display: inline-block;
+        font-family: monospace;
+        font-size: 7px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        letter-spacing: 0.04em;
+      }
+      .card:nth-child(1) .demo-tag {
+        background: rgba(80, 160, 255, 0.18);
+        border: 1px solid rgba(80, 160, 255, 0.35);
+        color: rgba(140, 200, 255, 0.9);
+      }
+      .card:nth-child(2) .demo-tag {
+        background: rgba(0, 200, 160, 0.18);
+        border: 1px solid rgba(0, 200, 160, 0.35);
+        color: rgba(80, 240, 200, 0.9);
+      }
+      .card:nth-child(3) .demo-tag {
+        background: rgba(200, 120, 255, 0.18);
+        border: 1px solid rgba(200, 120, 255, 0.35);
+        color: rgba(220, 160, 255, 0.9);
+      }
+      .card:nth-child(4) .demo-tag {
+        background: rgba(255, 160, 40, 0.18);
+        border: 1px solid rgba(255, 160, 40, 0.35);
+        color: rgba(255, 200, 120, 0.9);
+      }
+
+      .demo-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 700;
+        font-size: 8px;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.92);
+        display: block;
+      }
+
+      /* ── FINALE ── */
+      .finale {
+        position: absolute;
+        bottom: 8px;
+        left: 52px;
+        right: 52px;
+        height: 42px;
+        z-index: 20;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          rgba(10, 10, 30, 0) 0%,
+          rgba(14, 22, 58, 0.92) 12%,
+          rgba(18, 28, 68, 0.96) 50%,
+          rgba(14, 22, 58, 0.92) 88%,
+          rgba(10, 10, 30, 0) 100%
+        );
+        border: 1px solid rgba(201, 168, 76, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        animation: finaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.4s forwards;
+      }
+      .finale::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(201, 168, 76, 0.05) 50%,
+          transparent
+        );
+      }
+      .fdiamond {
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid #c9a84c;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .fline {
+        height: 1px;
+        width: 50px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+        flex-shrink: 0;
+      }
+      .fline.rev {
+        background: linear-gradient(
+          to left,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .finale-text {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 11.5px;
+        color: rgba(220, 210, 255, 0.84);
+        text-align: center;
+      }
+      .finale-text strong {
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 12px;
+        color: #c9a84c;
+        letter-spacing: 0.08em;
+      }
+      .finale-text em {
+        font-style: italic;
+        color: rgba(180, 215, 255, 0.85);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(18px);
+          filter: brightness(0.4);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+          filter: brightness(1);
+        }
+      }
+      @keyframes glowFlash {
+        0% {
+          opacity: 0;
+        }
+        30% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 0.65;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes finaleIn {
+        0% {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(-2px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes livePulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.35;
+          transform: scale(0.7);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+
+      <div class="header">
+        <div>
+          <div class="layer-badge">
+            <span class="badge-line"></span>Live AI Product Demonstrations<span
+              class="badge-line"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="slide-title">
+            Chat Interfaces Built by Soft Tech Group
+            <p>Real products. Real conversations. Real impact.</p>
+          </h2>
+        </div>
+        <div class="header-right">
+          <b>Soft Tech Group</b> — four production AI systems built end-to-end
+          across ERP, real estate, e-commerce and property inspection.
+        </div>
+      </div>
+
+      <div class="demo-grid">
+        <!-- ── DEMO 01 · Terra AI ── -->
+        <div class="card">
+          <video autoplay muted loop playsinline>
+            <source
+              src="https://res.cloudinary.com/dxvfabxw8/video/upload/v1773966104/copy_AE0A9492-C7C6-46A4-BB2D-54D5BE9E5B17_aen46j.mov"
+              type="video/mp4"
+            />
+          </video>
+          <div class="scan"></div>
+          <div class="ctL"></div>
+          <div class="ctR"></div>
+          <div class="cbL"></div>
+          <div class="cbR"></div>
+          <div class="live"><span class="live-dot"></span>LIVE DEMO</div>
+          <div class="info">
+            <span class="demo-num">Demo 01</span>
+            <span class="demo-title">Terra AI — Sales Enterprise ERP</span>
+            <span class="demo-tag"
+              >Enterprise Resource Planning · Agentic AI · Revenue
+              Intelligence</span
+            >
+            <span class="demo-desc"
+              >An AI platform unifying revenue forecasting, sales prediction,
+              industry knowledge AI, quotation management, Terra Design Studio,
+              marketing campaigns, customer information management and an
+              analytical dashboard — enabling organisations to automate
+              workflows, gain intelligent insights, and optimise sales and
+              revenue performance.</span
+            >
+          </div>
+        </div>
+
+        <!-- ── DEMO 02 · PropVision ── -->
+        <div class="card">
+          <video autoplay muted loop playsinline>
+            <source
+              src="https://res.cloudinary.com/dxvfabxw8/video/upload/v1773966178/PropVision-Demo-2_tmhohy.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <div class="scan"></div>
+          <div class="ctL"></div>
+          <div class="ctR"></div>
+          <div class="cbL"></div>
+          <div class="cbR"></div>
+          <div class="live"><span class="live-dot"></span>LIVE DEMO</div>
+          <div class="info">
+            <span class="demo-num">Demo 02</span>
+            <span class="demo-title">PropVision — AI Asset Inspection</span>
+            <span class="demo-tag"
+              >Image Recognition · Predictive Maintenance · Field AI</span
+            >
+            <span class="demo-desc"
+              >AI-driven asset inspection using image recognition to detect
+              structural defects, corrosion and moisture damage from photos.
+              Predicts failures, generates repair recommendations and gives
+              field engineers instant AI guidance — turning maintenance into a
+              predictive, data-driven process.</span
+            >
+          </div>
+        </div>
+
+        <!-- ── DEMO 03 · LUXE ── -->
+        <div class="card">
+          <video autoplay muted loop playsinline>
+            <source
+              src="https://res.cloudinary.com/dxvfabxw8/video/upload/v1773966211/freecompress-Luxe_-_Demo_qvyttb.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <div class="scan"></div>
+          <div class="ctL"></div>
+          <div class="ctR"></div>
+          <div class="cbL"></div>
+          <div class="cbR"></div>
+          <div class="live"><span class="live-dot"></span>LIVE DEMO</div>
+          <div class="info">
+            <span class="demo-num">Demo 03</span>
+            <span class="demo-title">LUXE — Agentic E-Commerce Assistant</span>
+            <span class="demo-tag"
+              >Agentic AI · E-Commerce · Conversational Shopping</span
+            >
+            <span class="demo-desc"
+              >Transforms e-commerce from endless scrolling into an intelligent,
+              personalised experience — understanding customer intent, curating
+              products and guiding shoppers seamlessly to purchase. Combines
+              conversational AI with proactive recommendations to increase
+              conversions, boost revenue and deliver a smarter digital shopping
+              experience.</span
+            >
+          </div>
+        </div>
+
+        <!-- ── DEMO 04 · Aria AI ── -->
+        <div class="card">
+          <video autoplay muted loop playsinline>
+            <source
+              src="https://res.cloudinary.com/dxvfabxw8/video/upload/v1773969854/freecompress-Aria_AI_ecnbul.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <div class="scan"></div>
+          <div class="ctL"></div>
+          <div class="ctR"></div>
+          <div class="cbL"></div>
+          <div class="cbR"></div>
+          <div class="live"><span class="live-dot"></span>LIVE DEMO</div>
+          <div class="info">
+            <span class="demo-num">Demo 04</span>
+            <span class="demo-title">Aria AI — Real Estate Intelligence</span>
+            <span class="demo-tag"
+              >Agentic AI · Real Estate · Geo-Spatial Intelligence</span
+            >
+            <span class="demo-desc"
+              >Connects property listings, market trends, geo-spatial data and
+              client preferences into a unified system. Aria autonomously
+              understands user intent, reasons over real estate data, and
+              delivers real-time insights and recommendations — supporting
+              faster, smarter property decisions.</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="finale">
+        <div class="fline rev"></div>
+        <div class="fdiamond"></div>
+        <div class="fline rev" style="width: 28px"></div>
+        <div class="finale-text">
+          All four built end-to-end by <strong>Soft Tech Group</strong> —
+          <em
+            >from architecture design and model selection to deployment,
+            integration and production scale.</em
+          >
+        </div>
+        <div class="fline" style="width: 28px"></div>
+        <div class="fdiamond"></div>
+        <div class="fline"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 8 – Orchestration Layer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #020810;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #020810;
+        font-family: "Raleway", sans-serif;
+      }
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 50;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(30, 70, 160, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(30, 70, 160, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .bg-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 80% 70% at 55% 60%,
+          rgba(40, 20, 180, 0.14) 0%,
+          transparent 65%
+        );
+      }
+
+      .header {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .layer-badge {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 4px;
+      }
+      .badge-line {
+        display: inline-block;
+        width: 22px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .slide-title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 24px;
+        line-height: 1.05;
+        color: #f2efe8;
+      }
+      .slide-title em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 16px;
+        color: #80cfff;
+        display: block;
+        margin-top: 1px;
+      }
+      .header-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 11px;
+        line-height: 1.6;
+        color: rgba(175, 160, 128, 0.55);
+        max-width: 340px;
+        text-align: right;
+      }
+      .header-desc b {
+        color: rgba(200, 185, 155, 0.76);
+        font-weight: 500;
+      }
+      .h-rule {
+        position: absolute;
+        top: 96px;
+        left: 52px;
+        right: 52px;
+        height: 1px;
+        z-index: 10;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.3) 20%,
+          rgba(201, 168, 76, 0.5) 50%,
+          rgba(201, 168, 76, 0.3) 80%,
+          transparent
+        );
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.4s forwards;
+      }
+
+      /* main diagram area */
+      .diagram {
+        position: absolute;
+        top: 104px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 5;
+      }
+      .diagram svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* finale */
+      .finale {
+        position: absolute;
+        bottom: 8px;
+        left: 52px;
+        right: 52px;
+        height: 50px;
+        z-index: 20;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          rgba(10, 10, 30, 0) 0%,
+          rgba(14, 22, 58, 0.92) 12%,
+          rgba(18, 28, 68, 0.96) 50%,
+          rgba(14, 22, 58, 0.92) 88%,
+          rgba(10, 10, 30, 0) 100%
+        );
+        border: 1px solid rgba(201, 168, 76, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        animation: finaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 3.5s forwards;
+      }
+      .finale::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(201, 168, 76, 0.05) 50%,
+          transparent 100%
+        );
+      }
+      .fdiamond {
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid #c9a84c;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .fline {
+        height: 1px;
+        width: 50px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+        flex-shrink: 0;
+      }
+      .fline.rev {
+        background: linear-gradient(
+          to left,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .finale-text {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 12.5px;
+        color: rgba(220, 210, 255, 0.84);
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+      .finale-text strong {
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: #c9a84c;
+        letter-spacing: 0.08em;
+      }
+      .finale-text em {
+        font-style: italic;
+        color: rgba(160, 220, 255, 0.88);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes finaleIn {
+        0% {
+          opacity: 0;
+          transform: translateY(14px) scaleX(0.93);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(-2px) scaleX(1.01);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scaleX(1);
+        }
+      }
+      @keyframes nodeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.85) translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+
+      <div class="header">
+        <div>
+          <div class="layer-badge">
+            <span class="badge-line"></span>Layer 04 · Orchestration<span
+              class="badge-line"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="slide-title">
+            The Orchestration / Agent Layer<em
+              >The brain that manages everything</em
+            >
+          </h2>
+        </div>
+        <div class="header-desc">
+          <b>This is where AI becomes autonomous.</b> The orchestration layer
+          wires together prompts, tools, memory and agents — turning a model
+          into a system that plans, acts and learns.
+        </div>
+      </div>
+      <div class="h-rule"></div>
+
+      <!-- ═══════════════════════════════════════════════════
+       FULL 3D ORCHESTRATION DIAGRAM
+       Layout: isometric perspective
+       Centre: AGENT BRAIN (orchestrator)
+       Surrounding: 5 subsystems in orbit
+       Bottom: output channels
+  ═══════════════════════════════════════════════════ -->
+      <div class="diagram">
+        <svg
+          viewBox="0 0 1280 590"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <!-- 3D node gradients -->
+            <linearGradient id="agentTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3A2080" />
+              <stop offset="100%" stop-color="#200E58" />
+            </linearGradient>
+            <linearGradient id="agentSide" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#180C40" />
+              <stop offset="100%" stop-color="#0C0828" />
+            </linearGradient>
+            <linearGradient id="promptTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1A4A8A" />
+              <stop offset="100%" stop-color="#0E2858" />
+            </linearGradient>
+            <linearGradient id="toolTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0A4A38" />
+              <stop offset="100%" stop-color="#062418" />
+            </linearGradient>
+            <linearGradient id="ragTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4A3A00" />
+              <stop offset="100%" stop-color="#281E00" />
+            </linearGradient>
+            <linearGradient id="memTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4A0A20" />
+              <stop offset="100%" stop-color="#280410" />
+            </linearGradient>
+            <linearGradient id="multiTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1A1A5A" />
+              <stop offset="100%" stop-color="#0E0E38" />
+            </linearGradient>
+            <linearGradient id="outTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0A3A4A" />
+              <stop offset="100%" stop-color="#041E28" />
+            </linearGradient>
+
+            <!-- glow radial -->
+            <radialGradient id="centreGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#8040FF" stop-opacity=".35" />
+              <stop offset="100%" stop-color="#4020C0" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="bgOrbit" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#6030FF" stop-opacity=".10" />
+              <stop offset="100%" stop-color="#3010A0" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- arrow marker -->
+            <marker
+              id="arw"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto"
+            >
+              <path
+                d="M2 2L8 5L2 8"
+                fill="none"
+                stroke="#8060FF"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </marker>
+            <marker
+              id="arwG"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto"
+            >
+              <path
+                d="M2 2L8 5L2 8"
+                fill="none"
+                stroke="#20C880"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </marker>
+            <marker
+              id="arwA"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto"
+            >
+              <path
+                d="M2 2L8 5L2 8"
+                fill="none"
+                stroke="#E0B000"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </marker>
+            <marker
+              id="arwR"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto"
+            >
+              <path
+                d="M2 2L8 5L2 8"
+                fill="none"
+                stroke="#FF5060"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </marker>
+            <marker
+              id="arwC"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto"
+            >
+              <path
+                d="M2 2L8 5L2 8"
+                fill="none"
+                stroke="#00C8E0"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </marker>
+
+            <!-- Flow animation paths -->
+            <path id="fp1" d="M200 235 Q320 235 380 285" />
+            <path id="fp2" d="M380 285 Q260 285 210 250" />
+            <path id="fp3" d="M540 130 Q540 200 500 260" />
+            <path id="fp4" d="M500 260 Q540 220 545 160" />
+            <path id="fp5" d="M700 130 Q700 200 740 260" />
+            <path id="fp6" d="M740 260 Q720 210 705 160" />
+            <path id="fp7" d="M900 235 Q800 260 760 290" />
+            <path id="fp8" d="M520 350 Q540 400 540 450" />
+            <path id="fp9" d="M580 350 Q640 400 700 450" />
+            <path id="fp10" d="M700 350 Q700 400 760 450" />
+          </defs>
+
+          <!-- ── AMBIENT ORBIT GLOW ── -->
+          <ellipse cx="630" cy="290" rx="350" ry="220" fill="url(#bgOrbit)" />
+          <!-- orbit ring -->
+          <ellipse
+            cx="630"
+            cy="290"
+            rx="280"
+            ry="180"
+            fill="none"
+            stroke="rgba(100,60,255,0.10)"
+            stroke-width="1"
+            stroke-dasharray="12,8"
+          />
+
+          <!-- ════════════════════════════════════════════
+           USER INPUT (top-left entry point)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 0.2s forwards">
+            <!-- 3D pill -->
+            <ellipse
+              cx="100"
+              cy="122"
+              rx="80"
+              ry="20"
+              fill="#0C0820"
+              opacity=".6"
+            />
+            <rect x="20" y="100" width="160" height="20" fill="#181050" />
+            <ellipse
+              cx="20"
+              cy="110"
+              rx="14"
+              ry="10"
+              fill="#100C38"
+              opacity=".8"
+            />
+            <ellipse
+              cx="180"
+              cy="110"
+              rx="14"
+              ry="10"
+              fill="#0C0828"
+              opacity=".7"
+            />
+            <ellipse
+              cx="100"
+              cy="100"
+              rx="80"
+              ry="20"
+              fill="#2A1878"
+              stroke="#6040D0"
+              stroke-width="1.2"
+            />
+            <text
+              x="100"
+              y="104"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              fill="rgba(180,150,255,0.60)"
+              letter-spacing="1"
+            >
+              USER / SYSTEM
+            </text>
+            <text
+              x="100"
+              y="118"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="9"
+              fill="rgba(160,130,240,0.55)"
+            >
+              Query or Task
+            </text>
+            <!-- arrow down-right to orchestrator -->
+            <line
+              x1="160"
+              y1="118"
+              x2="368"
+              y2="252"
+              stroke="#8060FF"
+              stroke-width="1.4"
+              stroke-dasharray="6,3"
+              marker-end="url(#arw)"
+              opacity=".70"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-27"
+                dur=".9s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- animated packet -->
+            <circle r="5" fill="#A080FF" opacity=".9">
+              <animateMotion dur="2.5s" repeatCount="indefinite" begin=".3s">
+                <mpath xlink:href="#fp1" />
+              </animateMotion>
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           CENTRE: AGENT BRAIN / ORCHESTRATOR
+           Large 3D hexagonal prism
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 0.5s forwards">
+            <!-- shadow -->
+            <ellipse
+              cx="630"
+              cy="348"
+              rx="140"
+              ry="28"
+              fill="#0A0620"
+              opacity=".7"
+            />
+            <!-- right face -->
+            <polygon
+              points="750,250 770,238 770,330 750,342"
+              fill="#14083A"
+              stroke="#2A1068"
+              stroke-width=".5"
+            />
+            <!-- top face -->
+            <polygon
+              points="510,250 750,250 770,238 530,238"
+              fill="#281460"
+              stroke="#5030B0"
+              stroke-width=".8"
+            />
+            <!-- front face -->
+            <rect
+              x="510"
+              y="250"
+              width="240"
+              height="92"
+              rx="0"
+              fill="url(#agentTop)"
+              stroke="#6040D0"
+              stroke-width="1.2"
+            />
+            <!-- inner glow -->
+            <rect
+              x="514"
+              y="254"
+              width="232"
+              height="84"
+              fill="url(#centreGlow)"
+              opacity=".6"
+            />
+            <!-- hexagon icon -->
+            <polygon
+              points="630,268 648,278 648,298 630,308 612,298 612,278"
+              fill="none"
+              stroke="#A080FF"
+              stroke-width="1.8"
+            />
+            <polygon
+              points="630,274 643,281 643,295 630,302 617,295 617,281"
+              fill="#3020A0"
+              stroke="#8060E0"
+              stroke-width="1"
+            />
+            <text
+              x="630"
+              y="290"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="#C0A0FF"
+              font-weight="bold"
+            >
+              AI
+            </text>
+            <text
+              x="630"
+              y="301"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(160,130,255,0.70)"
+            >
+              AGENT
+            </text>
+            <!-- title -->
+            <text
+              x="630"
+              y="323"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="14"
+              font-weight="700"
+              fill="#D0B8FF"
+              letter-spacing="2"
+            >
+              ORCHESTRATOR
+            </text>
+            <text
+              x="630"
+              y="338"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="9.5"
+              fill="rgba(180,155,255,0.70)"
+            >
+              Plan · Act · Observe · Reflect · Repeat
+            </text>
+            <!-- status LEDs -->
+            <circle cx="528" cy="263" r="3.5" fill="#A060FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.6s"
+                repeatCount="indefinite"
+                begin=".2s"
+              />
+            </circle>
+            <circle cx="540" cy="263" r="3.5" fill="#60B0FF" opacity=".8">
+              <animate
+                attributeName="opacity"
+                values=".8;.3;.8"
+                dur="1.6s"
+                repeatCount="indefinite"
+                begin=".7s"
+              />
+            </circle>
+            <circle cx="552" cy="263" r="3.5" fill="#00D890" opacity=".85">
+              <animate
+                attributeName="opacity"
+                values=".85;.3;.85"
+                dur="1.6s"
+                repeatCount="indefinite"
+                begin="1.1s"
+              />
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           01 · PROMPT ENGINEERING (top-left)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 0.8s forwards">
+            <!-- connector to orchestrator -->
+            <line
+              x1="472"
+              y1="183"
+              x2="530"
+              y2="252"
+              stroke="#4080FF"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arw)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="530"
+              y1="252"
+              x2="472"
+              y2="183"
+              stroke="#4080FF"
+              stroke-width=".8"
+              stroke-dasharray="5,3"
+              opacity=".35"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- 3D box -->
+            <rect
+              x="358"
+              y="148"
+              width="228"
+              height="22"
+              rx="3"
+              fill="#0A0E28"
+              opacity=".5"
+            />
+            <polygon
+              points="586,110 598,104 598,144 586,148"
+              fill="#0C1238"
+              stroke="#1A2060"
+              stroke-width=".5"
+            />
+            <polygon
+              points="358,110 586,110 598,104 370,104"
+              fill="#162050"
+              stroke="#2A3890"
+              stroke-width=".7"
+            />
+            <rect
+              x="358"
+              y="110"
+              width="228"
+              height="38"
+              rx="4"
+              fill="url(#promptTop)"
+              stroke="#2A50B0"
+              stroke-width="1"
+            />
+            <rect
+              x="362"
+              y="114"
+              width="220"
+              height="30"
+              rx="3"
+              fill="none"
+              stroke="rgba(80,140,220,0.20)"
+              stroke-width=".6"
+            />
+            <!-- icon: speech bubble -->
+            <rect
+              x="368"
+              y="117"
+              width="22"
+              height="16"
+              rx="3"
+              fill="#1A3870"
+              stroke="#3060C0"
+              stroke-width=".7"
+            />
+            <polygon
+              points="372,133 368,138 378,133"
+              fill="#1A3870"
+              stroke="#3060C0"
+              stroke-width=".5"
+            />
+            <line
+              x1="373"
+              y1="122"
+              x2="384"
+              y2="122"
+              stroke="#5090E0"
+              stroke-width="1"
+            />
+            <line
+              x1="373"
+              y1="127"
+              x2="382"
+              y2="127"
+              stroke="#4080D0"
+              stroke-width="1"
+            />
+            <text
+              x="484"
+              y="127"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="12"
+              font-weight="600"
+              fill="#80B0FF"
+              letter-spacing="1"
+            >
+              PROMPT ENGINEERING
+            </text>
+            <text
+              x="484"
+              y="141"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(100,160,240,0.68)"
+            >
+              System prompts · Few-shot · CoT templates · Role injection
+            </text>
+            <circle cx="574" cy="119" r="2.5" fill="#4090FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.4;.9"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".3s"
+              />
+            </circle>
+            <!-- packet -->
+            <circle r="4" fill="#60A0FF" opacity=".85">
+              <animateMotion dur="2.2s" repeatCount="indefinite" begin=".8s">
+                <mpath xlink:href="#fp3" />
+              </animateMotion>
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           02 · TOOL CALLING (top-right)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 0.95s forwards">
+            <line
+              x1="786"
+              y1="183"
+              x2="730"
+              y2="252"
+              stroke="#20C880"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arwG)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="730"
+              y1="252"
+              x2="786"
+              y2="183"
+              stroke="#20C880"
+              stroke-width=".8"
+              stroke-dasharray="5,3"
+              opacity=".35"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <rect
+              x="686"
+              y="148"
+              width="228"
+              height="22"
+              rx="3"
+              fill="#040E08"
+              opacity=".5"
+            />
+            <polygon
+              points="914,110 926,104 926,144 914,148"
+              fill="#081408"
+              stroke="#102018"
+              stroke-width=".5"
+            />
+            <polygon
+              points="686,110 914,110 926,104 698,104"
+              fill="#0C2010"
+              stroke="#183020"
+              stroke-width=".7"
+            />
+            <rect
+              x="686"
+              y="110"
+              width="228"
+              height="38"
+              rx="4"
+              fill="url(#toolTop)"
+              stroke="#1A6040"
+              stroke-width="1"
+            />
+            <rect
+              x="690"
+              y="114"
+              width="220"
+              height="30"
+              rx="3"
+              fill="none"
+              stroke="rgba(40,160,100,0.20)"
+              stroke-width=".6"
+            />
+            <!-- icon: wrench/tool -->
+            <rect
+              x="692"
+              y="118"
+              width="22"
+              height="14"
+              rx="2.5"
+              fill="#0A3020"
+              stroke="#1A6040"
+              stroke-width=".7"
+            />
+            <text
+              x="703"
+              y="128.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="#30D080"
+            >
+              ⚙
+            </text>
+            <text
+              x="806"
+              y="127"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="12"
+              font-weight="600"
+              fill="#40D890"
+              letter-spacing="1"
+            >
+              TOOL CALLING
+            </text>
+            <text
+              x="806"
+              y="141"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(40,180,110,0.68)"
+            >
+              Web search · APIs · Code exec · DB queries · File I/O
+            </text>
+            <circle cx="902" cy="119" r="2.5" fill="#30D870" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.4;.9"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".6s"
+              />
+            </circle>
+            <circle r="4" fill="#30D880" opacity=".85">
+              <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.1s">
+                <mpath xlink:href="#fp5" />
+              </animateMotion>
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           03 · RAG SYSTEMS (left)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 1.1s forwards">
+            <line
+              x1="310"
+              y1="292"
+              x2="508"
+              y2="292"
+              stroke="#E0B000"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arwA)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="508"
+              y1="292"
+              x2="310"
+              y2="292"
+              stroke="#E0B000"
+              stroke-width=".8"
+              stroke-dasharray="5,3"
+              opacity=".35"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <rect
+              x="74"
+              y="275"
+              width="240"
+              height="24"
+              rx="3"
+              fill="#0A0800"
+              opacity=".5"
+            />
+            <polygon
+              points="314,238 328,232 328,274 314,278"
+              fill="#1C1400"
+              stroke="#302000"
+              stroke-width=".5"
+            />
+            <polygon
+              points="74,238 314,238 328,232 88,232"
+              fill="#2A1E00"
+              stroke="#483200"
+              stroke-width=".7"
+            />
+            <rect
+              x="74"
+              y="238"
+              width="240"
+              height="40"
+              rx="4"
+              fill="url(#ragTop)"
+              stroke="#806000"
+              stroke-width="1"
+            />
+            <rect
+              x="78"
+              y="242"
+              width="232"
+              height="32"
+              rx="3"
+              fill="none"
+              stroke="rgba(180,130,0,0.20)"
+              stroke-width=".6"
+            />
+            <!-- icon: database + search -->
+            <rect
+              x="82"
+              y="245"
+              width="26"
+              height="20"
+              rx="2"
+              fill="#281800"
+              stroke="#806000"
+              stroke-width=".7"
+            />
+            <ellipse
+              cx="95"
+              cy="250"
+              rx="8"
+              ry="4"
+              fill="#5A3800"
+              stroke="#A06000"
+              stroke-width=".6"
+            />
+            <rect x="87" y="250" width="16" height="10" fill="#3A2200" />
+            <ellipse
+              cx="95"
+              cy="260"
+              rx="8"
+              ry="4"
+              fill="#3A2200"
+              stroke="#806000"
+              stroke-width=".5"
+            />
+            <text
+              x="200"
+              y="257"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="13"
+              font-weight="600"
+              fill="#E0A820"
+              letter-spacing="1"
+            >
+              RAG SYSTEMS
+            </text>
+            <text
+              x="200"
+              y="271"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(200,155,20,0.70)"
+            >
+              Retrieve · Embed · Rank · Inject context into prompt
+            </text>
+            <circle cx="302" cy="247" r="2.5" fill="#D09800" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.4;.9"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".4s"
+              />
+            </circle>
+            <!-- packet -->
+            <circle r="4" fill="#E0B000" opacity=".85">
+              <animateMotion dur="2s" repeatCount="indefinite" begin=".6s">
+                <mpath xlink:href="#fp7" />
+              </animateMotion>
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           04 · MEMORY SYSTEM (right)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 1.25s forwards">
+            <line
+              x1="752"
+              y1="292"
+              x2="952"
+              y2="292"
+              stroke="#FF5060"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arwR)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="952"
+              y1="292"
+              x2="752"
+              y2="292"
+              stroke="#FF5060"
+              stroke-width=".8"
+              stroke-dasharray="5,3"
+              opacity=".35"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <rect
+              x="956"
+              y="275"
+              width="240"
+              height="24"
+              rx="3"
+              fill="#0A0208"
+              opacity=".5"
+            />
+            <polygon
+              points="1196,238 1210,232 1210,274 1196,278"
+              fill="#1A0410"
+              stroke="#280610"
+              stroke-width=".5"
+            />
+            <polygon
+              points="956,238 1196,238 1210,232 970,232"
+              fill="#2A0610"
+              stroke="#480A1A"
+              stroke-width=".7"
+            />
+            <rect
+              x="956"
+              y="238"
+              width="240"
+              height="40"
+              rx="4"
+              fill="url(#memTop)"
+              stroke="#A01838"
+              stroke-width="1"
+            />
+            <rect
+              x="960"
+              y="242"
+              width="232"
+              height="32"
+              rx="3"
+              fill="none"
+              stroke="rgba(200,40,60,0.20)"
+              stroke-width=".6"
+            />
+            <!-- icon: brain memory -->
+            <rect
+              x="964"
+              y="245"
+              width="26"
+              height="20"
+              rx="2"
+              fill="#280410"
+              stroke="#A01838"
+              stroke-width=".7"
+            />
+            <text
+              x="977"
+              y="258.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="11"
+              fill="#FF4060"
+            >
+              🧠
+            </text>
+            <text
+              x="1082"
+              y="257"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="13"
+              font-weight="600"
+              fill="#FF7080"
+              letter-spacing="1"
+            >
+              MEMORY SYSTEM
+            </text>
+            <text
+              x="1082"
+              y="271"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(255,110,120,0.68)"
+            >
+              Short-term · Long-term · Episodic · Semantic store
+            </text>
+            <circle cx="1184" cy="247" r="2.5" fill="#FF4060" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.4;.9"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".8s"
+              />
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           05 · MULTI-AGENT WORKFLOWS (bottom of orchestrator)
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: nodeIn 0.5s ease 1.4s forwards">
+            <!-- connector to output area -->
+            <line
+              x1="630"
+              y1="342"
+              x2="630"
+              y2="392"
+              stroke="#00C8E0"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arwC)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <!-- sub-agents row -->
+            <!-- Agent A -->
+            <rect
+              x="72"
+              y="396"
+              width="170"
+              height="74"
+              rx="6"
+              fill="#060C1E"
+              stroke="#1A2850"
+              stroke-width=".9"
+            />
+            <rect
+              x="76"
+              y="400"
+              width="162"
+              height="66"
+              rx="5"
+              fill="#080E24"
+            />
+            <text
+              x="157"
+              y="414"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="9"
+              fill="rgba(80,140,255,0.80)"
+              letter-spacing=".5"
+            >
+              AGENT A
+            </text>
+            <text
+              x="157"
+              y="426"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8"
+              fill="rgba(80,130,240,0.65)"
+            >
+              Research Sub-Agent
+            </text>
+            <text
+              x="157"
+              y="437"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Searches · Scrapes
+            </text>
+            <text
+              x="157"
+              y="448"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Summarises data
+            </text>
+            <circle
+              cx="88"
+              cy="409"
+              r="4.5"
+              fill="#1840A0"
+              stroke="#3060D0"
+              stroke-width=".8"
+            />
+            <circle cx="88" cy="409" r="2" fill="#60A0FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.4s"
+                repeatCount="indefinite"
+                begin=".1s"
+              />
+            </circle>
+            <!-- mini tool icons -->
+            <rect
+              x="80"
+              y="455"
+              width="30"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="95"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              web search
+            </text>
+            <rect
+              x="116"
+              y="455"
+              width="30"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="131"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              scraper
+            </text>
+            <rect
+              x="152"
+              y="455"
+              width="34"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="169"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              summariser
+            </text>
+            <!-- Agent B -->
+            <rect
+              x="272"
+              y="396"
+              width="170"
+              height="74"
+              rx="6"
+              fill="#060C1E"
+              stroke="#1A2850"
+              stroke-width=".9"
+            />
+            <rect
+              x="276"
+              y="400"
+              width="162"
+              height="66"
+              rx="5"
+              fill="#080E24"
+            />
+            <text
+              x="357"
+              y="414"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="9"
+              fill="rgba(80,140,255,0.80)"
+              letter-spacing=".5"
+            >
+              AGENT B
+            </text>
+            <text
+              x="357"
+              y="426"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8"
+              fill="rgba(80,130,240,0.65)"
+            >
+              Code Execution Agent
+            </text>
+            <text
+              x="357"
+              y="437"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Writes · Runs · Tests
+            </text>
+            <text
+              x="357"
+              y="448"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Fixes bugs · Returns
+            </text>
+            <circle
+              cx="288"
+              cy="409"
+              r="4.5"
+              fill="#1840A0"
+              stroke="#3060D0"
+              stroke-width=".8"
+            />
+            <circle cx="288" cy="409" r="2" fill="#60A0FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.4s"
+                repeatCount="indefinite"
+                begin=".4s"
+              />
+            </circle>
+            <rect
+              x="280"
+              y="455"
+              width="30"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="295"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              Python
+            </text>
+            <rect
+              x="316"
+              y="455"
+              width="34"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="333"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              code exec
+            </text>
+            <rect
+              x="356"
+              y="455"
+              width="38"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="375"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              unit tests
+            </text>
+            <!-- Agent C (CENTRE — Planning) -->
+            <rect
+              x="472"
+              y="396"
+              width="316"
+              height="74"
+              rx="6"
+              fill="#0C0A20"
+              stroke="#302870"
+              stroke-width="1.1"
+            />
+            <rect
+              x="476"
+              y="400"
+              width="308"
+              height="66"
+              rx="5"
+              fill="#0E0C26"
+            />
+            <text
+              x="630"
+              y="414"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              fill="rgba(150,120,255,0.90)"
+              letter-spacing="1"
+            >
+              PLANNING AGENT (Orchestrator Core)
+            </text>
+            <text
+              x="630"
+              y="428"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(140,110,245,0.72)"
+            >
+              Decomposes → assigns sub-agents → collects results → synthesises
+              answer
+            </text>
+            <text
+              x="630"
+              y="440"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(120,90,220,0.60)"
+            >
+              ReAct loop · Reflexion · Plan-and-Execute · AutoGPT pattern
+            </text>
+            <circle
+              cx="488"
+              cy="409"
+              r="5"
+              fill="#3020A0"
+              stroke="#7050E0"
+              stroke-width=".9"
+            />
+            <circle cx="488" cy="409" r="2.5" fill="#A080FF" opacity=".95">
+              <animate
+                attributeName="opacity"
+                values=".95;.3;.95"
+                dur="1.2s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            <circle
+              cx="502"
+              cy="409"
+              r="5"
+              fill="#3020A0"
+              stroke="#7050E0"
+              stroke-width=".9"
+            />
+            <circle cx="502" cy="409" r="2.5" fill="#A080FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.2s"
+                repeatCount="indefinite"
+                begin=".4s"
+              />
+            </circle>
+            <!-- tool pills -->
+            <rect
+              x="480"
+              y="449"
+              width="50"
+              height="11"
+              rx="2"
+              fill="#201840"
+              stroke="#402880"
+              stroke-width=".6"
+            />
+            <text
+              x="505"
+              y="457.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(160,130,255,0.80)"
+            >
+              LLM call
+            </text>
+            <rect
+              x="536"
+              y="449"
+              width="54"
+              height="11"
+              rx="2"
+              fill="#201840"
+              stroke="#402880"
+              stroke-width=".6"
+            />
+            <text
+              x="563"
+              y="457.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(160,130,255,0.80)"
+            >
+              task router
+            </text>
+            <rect
+              x="596"
+              y="449"
+              width="54"
+              height="11"
+              rx="2"
+              fill="#201840"
+              stroke="#402880"
+              stroke-width=".6"
+            />
+            <text
+              x="623"
+              y="457.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(160,130,255,0.80)"
+            >
+              reflection
+            </text>
+            <rect
+              x="656"
+              y="449"
+              width="54"
+              height="11"
+              rx="2"
+              fill="#201840"
+              stroke="#402880"
+              stroke-width=".6"
+            />
+            <text
+              x="683"
+              y="457.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(160,130,255,0.80)"
+            >
+              synthesise
+            </text>
+            <rect
+              x="716"
+              y="449"
+              width="50"
+              height="11"
+              rx="2"
+              fill="#201840"
+              stroke="#402880"
+              stroke-width=".6"
+            />
+            <text
+              x="741"
+              y="457.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(160,130,255,0.80)"
+            >
+              output
+            </text>
+            <!-- Agent D -->
+            <rect
+              x="808"
+              y="396"
+              width="170"
+              height="74"
+              rx="6"
+              fill="#060C1E"
+              stroke="#1A2850"
+              stroke-width=".9"
+            />
+            <rect
+              x="812"
+              y="400"
+              width="162"
+              height="66"
+              rx="5"
+              fill="#080E24"
+            />
+            <text
+              x="893"
+              y="414"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="9"
+              fill="rgba(80,140,255,0.80)"
+              letter-spacing=".5"
+            >
+              AGENT D
+            </text>
+            <text
+              x="893"
+              y="426"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8"
+              fill="rgba(80,130,240,0.65)"
+            >
+              Data Analyst Agent
+            </text>
+            <text
+              x="893"
+              y="437"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Queries · Computes
+            </text>
+            <text
+              x="893"
+              y="448"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Charts · Reports
+            </text>
+            <circle
+              cx="824"
+              cy="409"
+              r="4.5"
+              fill="#1840A0"
+              stroke="#3060D0"
+              stroke-width=".8"
+            />
+            <circle cx="824" cy="409" r="2" fill="#60A0FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.4s"
+                repeatCount="indefinite"
+                begin=".7s"
+              />
+            </circle>
+            <rect
+              x="818"
+              y="455"
+              width="32"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="834"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              SQL query
+            </text>
+            <rect
+              x="856"
+              y="455"
+              width="36"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="874"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              statistics
+            </text>
+            <rect
+              x="898"
+              y="455"
+              width="34"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="915"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              charting
+            </text>
+            <!-- Agent E -->
+            <rect
+              x="1008"
+              y="396"
+              width="190"
+              height="74"
+              rx="6"
+              fill="#060C1E"
+              stroke="#1A2850"
+              stroke-width=".9"
+            />
+            <rect
+              x="1012"
+              y="400"
+              width="182"
+              height="66"
+              rx="5"
+              fill="#080E24"
+            />
+            <text
+              x="1103"
+              y="414"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="9"
+              fill="rgba(80,140,255,0.80)"
+              letter-spacing=".5"
+            >
+              AGENT E
+            </text>
+            <text
+              x="1103"
+              y="426"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8"
+              fill="rgba(80,130,240,0.65)"
+            >
+              Communication Agent
+            </text>
+            <text
+              x="1103"
+              y="437"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Drafts · Emails
+            </text>
+            <text
+              x="1103"
+              y="448"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(60,120,220,0.55)"
+            >
+              Slack · Notifies
+            </text>
+            <circle
+              cx="1024"
+              cy="409"
+              r="4.5"
+              fill="#1840A0"
+              stroke="#3060D0"
+              stroke-width=".8"
+            />
+            <circle cx="1024" cy="409" r="2" fill="#60A0FF" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.4s"
+                repeatCount="indefinite"
+                begin="1.0s"
+              />
+            </circle>
+            <rect
+              x="1016"
+              y="455"
+              width="38"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="1035"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              email API
+            </text>
+            <rect
+              x="1060"
+              y="455"
+              width="36"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="1078"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              Slack bot
+            </text>
+            <rect
+              x="1102"
+              y="455"
+              width="40"
+              height="11"
+              rx="2"
+              fill="#102040"
+              stroke="#2040A0"
+              stroke-width=".5"
+            />
+            <text
+              x="1122"
+              y="463.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(80,160,255,0.70)"
+            >
+              webhooks
+            </text>
+
+            <!-- Connections from orchestrator down to agents -->
+            <line
+              x1="560"
+              y1="342"
+              x2="200"
+              y2="396"
+              stroke="#4060C0"
+              stroke-width="1"
+              stroke-dasharray="5,3"
+              opacity=".55"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="580"
+              y1="342"
+              x2="350"
+              y2="396"
+              stroke="#4060C0"
+              stroke-width="1"
+              stroke-dasharray="5,3"
+              opacity=".55"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="630"
+              y1="342"
+              x2="630"
+              y2="396"
+              stroke="#7050D0"
+              stroke-width="1.4"
+              stroke-dasharray="5,3"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="680"
+              y1="342"
+              x2="900"
+              y2="396"
+              stroke="#4060C0"
+              stroke-width="1"
+              stroke-dasharray="5,3"
+              opacity=".55"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="700"
+              y1="342"
+              x2="1095"
+              y2="396"
+              stroke="#4060C0"
+              stroke-width="1"
+              stroke-dasharray="5,3"
+              opacity=".55"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+
+            <!-- RESULT OUTPUT arrow -->
+            <line
+              x1="630"
+              y1="470"
+              x2="630"
+              y2="505"
+              stroke="#00C8E0"
+              stroke-width="1.3"
+              stroke-dasharray="5,3"
+              marker-end="url(#arwC)"
+              opacity=".65"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-24"
+                dur=".8s"
+                repeatCount="indefinite"
+              />
+            </line>
+
+            <!-- OUTPUT BANNER -->
+            <rect
+              x="390"
+              y="508"
+              width="480"
+              height="38"
+              rx="6"
+              fill="#040E14"
+              stroke="#1A6070"
+              stroke-width="1"
+            />
+            <rect
+              x="393"
+              y="511"
+              width="474"
+              height="32"
+              rx="5"
+              fill="#06121A"
+            />
+            <text
+              x="630"
+              y="524"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              fill="rgba(0,200,220,0.75)"
+              letter-spacing="1.5"
+            >
+              FINAL RESPONSE → USER / APPLICATION
+            </text>
+            <text
+              x="630"
+              y="538"
+              text-anchor="middle"
+              font-family="'Raleway',sans-serif"
+              font-size="8.5"
+              fill="rgba(0,170,195,0.60)"
+            >
+              Synthesised · Verified · Formatted · Delivered via API or UI
+            </text>
+            <!-- status dots on output -->
+            <circle cx="406" cy="524" r="3" fill="#00D0E0" opacity=".9">
+              <animate
+                attributeName="opacity"
+                values=".9;.3;.9"
+                dur="1.2s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            <circle cx="416" cy="524" r="3" fill="#00B0C8" opacity=".8">
+              <animate
+                attributeName="opacity"
+                values=".8;.3;.8"
+                dur="1.2s"
+                repeatCount="indefinite"
+                begin=".4s"
+              />
+            </circle>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           RETURN FEEDBACK LOOP arrows
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: fadeIn 0.8s ease 2s forwards">
+            <!-- memory feedback loop (curved back to orchestrator) -->
+            <path
+              d="M1082 232 Q1082 170 730 200 Q640 210 630 250"
+              stroke="#FF5060"
+              stroke-width="1"
+              fill="none"
+              stroke-dasharray="5,4"
+              opacity=".45"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-54"
+                dur="2s"
+                repeatCount="indefinite"
+              />
+            </path>
+            <text
+              x="856"
+              y="186"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(255,80,100,0.55)"
+            >
+              ← stores context back
+            </text>
+            <!-- RAG feedback -->
+            <path
+              d="M200 232 Q200 165 500 185 Q560 192 580 250"
+              stroke="#E0B000"
+              stroke-width="1"
+              fill="none"
+              stroke-dasharray="5,4"
+              opacity=".40"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-54"
+                dur="2s"
+                repeatCount="indefinite"
+              />
+            </path>
+            <text
+              x="348"
+              y="162"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(200,155,0,0.50)"
+            >
+              ← retrieved context
+            </text>
+          </g>
+
+          <!-- ════════════════════════════════════════════
+           LEGEND / SECTION LABELS
+      ════════════════════════════════════════════ -->
+          <g style="opacity: 0; animation: fadeIn 0.6s ease 2.5s forwards">
+            <text
+              x="640"
+              y="382"
+              text-anchor="middle"
+              font-family="'Cinzel',serif"
+              font-size="8"
+              fill="rgba(100,80,200,0.45)"
+              letter-spacing="1.5"
+            >
+              MULTI-AGENT WORKFORCE
+            </text>
+            <!-- bracket line under -->
+            <line
+              x1="74"
+              y1="388"
+              x2="1196"
+              y2="388"
+              stroke="rgba(100,80,200,0.18)"
+              stroke-width=".8"
+            />
+          </g>
+        </svg>
+      </div>
+
+      <!-- FINALE -->
+      <div class="finale">
+        <div class="fline rev"></div>
+        <div class="fdiamond"></div>
+        <div class="fline rev" style="width: 28px"></div>
+        <div class="finale-text">
+          <strong>Soft Tech Group</strong> builds
+          <em>production-ready agentic systems</em> — orchestrating models,
+          tools and memory into
+          <em>autonomous workflows that deliver results.</em>
+        </div>
+        <div class="fline" style="width: 28px"></div>
+        <div class="fdiamond"></div>
+        <div class="fline"></div>
+      </div>
+    </div>
+  </body>
+</html>

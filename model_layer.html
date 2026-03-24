@@ -1,0 +1,4913 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 6 – Model Layer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #020810;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #020810;
+        font-family: "Raleway", sans-serif;
+      }
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 50;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(30, 70, 160, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(30, 70, 160, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .bg-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 70% 60% at 50% 55%,
+          rgba(80, 40, 200, 0.1) 0%,
+          transparent 65%
+        );
+      }
+      .header {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .layer-badge {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 4px;
+      }
+      .badge-line {
+        display: inline-block;
+        width: 22px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .slide-title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 24px;
+        line-height: 1.05;
+        color: #f2efe8;
+      }
+      .slide-title em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 16px;
+        color: #b090ff;
+        display: block;
+        margin-top: 1px;
+      }
+      .header-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 11px;
+        line-height: 1.6;
+        color: rgba(175, 160, 128, 0.55);
+        max-width: 340px;
+        text-align: right;
+      }
+      .header-desc b {
+        color: rgba(200, 185, 155, 0.76);
+        font-weight: 500;
+      }
+      .h-rule {
+        position: absolute;
+        top: 96px;
+        left: 52px;
+        right: 52px;
+        height: 1px;
+        z-index: 10;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.3) 20%,
+          rgba(201, 168, 76, 0.5) 50%,
+          rgba(201, 168, 76, 0.3) 80%,
+          transparent
+        );
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.4s forwards;
+      }
+
+      /* ── CARDS: full-width visual, no text panel ── */
+      .card-stack {
+        position: absolute;
+        top: 105px;
+        left: 52px;
+        right: 52px;
+        bottom: 70px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .card {
+        flex: 1;
+        border-radius: 10px;
+        border: 1px solid rgba(130, 90, 255, 0.15);
+        overflow: hidden;
+        position: relative;
+        min-height: 0;
+        opacity: 0;
+        display: block;
+      }
+      .card.c1 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+      }
+      .card.c2 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.52s forwards;
+      }
+      .card.c3 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.69s forwards;
+      }
+      .card.c4 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.86s forwards;
+      }
+      .card.c5 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.03s forwards;
+      }
+      .card.c6 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.2s forwards;
+      }
+      .card-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        z-index: 20;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .card.c1 .card-glow {
+        animation: glowFlash 0.55s ease 0.75s forwards;
+        border: 1.5px solid rgba(120, 80, 255, 0.7);
+      }
+      .card.c2 .card-glow {
+        animation: glowFlash 0.55s ease 0.92s forwards;
+        border: 1.5px solid rgba(0, 200, 255, 0.65);
+      }
+      .card.c3 .card-glow {
+        animation: glowFlash 0.55s ease 1.09s forwards;
+        border: 1.5px solid rgba(255, 140, 0, 0.65);
+      }
+      .card.c4 .card-glow {
+        animation: glowFlash 0.55s ease 1.26s forwards;
+        border: 1.5px solid rgba(0, 220, 160, 0.65);
+      }
+      .card.c5 .card-glow {
+        animation: glowFlash 0.55s ease 1.43s forwards;
+        border: 1.5px solid rgba(255, 60, 100, 0.65);
+      }
+      .card.c6 .card-glow {
+        animation: glowFlash 0.55s ease 1.6s forwards;
+        border: 1.5px solid rgba(255, 200, 0, 0.65);
+      }
+      /* SVG fills 100% of card */
+      .card svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .finale {
+        position: absolute;
+        bottom: 8px;
+        left: 52px;
+        right: 52px;
+        height: 54px;
+        z-index: 20;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          rgba(10, 10, 30, 0) 0%,
+          rgba(20, 14, 50, 0.92) 12%,
+          rgba(28, 18, 64, 0.96) 50%,
+          rgba(20, 14, 50, 0.92) 88%,
+          rgba(10, 10, 30, 0) 100%
+        );
+        border: 1px solid rgba(201, 168, 76, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        animation: finaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.9s forwards;
+      }
+      .finale::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(201, 168, 76, 0.05) 50%,
+          transparent 100%
+        );
+      }
+      .fdiamond {
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid #c9a84c;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .fline {
+        height: 1px;
+        width: 50px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+        flex-shrink: 0;
+      }
+      .fline.rev {
+        background: linear-gradient(
+          to left,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .finale-text {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 12.5px;
+        color: rgba(220, 210, 255, 0.84);
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+      .finale-text strong {
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: #c9a84c;
+        letter-spacing: 0.08em;
+      }
+      .finale-text em {
+        font-style: italic;
+        color: rgba(200, 180, 255, 0.85);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes cardSlide {
+        0% {
+          opacity: 0;
+          transform: translateX(-28px);
+          filter: brightness(0.4);
+        }
+        60% {
+          opacity: 1;
+          filter: brightness(1.15);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+          filter: brightness(1);
+        }
+      }
+      @keyframes glowFlash {
+        0% {
+          opacity: 0;
+        }
+        30% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes finaleIn {
+        0% {
+          opacity: 0;
+          transform: translateY(14px) scaleX(0.93);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(-2px) scaleX(1.01);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scaleX(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+
+      <div class="header">
+        <div>
+          <div class="layer-badge">
+            <span class="badge-line"></span>Layer 03 · Models<span
+              class="badge-line"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="slide-title">
+            The Model Layer<em>Where intelligence &amp; value happens</em>
+          </h2>
+        </div>
+        <div class="header-desc">
+          <b>Models transform data into decisions.</b> From language to vision
+          to prediction — each model type unlocks a different dimension of
+          AI-driven business value.
+        </div>
+      </div>
+      <div class="h-rule"></div>
+
+      <div class="card-stack">
+        <!-- ══ 01 · LLMs ══ -->
+        <div class="card c1">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <path id="pA" d="M8 41 L48 41" />
+              <path id="pB" d="M8 41 L48 41" />
+            </defs>
+            <rect width="1176" height="82" fill="#060412" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#8040FF"
+              opacity=".07"
+            />
+            <!-- spread the illustration across full 1176 width -->
+            <!-- INPUT section (left) -->
+            <text
+              x="95"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(160,120,255,0.60)"
+            >
+              INPUT TOKENS
+            </text>
+            <rect
+              x="10"
+              y="14"
+              width="50"
+              height="14"
+              rx="2.5"
+              fill="#1A0848"
+              stroke="#6030C0"
+              stroke-width=".8"
+            />
+            <text
+              x="35"
+              y="24.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="#A070F0"
+            >
+              "The"
+            </text>
+            <rect
+              x="66"
+              y="14"
+              width="50"
+              height="14"
+              rx="2.5"
+              fill="#1A0848"
+              stroke="#6030C0"
+              stroke-width=".8"
+            />
+            <text
+              x="91"
+              y="24.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="#A070F0"
+            >
+              "AI"
+            </text>
+            <rect
+              x="122"
+              y="14"
+              width="58"
+              height="14"
+              rx="2.5"
+              fill="#1A0848"
+              stroke="#6030C0"
+              stroke-width=".8"
+            />
+            <text
+              x="151"
+              y="24.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="#A070F0"
+            >
+              "model"
+            </text>
+            <!-- token highlight sweep -->
+            <rect
+              x="10"
+              y="27"
+              width="50"
+              height="2.5"
+              rx="1"
+              fill="#8040FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="x"
+                values="10;66;122;10"
+                dur="2s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.9;0.9;0"
+                dur="2s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <!-- arrow -->
+            <line
+              x1="182"
+              y1="41"
+              x2="208"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="206,38 212,41 206,44"
+              fill="#6030C0"
+              opacity=".6"
+            />
+
+            <!-- EMBEDDING section -->
+            <text
+              x="270"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(140,100,255,0.55)"
+            >
+              EMBEDDING SPACE
+            </text>
+            <rect
+              x="216"
+              y="15"
+              width="108"
+              height="52"
+              rx="4"
+              fill="#0C0624"
+              stroke="#4020A0"
+              stroke-width=".8"
+            />
+            <!-- embedding vectors as coloured bars -->
+            <rect
+              x="222"
+              y="20"
+              width="6"
+              height="38"
+              rx="1"
+              fill="#6030C0"
+              opacity=".8"
+            />
+            <rect
+              x="230"
+              y="28"
+              width="6"
+              height="30"
+              rx="1"
+              fill="#5028B0"
+              opacity=".7"
+            />
+            <rect
+              x="238"
+              y="22"
+              width="6"
+              height="36"
+              rx="1"
+              fill="#7038D0"
+              opacity=".8"
+            />
+            <rect
+              x="246"
+              y="32"
+              width="6"
+              height="24"
+              rx="1"
+              fill="#4820A0"
+              opacity=".65"
+            />
+            <rect
+              x="254"
+              y="18"
+              width="6"
+              height="40"
+              rx="1"
+              fill="#8040E0"
+              opacity=".8"
+            />
+            <rect
+              x="262"
+              y="26"
+              width="6"
+              height="32"
+              rx="1"
+              fill="#6030C0"
+              opacity=".72"
+            />
+            <rect
+              x="270"
+              y="34"
+              width="6"
+              height="22"
+              rx="1"
+              fill="#5028B0"
+              opacity=".65"
+            />
+            <rect
+              x="278"
+              y="20"
+              width="6"
+              height="38"
+              rx="1"
+              fill="#7038D0"
+              opacity=".78"
+            />
+            <rect
+              x="286"
+              y="30"
+              width="6"
+              height="26"
+              rx="1"
+              fill="#4820A0"
+              opacity=".62"
+            />
+            <rect
+              x="294"
+              y="16"
+              width="6"
+              height="42"
+              rx="1"
+              fill="#8040E0"
+              opacity=".82"
+            />
+            <rect
+              x="302"
+              y="24"
+              width="6"
+              height="34"
+              rx="1"
+              fill="#6030C0"
+              opacity=".70"
+            />
+            <rect
+              x="310"
+              y="28"
+              width="6"
+              height="28"
+              rx="1"
+              fill="#5028B0"
+              opacity=".68"
+            />
+            <line
+              x1="328"
+              y1="41"
+              x2="352"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="350,38 356,41 350,44"
+              fill="#6030C0"
+              opacity=".6"
+            />
+
+            <!-- TRANSFORMER STACK (centre, expanded) -->
+            <text
+              x="490"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(160,120,255,0.60)"
+            >
+              TRANSFORMER
+            </text>
+            <rect
+              x="360"
+              y="14"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="418"
+              y="24"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Multi-Head Self-Attention
+            </text>
+            <rect
+              x="360"
+              y="31"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#140738"
+              stroke="#4818A0"
+              stroke-width=".8"
+            />
+            <text
+              x="418"
+              y="41"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(160,120,255,0.75)"
+            >
+              Feed-Forward Network
+            </text>
+            <rect
+              x="360"
+              y="48"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="418"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Layer Normalisation
+            </text>
+            <rect
+              x="358"
+              y="12"
+              width="120"
+              height="52"
+              rx="4"
+              fill="none"
+              stroke="#6030C0"
+              stroke-width=".7"
+              opacity=".45"
+            />
+            <!-- pulse -->
+            <rect
+              x="360"
+              y="14"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#8040FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="y"
+                values="14;31;48;14"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".8s"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.28;0;0"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".8s"
+              />
+            </rect>
+            <!-- repeat block x3 -->
+            <rect
+              x="488"
+              y="14"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="546"
+              y="24"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Multi-Head Self-Attention
+            </text>
+            <rect
+              x="488"
+              y="31"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#140738"
+              stroke="#4818A0"
+              stroke-width=".8"
+            />
+            <text
+              x="546"
+              y="41"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(160,120,255,0.75)"
+            >
+              Feed-Forward Network
+            </text>
+            <rect
+              x="488"
+              y="48"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="546"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Layer Normalisation
+            </text>
+            <rect
+              x="486"
+              y="12"
+              width="120"
+              height="52"
+              rx="4"
+              fill="none"
+              stroke="#6030C0"
+              stroke-width=".7"
+              opacity=".45"
+            />
+            <rect
+              x="616"
+              y="14"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="674"
+              y="24"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Multi-Head Self-Attention
+            </text>
+            <rect
+              x="616"
+              y="31"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#140738"
+              stroke="#4818A0"
+              stroke-width=".8"
+            />
+            <text
+              x="674"
+              y="41"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(160,120,255,0.75)"
+            >
+              Feed-Forward Network
+            </text>
+            <rect
+              x="616"
+              y="48"
+              width="116"
+              height="14"
+              rx="3"
+              fill="#160840"
+              stroke="#5020B0"
+              stroke-width=".8"
+            />
+            <text
+              x="674"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(175,135,255,0.80)"
+            >
+              Layer Normalisation
+            </text>
+            <rect
+              x="614"
+              y="12"
+              width="120"
+              height="52"
+              rx="4"
+              fill="none"
+              stroke="#6030C0"
+              stroke-width=".7"
+              opacity=".45"
+            />
+            <!-- block connectors -->
+            <line
+              x1="480"
+              y1="41"
+              x2="486"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              opacity=".5"
+            />
+            <line
+              x1="608"
+              y1="41"
+              x2="614"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              opacity=".5"
+            />
+            <text
+              x="490"
+              y="73"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(140,100,220,0.45)"
+            >
+              × 96 layers (GPT-4)
+            </text>
+            <line
+              x1="738"
+              y1="41"
+              x2="764"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="762,38 768,41 762,44"
+              fill="#6030C0"
+              opacity=".6"
+            />
+
+            <!-- OUTPUT LOGITS -->
+            <text
+              x="840"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(160,120,255,0.60)"
+            >
+              OUTPUT LOGITS
+            </text>
+            <rect
+              x="772"
+              y="14"
+              width="18"
+              height="54"
+              rx="2"
+              fill="#0C0628"
+              stroke="#3818A0"
+              stroke-width=".7"
+            />
+            <rect
+              x="772"
+              y="24"
+              width="18"
+              height="44"
+              rx="1"
+              fill="#6030C0"
+              opacity=".84"
+            />
+            <rect
+              x="794"
+              y="14"
+              width="18"
+              height="54"
+              rx="2"
+              fill="#0C0628"
+              stroke="#3818A0"
+              stroke-width=".7"
+            />
+            <rect
+              x="794"
+              y="18"
+              width="18"
+              height="50"
+              rx="1"
+              fill="#7040D0"
+              opacity=".78"
+            />
+            <rect
+              x="816"
+              y="14"
+              width="18"
+              height="54"
+              rx="2"
+              fill="#0C0628"
+              stroke="#3818A0"
+              stroke-width=".7"
+            />
+            <rect
+              x="816"
+              y="28"
+              width="18"
+              height="40"
+              rx="1"
+              fill="#5828B8"
+              opacity=".72"
+            />
+            <rect
+              x="838"
+              y="14"
+              width="18"
+              height="54"
+              rx="2"
+              fill="#0C0628"
+              stroke="#3818A0"
+              stroke-width=".7"
+            />
+            <rect
+              x="838"
+              y="38"
+              width="18"
+              height="30"
+              rx="1"
+              fill="#4020A0"
+              opacity=".64"
+            />
+            <rect
+              x="860"
+              y="14"
+              width="18"
+              height="54"
+              rx="2"
+              fill="#0C0628"
+              stroke="#3818A0"
+              stroke-width=".7"
+            />
+            <rect
+              x="860"
+              y="46"
+              width="18"
+              height="22"
+              rx="1"
+              fill="#3018A0"
+              opacity=".58"
+            />
+            <text
+              x="780"
+              y="72"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(140,100,220,0.55)"
+            >
+              be
+            </text>
+            <text
+              x="803"
+              y="72"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(140,100,220,0.65)"
+            >
+              do
+            </text>
+            <text
+              x="826"
+              y="72"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(140,100,220,0.55)"
+            >
+              can
+            </text>
+            <text
+              x="849"
+              y="72"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(140,100,220,0.48)"
+            >
+              is
+            </text>
+            <text
+              x="872"
+              y="72"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(140,100,220,0.42)"
+            >
+              the
+            </text>
+            <line
+              x1="882"
+              y1="41"
+              x2="904"
+              y2="41"
+              stroke="#6030C0"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="902,38 908,41 902,44"
+              fill="#6030C0"
+              opacity=".6"
+            />
+
+            <!-- GENERATED RESPONSE -->
+            <text
+              x="1040"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(160,120,255,0.60)"
+            >
+              GENERATED RESPONSE
+            </text>
+            <rect
+              x="912"
+              y="14"
+              width="248"
+              height="54"
+              rx="5"
+              fill="#0A0628"
+              stroke="#5020B0"
+              stroke-width=".9"
+            />
+            <text
+              x="920"
+              y="28"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(170,140,255,0.85)"
+            >
+              "Models transform raw data
+            </text>
+            <text
+              x="920"
+              y="41"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(160,130,245,0.80)"
+            >
+              into actionable intelligence,
+            </text>
+            <text
+              x="920"
+              y="54"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(170,140,255,0.82)"
+            >
+              enabling better decisions."
+            </text>
+            <!-- blinking cursor -->
+            <rect
+              x="920"
+              y="58"
+              width="6"
+              height="8"
+              rx="1"
+              fill="#A060FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.9;0"
+                dur=".9s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+
+            <!-- label overlay bottom-left -->
+            <rect
+              x="0"
+              y="58"
+              width="340"
+              height="24"
+              rx="0"
+              fill="linear-gradient(to right,rgba(6,4,18,0.92),transparent)"
+            />
+            <rect
+              x="0"
+              y="56"
+              width="340"
+              height="26"
+              fill="url(#labelFade01)"
+            />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(160,120,255,0.50)"
+              letter-spacing="1"
+            >
+              01
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(210,195,255,0.85)"
+            >
+              Large Language Models (LLMs)
+            </text>
+            <defs>
+              <linearGradient id="labelFade01" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#060412" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#060412" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- ══ 02 · COMPUTER VISION ══ -->
+        <div class="card c2">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="lf02" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#030C18" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#030C18" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="1176" height="82" fill="#030C18" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#00C8FF"
+              opacity=".06"
+            />
+
+            <!-- INPUT IMAGE (pixel art, wider) -->
+            <text
+              x="75"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,255,0.60)"
+            >
+              INPUT IMAGE
+            </text>
+            <rect
+              x="8"
+              y="13"
+              width="134"
+              height="62"
+              rx="4"
+              fill="#060E18"
+              stroke="#1A4060"
+              stroke-width=".8"
+            />
+            <rect x="10" y="15" width="130" height="32" fill="#0C1820" />
+            <rect x="10" y="47" width="130" height="26" fill="#080E14" />
+            <ellipse
+              cx="75"
+              cy="30"
+              rx="28"
+              ry="13"
+              fill="#142030"
+              opacity=".7"
+            />
+            <rect
+              x="18"
+              y="52"
+              width="44"
+              height="18"
+              rx="1.5"
+              fill="#142040"
+            />
+            <rect
+              x="24"
+              y="46"
+              width="32"
+              height="14"
+              rx="1.5"
+              fill="#1A2848"
+            />
+            <circle cx="26" cy="70" r="5" fill="#0A1428" />
+            <circle cx="26" cy="70" r="2.5" fill="#141E30" />
+            <circle cx="52" cy="70" r="5" fill="#0A1428" />
+            <circle cx="52" cy="70" r="2.5" fill="#141E30" />
+            <rect
+              x="90"
+              y="46"
+              width="18"
+              height="30"
+              rx="1.5"
+              fill="#182030"
+            />
+            <circle cx="99" cy="42" r="8" fill="#1A2535" />
+            <rect
+              x="115"
+              y="20"
+              width="22"
+              height="54"
+              rx="1.5"
+              fill="#121820"
+              stroke="#1E2A30"
+              stroke-width=".5"
+            />
+            <!-- pixel grid -->
+            <line
+              x1="10"
+              y1="47"
+              x2="140"
+              y2="47"
+              stroke="#1A3050"
+              stroke-width=".4"
+              opacity=".5"
+            />
+            <line
+              x1="10"
+              y1="63"
+              x2="140"
+              y2="63"
+              stroke="#1A3050"
+              stroke-width=".4"
+              opacity=".5"
+            />
+            <line
+              x1="44"
+              y1="15"
+              x2="44"
+              y2="75"
+              stroke="#1A3050"
+              stroke-width=".4"
+              opacity=".4"
+            />
+            <line
+              x1="88"
+              y1="15"
+              x2="88"
+              y2="75"
+              stroke="#1A3050"
+              stroke-width=".4"
+              opacity=".4"
+            />
+            <line
+              x1="110"
+              y1="15"
+              x2="110"
+              y2="75"
+              stroke="#1A3050"
+              stroke-width=".4"
+              opacity=".4"
+            />
+            <!-- conv scan box -->
+            <rect
+              x="10"
+              y="15"
+              width="28"
+              height="28"
+              rx="1"
+              fill="none"
+              stroke="#00C8FF"
+              stroke-width="1.5"
+              opacity="0"
+            >
+              <animate
+                attributeName="x"
+                values="10;44;78;10;44;78;10"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+              <animate
+                attributeName="y"
+                values="15;15;15;43;43;43;15"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;.85;.85;.85;.85;.85;0"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <!-- arrow -->
+            <line
+              x1="145"
+              y1="41"
+              x2="165"
+              y2="41"
+              stroke="#1A6090"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="163,38 169,41 163,44"
+              fill="#1A6090"
+              opacity=".6"
+            />
+
+            <!-- CNN LAYERS (wider, 3 conv banks) -->
+            <text
+              x="280"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,255,0.60)"
+            >
+              Convolutional Neural Network FEATURE EXTRACTION
+            </text>
+            <!-- Conv1 bank -->
+            <rect
+              x="172"
+              y="14"
+              width="14"
+              height="54"
+              rx="2"
+              fill="#0E2840"
+              stroke="#1A6090"
+              stroke-width=".8"
+            />
+            <rect
+              x="190"
+              y="14"
+              width="14"
+              height="54"
+              rx="2"
+              fill="#0E2840"
+              stroke="#1A6090"
+              stroke-width=".8"
+            />
+            <rect
+              x="208"
+              y="14"
+              width="14"
+              height="54"
+              rx="2"
+              fill="#0E2840"
+              stroke="#1A6090"
+              stroke-width=".8"
+            />
+            <text
+              x="193"
+              y="76"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(0,180,230,0.55)"
+            >
+              Conv1 (64)
+            </text>
+            <rect
+              x="174"
+              y="20"
+              width="8"
+              height="12"
+              rx="1"
+              fill="#00A0E0"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.65;.30;.65;0"
+                dur="2s"
+                repeatCount="indefinite"
+                begin=".8s"
+              />
+            </rect>
+            <!-- Conv2 -->
+            <rect
+              x="242"
+              y="20"
+              width="12"
+              height="42"
+              rx="2"
+              fill="#0A2030"
+              stroke="#157080"
+              stroke-width=".8"
+            />
+            <rect
+              x="258"
+              y="20"
+              width="12"
+              height="42"
+              rx="2"
+              fill="#0A2030"
+              stroke="#157080"
+              stroke-width=".8"
+            />
+            <rect
+              x="274"
+              y="20"
+              width="12"
+              height="42"
+              rx="2"
+              fill="#0A2030"
+              stroke="#157080"
+              stroke-width=".8"
+            />
+            <text
+              x="261"
+              y="76"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(0,170,210,0.50)"
+            >
+              Conv2 (128)
+            </text>
+            <rect
+              x="244"
+              y="26"
+              width="8"
+              height="10"
+              rx="1"
+              fill="#0080C0"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.55;.28;.55;0"
+                dur="2s"
+                repeatCount="indefinite"
+                begin="1.1s"
+              />
+            </rect>
+            <!-- Conv3 -->
+            <rect
+              x="308"
+              y="26"
+              width="10"
+              height="30"
+              rx="2"
+              fill="#071828"
+              stroke="#105060"
+              stroke-width=".8"
+            />
+            <rect
+              x="322"
+              y="26"
+              width="10"
+              height="30"
+              rx="2"
+              fill="#071828"
+              stroke="#105060"
+              stroke-width=".8"
+            />
+            <rect
+              x="336"
+              y="26"
+              width="10"
+              height="30"
+              rx="2"
+              fill="#071828"
+              stroke="#105060"
+              stroke-width=".8"
+            />
+            <text
+              x="325"
+              y="76"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(0,160,200,0.48)"
+            >
+              Conv3 (256)
+            </text>
+            <!-- arrows between conv blocks -->
+            <line
+              x1="226"
+              y1="41"
+              x2="240"
+              y2="41"
+              stroke="#1A6090"
+              stroke-width=".8"
+              stroke-dasharray="3,2"
+              opacity=".5"
+            />
+            <line
+              x1="290"
+              y1="41"
+              x2="306"
+              y2="41"
+              stroke="#1A6090"
+              stroke-width=".8"
+              stroke-dasharray="3,2"
+              opacity=".5"
+            />
+            <line
+              x1="350"
+              y1="41"
+              x2="372"
+              y2="41"
+              stroke="#1A6090"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="370,38 376,41 370,44"
+              fill="#1A6090"
+              opacity=".6"
+            />
+
+            <!-- DETECTION OUTPUT (right half — large) -->
+            <text
+              x="750"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,255,0.60)"
+            >
+              DETECTION OUTPUT
+            </text>
+            <rect
+              x="380"
+              y="12"
+              width="788"
+              height="62"
+              rx="5"
+              fill="#060E18"
+              stroke="#1A4060"
+              stroke-width=".9"
+            />
+            <!-- scene reproduction -->
+            <rect
+              x="382"
+              y="14"
+              width="784"
+              height="58"
+              rx="4"
+              fill="#080E14"
+            />
+            <!-- sky -->
+            <rect x="382" y="14" width="784" height="26" fill="#0C1820" />
+            <ellipse
+              cx="588"
+              cy="24"
+              rx="80"
+              ry="14"
+              fill="#142030"
+              opacity=".6"
+            />
+            <!-- car (wider) -->
+            <rect
+              x="402"
+              y="40"
+              width="120"
+              height="28"
+              rx="3"
+              fill="#142040"
+              stroke="#204050"
+              stroke-width=".5"
+            />
+            <rect x="420" y="34" width="88" height="20" rx="2" fill="#1A2848" />
+            <circle cx="420" cy="68" r="8" fill="#0A1428" />
+            <circle cx="420" cy="68" r="4" fill="#141E30" />
+            <circle cx="502" cy="68" r="8" fill="#0A1428" />
+            <circle cx="502" cy="68" r="4" fill="#141E30" />
+            <!-- person -->
+            <rect x="600" y="34" width="34" height="36" rx="2" fill="#182030" />
+            <circle cx="617" cy="30" r="10" fill="#1A2535" />
+            <!-- building 1 -->
+            <rect
+              x="720"
+              y="16"
+              width="100"
+              height="58"
+              rx="2"
+              fill="#121820"
+              stroke="#1E2A30"
+              stroke-width=".5"
+            />
+            <rect
+              x="728"
+              y="22"
+              width="16"
+              height="12"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="752"
+              y="22"
+              width="16"
+              height="12"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="728"
+              y="40"
+              width="16"
+              height="12"
+              fill="#FFD060"
+              opacity=".5"
+            />
+            <rect
+              x="752"
+              y="40"
+              width="16"
+              height="12"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="728"
+              y="58"
+              width="16"
+              height="12"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="752"
+              y="58"
+              width="16"
+              height="12"
+              fill="#FFD060"
+              opacity=".4"
+            />
+            <!-- building 2 -->
+            <rect
+              x="860"
+              y="18"
+              width="80"
+              height="56"
+              rx="2"
+              fill="#121820"
+              stroke="#1E2A30"
+              stroke-width=".5"
+            />
+            <rect
+              x="868"
+              y="24"
+              width="14"
+              height="10"
+              fill="#FFD060"
+              opacity=".45"
+            />
+            <rect
+              x="888"
+              y="24"
+              width="14"
+              height="10"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="868"
+              y="40"
+              width="14"
+              height="10"
+              fill="#1E3040"
+              opacity=".8"
+            />
+            <rect
+              x="888"
+              y="40"
+              width="14"
+              height="10"
+              fill="#FFD060"
+              opacity=".4"
+            />
+            <!-- BBOX CAR -->
+            <rect
+              x="397"
+              y="30"
+              width="134"
+              height="44"
+              rx="2"
+              fill="none"
+              stroke="#FFD030"
+              stroke-width="2"
+            />
+            <line
+              x1="397"
+              y1="30"
+              x2="409"
+              y2="30"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="397"
+              y1="30"
+              x2="397"
+              y2="42"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="531"
+              y1="30"
+              x2="519"
+              y2="30"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="531"
+              y1="30"
+              x2="531"
+              y2="42"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="397"
+              y1="74"
+              x2="409"
+              y2="74"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="397"
+              y1="74"
+              x2="397"
+              y2="62"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="531"
+              y1="74"
+              x2="519"
+              y2="74"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <line
+              x1="531"
+              y1="74"
+              x2="531"
+              y2="62"
+              stroke="#FFD030"
+              stroke-width="3"
+            />
+            <rect
+              x="397"
+              y="18"
+              width="72"
+              height="14"
+              rx="2.5"
+              fill="#FFD030"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.94"
+                dur=".3s"
+                begin="1.0s"
+                fill="freeze"
+              />
+            </rect>
+            <text
+              x="433"
+              y="28.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#1A0800"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;1"
+                dur=".3s"
+                begin="1.0s"
+                fill="freeze"
+              />
+              CAR 0.97
+            </text>
+            <!-- BBOX PERSON -->
+            <rect
+              x="593"
+              y="20"
+              width="52"
+              height="54"
+              rx="2"
+              fill="none"
+              stroke="#FF4080"
+              stroke-width="2"
+            />
+            <line
+              x1="593"
+              y1="20"
+              x2="605"
+              y2="20"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="593"
+              y1="20"
+              x2="593"
+              y2="32"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="645"
+              y1="20"
+              x2="633"
+              y2="20"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="645"
+              y1="20"
+              x2="645"
+              y2="32"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="593"
+              y1="74"
+              x2="605"
+              y2="74"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="593"
+              y1="74"
+              x2="593"
+              y2="62"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="645"
+              y1="74"
+              x2="633"
+              y2="74"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <line
+              x1="645"
+              y1="74"
+              x2="645"
+              y2="62"
+              stroke="#FF4080"
+              stroke-width="3"
+            />
+            <rect
+              x="593"
+              y="8"
+              width="72"
+              height="14"
+              rx="2.5"
+              fill="#FF4080"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.92"
+                dur=".3s"
+                begin="1.3s"
+                fill="freeze"
+              />
+            </rect>
+            <text
+              x="629"
+              y="18.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#1A0010"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;1"
+                dur=".3s"
+                begin="1.3s"
+                fill="freeze"
+              />
+              PERSON 0.99
+            </text>
+            <!-- BBOX BUILDING -->
+            <rect
+              x="716"
+              y="14"
+              width="108"
+              height="60"
+              rx="2"
+              fill="none"
+              stroke="#00C8FF"
+              stroke-width="2"
+            />
+            <line
+              x1="716"
+              y1="14"
+              x2="728"
+              y2="14"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="716"
+              y1="14"
+              x2="716"
+              y2="26"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="824"
+              y1="14"
+              x2="812"
+              y2="14"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="824"
+              y1="14"
+              x2="824"
+              y2="26"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="716"
+              y1="74"
+              x2="728"
+              y2="74"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="716"
+              y1="74"
+              x2="716"
+              y2="62"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="824"
+              y1="74"
+              x2="812"
+              y2="74"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <line
+              x1="824"
+              y1="74"
+              x2="824"
+              y2="62"
+              stroke="#00C8FF"
+              stroke-width="3"
+            />
+            <rect
+              x="716"
+              y="2"
+              width="84"
+              height="14"
+              rx="2.5"
+              fill="#00C8FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;.88"
+                dur=".3s"
+                begin="1.6s"
+                fill="freeze"
+              />
+            </rect>
+            <text
+              x="758"
+              y="12.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#001820"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;1"
+                dur=".3s"
+                begin="1.6s"
+                fill="freeze"
+              />
+              BUILDING 0.88
+            </text>
+
+            <!-- label -->
+            <rect x="0" y="56" width="360" height="26" fill="url(#lf02)" />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(0,200,255,0.48)"
+              letter-spacing="1"
+            >
+              02
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(180,230,255,0.85)"
+            >
+              Computer Vision Models
+            </text>
+          </svg>
+        </div>
+
+        <!-- ══ 03 · SPEECH ══ -->
+        <div class="card c3">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="lf03" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#080400" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#080400" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="1176" height="82" fill="#080400" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#FF8800"
+              opacity=".06"
+            />
+
+            <!-- WAVEFORM (wide, 40 bars) -->
+            <text
+              x="170"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(255,160,0,0.60)"
+            >
+              LIVE AUDIO WAVEFORM
+            </text>
+            <rect
+              x="6"
+              y="12"
+              width="328"
+              height="62"
+              rx="4"
+              fill="#0A0600"
+              stroke="#3A2000"
+              stroke-width=".8"
+            />
+            <line
+              x1="8"
+              y1="43"
+              x2="332"
+              y2="43"
+              stroke="#2A1800"
+              stroke-width=".6"
+            />
+            <!-- 38 animated bars -->
+            <rect
+              x="12"
+              y="30"
+              width="5"
+              height="26"
+              rx="1"
+              fill="#FF8800"
+              opacity=".82"
+            >
+              <animate
+                attributeName="height"
+                values="26;40;14;32;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".50s"
+              />
+              <animate
+                attributeName="y"
+                values="30;23;36;27;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".50s"
+              />
+            </rect>
+            <rect
+              x="20"
+              y="25"
+              width="5"
+              height="36"
+              rx="1"
+              fill="#FF9900"
+              opacity=".87"
+            >
+              <animate
+                attributeName="height"
+                values="36;20;48;28;36"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+              <animate
+                attributeName="y"
+                values="25;33;19;29;25"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+            </rect>
+            <rect
+              x="28"
+              y="20"
+              width="5"
+              height="46"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".92"
+            >
+              <animate
+                attributeName="height"
+                values="46;56;30;50;46"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="20;15;26;18;20"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="36"
+              y="28"
+              width="5"
+              height="30"
+              rx="1"
+              fill="#FF8800"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="30;44;18;36;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="28;21;34;25;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="44"
+              y="22"
+              width="5"
+              height="42"
+              rx="1"
+              fill="#FF9900"
+              opacity=".86"
+            >
+              <animate
+                attributeName="height"
+                values="42;28;54;34;42"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="22;29;16;26;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="52"
+              y="18"
+              width="5"
+              height="50"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".90"
+            >
+              <animate
+                attributeName="height"
+                values="50;62;36;56;50"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="18;12;25;15;18"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="60"
+              y="26"
+              width="5"
+              height="32"
+              rx="1"
+              fill="#FF8800"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="32;46;20;38;32"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+              <animate
+                attributeName="y"
+                values="26;20;33;22;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+            </rect>
+            <rect
+              x="68"
+              y="22"
+              width="5"
+              height="40"
+              rx="1"
+              fill="#FF9900"
+              opacity=".86"
+            >
+              <animate
+                attributeName="height"
+                values="40;26;52;32;40"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="22;30;17;27;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="76"
+              y="30"
+              width="5"
+              height="24"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".78"
+            >
+              <animate
+                attributeName="height"
+                values="24;38;14;30;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="30;24;36;28;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="84"
+              y="24"
+              width="5"
+              height="38"
+              rx="1"
+              fill="#FF8800"
+              opacity=".85"
+            >
+              <animate
+                attributeName="height"
+                values="38;22;50;30;38"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="24;32;18;28;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="92"
+              y="20"
+              width="5"
+              height="46"
+              rx="1"
+              fill="#FF9900"
+              opacity=".88"
+            >
+              <animate
+                attributeName="height"
+                values="46;58;30;52;46"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="20;14;28;17;20"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="100"
+              y="26"
+              width="5"
+              height="32"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="32;20;44;26;32"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+              <animate
+                attributeName="y"
+                values="26;33;21;30;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+            </rect>
+            <rect
+              x="108"
+              y="22"
+              width="5"
+              height="40"
+              rx="1"
+              fill="#FF8800"
+              opacity=".84"
+            >
+              <animate
+                attributeName="height"
+                values="40;52;24;46;40"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="22;16;31;19;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="116"
+              y="28"
+              width="5"
+              height="28"
+              rx="1"
+              fill="#FF9900"
+              opacity=".78"
+            >
+              <animate
+                attributeName="height"
+                values="28;14;40;22;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="28;36;23;32;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="124"
+              y="24"
+              width="5"
+              height="36"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".85"
+            >
+              <animate
+                attributeName="height"
+                values="36;48;22;42;36"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="24;18;31;21;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="132"
+              y="20"
+              width="5"
+              height="44"
+              rx="1"
+              fill="#FF8800"
+              opacity=".88"
+            >
+              <animate
+                attributeName="height"
+                values="44;56;28;50;44"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="20;14;28;17;20"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="140"
+              y="26"
+              width="5"
+              height="30"
+              rx="1"
+              fill="#FF9900"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="30;18;42;24;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+              <animate
+                attributeName="y"
+                values="26;32;22;29;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+            </rect>
+            <rect
+              x="148"
+              y="22"
+              width="5"
+              height="38"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".85"
+            >
+              <animate
+                attributeName="height"
+                values="38;50;22;44;38"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="22;16;30;19;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="156"
+              y="18"
+              width="5"
+              height="48"
+              rx="1"
+              fill="#FF8800"
+              opacity=".90"
+            >
+              <animate
+                attributeName="height"
+                values="48;60;34;54;48"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="18;12;26;15;18"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="164"
+              y="26"
+              width="5"
+              height="30"
+              rx="1"
+              fill="#FF9900"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="30;44;16;36;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="26;20;34;22;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="172"
+              y="30"
+              width="5"
+              height="22"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".74"
+            >
+              <animate
+                attributeName="height"
+                values="22;12;34;18;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="30;37;26;34;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="180"
+              y="26"
+              width="5"
+              height="30"
+              rx="1"
+              fill="#FF8800"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="30;42;18;36;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+              <animate
+                attributeName="y"
+                values="26;21;34;23;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+            </rect>
+            <rect
+              x="188"
+              y="20"
+              width="5"
+              height="44"
+              rx="1"
+              fill="#FF9900"
+              opacity=".88"
+            >
+              <animate
+                attributeName="height"
+                values="44;32;56;38;44"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="20;27;13;23;20"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="196"
+              y="16"
+              width="5"
+              height="52"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".92"
+            >
+              <animate
+                attributeName="height"
+                values="52;64;38;58;52"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="16;10;23;13;16"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="204"
+              y="24"
+              width="5"
+              height="36"
+              rx="1"
+              fill="#FF8800"
+              opacity=".84"
+            >
+              <animate
+                attributeName="height"
+                values="36;22;48;28;36"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="24;31;19;28;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="212"
+              y="28"
+              width="5"
+              height="28"
+              rx="1"
+              fill="#FF9900"
+              opacity=".78"
+            >
+              <animate
+                attributeName="height"
+                values="28;40;16;34;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="28;22;35;25;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="220"
+              y="22"
+              width="5"
+              height="40"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".86"
+            >
+              <animate
+                attributeName="height"
+                values="40;52;26;46;40"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+              <animate
+                attributeName="y"
+                values="22;16;29;19;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+            </rect>
+            <rect
+              x="228"
+              y="18"
+              width="5"
+              height="48"
+              rx="1"
+              fill="#FF8800"
+              opacity=".90"
+            >
+              <animate
+                attributeName="height"
+                values="48;36;60;42;48"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="18;25;11;22;18"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="236"
+              y="26"
+              width="5"
+              height="30"
+              rx="1"
+              fill="#FF9900"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="30;18;42;24;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="26;32;22;29;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="244"
+              y="30"
+              width="5"
+              height="22"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".74"
+            >
+              <animate
+                attributeName="height"
+                values="22;34;12;28;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="30;24;36;27;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="252"
+              y="24"
+              width="5"
+              height="36"
+              rx="1"
+              fill="#FF8800"
+              opacity=".84"
+            >
+              <animate
+                attributeName="height"
+                values="36;24;48;30;36"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="24;30;18;27;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="260"
+              y="20"
+              width="5"
+              height="44"
+              rx="1"
+              fill="#FF9900"
+              opacity=".88"
+            >
+              <animate
+                attributeName="height"
+                values="44;56;30;50;44"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+              <animate
+                attributeName="y"
+                values="20;14;28;17;20"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".55s"
+              />
+            </rect>
+            <rect
+              x="268"
+              y="26"
+              width="5"
+              height="32"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".82"
+            >
+              <animate
+                attributeName="height"
+                values="32;20;44;26;32"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+              <animate
+                attributeName="y"
+                values="26;32;22;29;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".60s"
+              />
+            </rect>
+            <rect
+              x="276"
+              y="28"
+              width="5"
+              height="28"
+              rx="1"
+              fill="#FF8800"
+              opacity=".76"
+            >
+              <animate
+                attributeName="height"
+                values="28;16;40;22;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+              <animate
+                attributeName="y"
+                values="28;35;23;32;28"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".65s"
+              />
+            </rect>
+            <rect
+              x="284"
+              y="22"
+              width="5"
+              height="40"
+              rx="1"
+              fill="#FF9900"
+              opacity=".86"
+            >
+              <animate
+                attributeName="height"
+                values="40;28;52;34;40"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="22;29;16;25;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <rect
+              x="292"
+              y="30"
+              width="5"
+              height="24"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".74"
+            >
+              <animate
+                attributeName="height"
+                values="24;14;36;18;24"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="30;37;25;34;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="300"
+              y="26"
+              width="5"
+              height="32"
+              rx="1"
+              fill="#FF8800"
+              opacity=".80"
+            >
+              <animate
+                attributeName="height"
+                values="32;44;18;38;32"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+              <animate
+                attributeName="y"
+                values="26;20;34;22;26"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".80s"
+              />
+            </rect>
+            <rect
+              x="308"
+              y="22"
+              width="5"
+              height="40"
+              rx="1"
+              fill="#FF9900"
+              opacity=".86"
+            >
+              <animate
+                attributeName="height"
+                values="40;28;52;34;40"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+              <animate
+                attributeName="y"
+                values="22;29;16;25;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".75s"
+              />
+            </rect>
+            <rect
+              x="316"
+              y="30"
+              width="5"
+              height="22"
+              rx="1"
+              fill="#FFAA00"
+              opacity=".72"
+            >
+              <animate
+                attributeName="height"
+                values="22;12;34;16;22"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+              <animate
+                attributeName="y"
+                values="30;37;25;34;30"
+                dur="1.1s"
+                repeatCount="indefinite"
+                begin=".70s"
+              />
+            </rect>
+            <!-- arrow -->
+            <line
+              x1="338"
+              y1="41"
+              x2="358"
+              y2="41"
+              stroke="#A05000"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="356,38 362,41 356,44"
+              fill="#A05000"
+              opacity=".6"
+            />
+
+            <!-- SPECTROGRAM (centre) -->
+            <text
+              x="490"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(255,160,0,0.60)"
+            >
+              SPECTROGRAM (FREQUENCY FEATURES)
+            </text>
+            <rect
+              x="366"
+              y="13"
+              width="348"
+              height="62"
+              rx="4"
+              fill="#060300"
+              stroke="#3A2000"
+              stroke-width=".8"
+            />
+            <rect
+              x="368"
+              y="15"
+              width="344"
+              height="8"
+              fill="#0A1828"
+              opacity=".9"
+            />
+            <rect
+              x="368"
+              y="24"
+              width="344"
+              height="8"
+              fill="#102030"
+              opacity=".9"
+            />
+            <rect
+              x="368"
+              y="33"
+              width="344"
+              height="8"
+              fill="#402010"
+              opacity=".9"
+            />
+            <rect
+              x="368"
+              y="42"
+              width="344"
+              height="8"
+              fill="#703020"
+              opacity=".9"
+            />
+            <rect
+              x="368"
+              y="51"
+              width="344"
+              height="8"
+              fill="#A06000"
+              opacity=".9"
+            />
+            <rect
+              x="368"
+              y="60"
+              width="344"
+              height="15"
+              fill="#D08000"
+              opacity=".9"
+            />
+            <!-- energy patches -->
+            <rect
+              x="376"
+              y="34"
+              width="40"
+              height="22"
+              rx="1.5"
+              fill="#FF8800"
+              opacity=".62"
+            />
+            <rect
+              x="424"
+              y="30"
+              width="52"
+              height="28"
+              rx="1.5"
+              fill="#FF9900"
+              opacity=".70"
+            />
+            <rect
+              x="490"
+              y="33"
+              width="36"
+              height="24"
+              rx="1.5"
+              fill="#FF8800"
+              opacity=".60"
+            />
+            <rect
+              x="546"
+              y="36"
+              width="28"
+              height="18"
+              rx="1.5"
+              fill="#FFAA00"
+              opacity=".55"
+            />
+            <rect
+              x="592"
+              y="28"
+              width="48"
+              height="32"
+              rx="1.5"
+              fill="#FF9900"
+              opacity=".68"
+            />
+            <rect
+              x="660"
+              y="34"
+              width="38"
+              height="22"
+              rx="1.5"
+              fill="#FF8800"
+              opacity=".60"
+            />
+            <rect
+              x="698"
+              y="30"
+              width="14"
+              height="28"
+              rx="1.5"
+              fill="#FFAA00"
+              opacity=".56"
+            />
+            <!-- scan line -->
+            <rect
+              x="368"
+              y="15"
+              width="5"
+              height="60"
+              rx="1"
+              fill="#FFCC44"
+              opacity="0"
+            >
+              <animate
+                attributeName="x"
+                values="368;706;368"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.60;0"
+                dur="2.5s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <!-- freq labels -->
+            <text
+              x="374"
+              y="20"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(100,150,255,0.50)"
+            >
+              High freq
+            </text>
+            <text
+              x="374"
+              y="70"
+              font-family="monospace"
+              font-size="6.5"
+              fill="rgba(255,160,40,0.55)"
+            >
+              Low freq (energy)
+            </text>
+            <!-- arrow -->
+            <line
+              x1="716"
+              y1="41"
+              x2="736"
+              y2="41"
+              stroke="#A05000"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".6"
+            />
+            <polygon
+              points="734,38 740,41 734,44"
+              fill="#A05000"
+              opacity=".6"
+            />
+
+            <!-- TRANSCRIPT OUTPUT -->
+            <text
+              x="960"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(255,160,0,0.60)"
+            >
+              TRANSCRIPT OUTPUT
+            </text>
+            <rect
+              x="744"
+              y="12"
+              width="424"
+              height="62"
+              rx="5"
+              fill="#080400"
+              stroke="#3A2000"
+              stroke-width=".9"
+            />
+            <text
+              x="754"
+              y="27"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(255,185,65,0.88)"
+            >
+              "The patient reported severe headaches
+            </text>
+            <text
+              x="754"
+              y="42"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(255,175,50,0.84)"
+            >
+              starting Tuesday morning, with accompanying
+            </text>
+            <text
+              x="754"
+              y="57"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(255,185,65,0.88)"
+            >
+              nausea and sensitivity to light..."
+            </text>
+            <rect
+              x="754"
+              y="61"
+              width="7"
+              height="9"
+              rx="1"
+              fill="#FF9900"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.9;0"
+                dur=".9s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </rect>
+            <text
+              x="990"
+              y="76"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(220,140,20,0.60)"
+            >
+              Confidence: 97.3% · Whisper · Azure STT · ElevenLabs TTS
+            </text>
+
+            <!-- label -->
+            <rect x="0" y="56" width="360" height="26" fill="url(#lf03)" />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(255,160,0,0.48)"
+              letter-spacing="1"
+            >
+              03
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(255,220,150,0.85)"
+            >
+              Speech Models (ASR &amp; TTS)
+            </text>
+          </svg>
+        </div>
+
+        <!-- ══ 04 · FINE-TUNED ══ -->
+        <div class="card c4">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <path id="ftpkt" d="M192 41 L240 41" />
+              <linearGradient id="lf04" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#030E08" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#030E08" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="1176" height="82" fill="#030E08" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#00D890"
+              opacity=".06"
+            />
+
+            <!-- BASE MODEL -->
+            <text
+              x="96"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,140,0.60)"
+            >
+              BASE MODEL
+            </text>
+            <rect
+              x="8"
+              y="13"
+              width="176"
+              height="62"
+              rx="5"
+              fill="#060E0A"
+              stroke="#1A4028"
+              stroke-width=".9"
+            />
+            <text
+              x="96"
+              y="34"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="14"
+              font-weight="bold"
+              fill="rgba(0,180,120,0.65)"
+            >
+              GPT-4
+            </text>
+            <text
+              x="96"
+              y="50"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,160,100,0.55)"
+            >
+              175 Billion Parameters
+            </text>
+            <text
+              x="96"
+              y="64"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,140,80,0.48)"
+            >
+              General Purpose
+            </text>
+            <!-- arrow + fine-tune label -->
+            <line
+              x1="186"
+              y1="41"
+              x2="240"
+              y2="41"
+              stroke="#1A8050"
+              stroke-width="1.2"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            />
+            <polygon
+              points="238,38 244,41 238,44"
+              fill="#1A8050"
+              opacity=".7"
+            />
+            <text
+              x="213"
+              y="36"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(0,200,140,0.55)"
+            >
+              LoRA
+            </text>
+            <text
+              x="213"
+              y="49"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(0,180,120,0.48)"
+            >
+              RLHF
+            </text>
+            <!-- animated packet -->
+            <circle r="5" fill="#30E880" opacity=".9">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin=".5s">
+                <mpath xlink:href="#ftpkt" />
+              </animateMotion>
+            </circle>
+            <circle r="3.5" fill="#20D060" opacity=".7">
+              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.3s">
+                <mpath xlink:href="#ftpkt" />
+              </animateMotion>
+            </circle>
+
+            <!-- FINE-TUNING BOX -->
+            <text
+              x="318"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,140,0.60)"
+            >
+              FINE-TUNING
+            </text>
+            <rect
+              x="248"
+              y="13"
+              width="140"
+              height="62"
+              rx="5"
+              fill="#060E0A"
+              stroke="#206040"
+              stroke-width=".9"
+            />
+            <text
+              x="318"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,140,0.70)"
+            >
+              Domain Dataset
+            </text>
+            <rect
+              x="258"
+              y="36"
+              width="120"
+              height="6"
+              rx="2"
+              fill="#0A2018"
+              stroke="#1A4030"
+              stroke-width=".4"
+            />
+            <rect
+              x="258"
+              y="36"
+              width="110"
+              height="6"
+              rx="2"
+              fill="#20C060"
+              opacity=".45"
+            />
+            <rect
+              x="258"
+              y="45"
+              width="120"
+              height="6"
+              rx="2"
+              fill="#0A2018"
+              stroke="#1A4030"
+              stroke-width=".4"
+            />
+            <rect
+              x="258"
+              y="45"
+              width="86"
+              height="6"
+              rx="2"
+              fill="#20C060"
+              opacity=".38"
+            />
+            <rect
+              x="258"
+              y="54"
+              width="120"
+              height="6"
+              rx="2"
+              fill="#0A2018"
+              stroke="#1A4030"
+              stroke-width=".4"
+            />
+            <rect
+              x="258"
+              y="54"
+              width="100"
+              height="6"
+              rx="2"
+              fill="#20C060"
+              opacity=".42"
+            />
+            <text
+              x="318"
+              y="69"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(0,160,100,0.55)"
+            >
+              SFT · DPO · RLHF
+            </text>
+
+            <!-- arrow -->
+            <line
+              x1="390"
+              y1="41"
+              x2="418"
+              y2="41"
+              stroke="#1A8050"
+              stroke-width="1.2"
+              stroke-dasharray="5,3"
+              opacity=".7"
+            />
+            <polygon
+              points="416,38 422,41 416,44"
+              fill="#1A8050"
+              opacity=".7"
+            />
+
+            <!-- DOMAIN MODEL PILLS (4, spread across right half) -->
+            <text
+              x="800"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(0,200,140,0.60)"
+            >
+              DOMAIN-SPECIFIC MODELS
+            </text>
+            <!-- Legal -->
+            <rect
+              x="426"
+              y="13"
+              width="168"
+              height="62"
+              rx="5"
+              fill="#0A1E12"
+              stroke="#208050"
+              stroke-width=".9"
+            />
+            <rect
+              x="428"
+              y="15"
+              width="8"
+              height="58"
+              rx="2"
+              fill="#30E880"
+              opacity=".78"
+            />
+            <text
+              x="520"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(60,230,150,0.92)"
+            >
+              ⚖ Legal-GPT
+            </text>
+            <text
+              x="520"
+              y="48"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(40,200,120,0.72)"
+            >
+              Contract analysis
+            </text>
+            <text
+              x="520"
+              y="63"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(30,180,100,0.55)"
+            >
+              99.2% clause accuracy
+            </text>
+            <circle cx="585" cy="41" r="3.5" fill="#20D060" opacity=".85">
+              <animate
+                attributeName="opacity"
+                values=".85;.4;.85"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".2s"
+              />
+            </circle>
+            <line
+              x1="598"
+              y1="41"
+              x2="614"
+              y2="41"
+              stroke="#1A8050"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".5"
+            />
+            <!-- Medical -->
+            <rect
+              x="602"
+              y="13"
+              width="168"
+              height="62"
+              rx="5"
+              fill="#0A1E12"
+              stroke="#208050"
+              stroke-width=".9"
+            />
+            <rect
+              x="604"
+              y="15"
+              width="8"
+              height="58"
+              rx="2"
+              fill="#20D870"
+              opacity=".72"
+            />
+            <text
+              x="694"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(50,220,140,0.90)"
+            >
+              🏥 Med-LLM
+            </text>
+            <text
+              x="694"
+              y="48"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(40,190,120,0.70)"
+            >
+              Clinical notes / SOAP
+            </text>
+            <text
+              x="694"
+              y="63"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(30,170,100,0.53)"
+            >
+              97.8% diagnostic acc.
+            </text>
+            <circle cx="771" cy="41" r="3.5" fill="#18C860" opacity=".85">
+              <animate
+                attributeName="opacity"
+                values=".85;.4;.85"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin=".6s"
+              />
+            </circle>
+            <line
+              x1="774"
+              y1="41"
+              x2="790"
+              y2="41"
+              stroke="#1A8050"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".5"
+            />
+            <!-- Finance -->
+            <rect
+              x="778"
+              y="13"
+              width="168"
+              height="62"
+              rx="5"
+              fill="#0A1E12"
+              stroke="#208050"
+              stroke-width=".9"
+            />
+            <rect
+              x="780"
+              y="15"
+              width="8"
+              height="58"
+              rx="2"
+              fill="#10C858"
+              opacity=".68"
+            />
+            <text
+              x="868"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(40,210,130,0.88)"
+            >
+              💹 Fin-LLM
+            </text>
+            <text
+              x="868"
+              y="48"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(35,185,110,0.68)"
+            >
+              Risk / compliance
+            </text>
+            <text
+              x="868"
+              y="63"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(28,165,95,0.52)"
+            >
+              Basel III · SOX ready
+            </text>
+            <circle cx="947" cy="41" r="3.5" fill="#08B850" opacity=".85">
+              <animate
+                attributeName="opacity"
+                values=".85;.4;.85"
+                dur="1.8s"
+                repeatCount="indefinite"
+                begin="1.0s"
+              />
+            </circle>
+            <line
+              x1="950"
+              y1="41"
+              x2="966"
+              y2="41"
+              stroke="#1A8050"
+              stroke-width="1"
+              stroke-dasharray="4,2"
+              opacity=".5"
+            />
+            <!-- Arabic -->
+            <rect
+              x="954"
+              y="13"
+              width="214"
+              height="62"
+              rx="5"
+              fill="#0A1E12"
+              stroke="#208050"
+              stroke-width=".9"
+            />
+            <rect
+              x="956"
+              y="15"
+              width="8"
+              height="58"
+              rx="2"
+              fill="#00B848"
+              opacity=".62"
+            />
+            <text
+              x="1064"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="10"
+              fill="rgba(30,200,120,0.86)"
+            >
+              🌍 AraLLM
+            </text>
+            <text
+              x="1064"
+              y="48"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(28,180,108,0.66)"
+            >
+              Arabic NLP · MENA
+            </text>
+            <text
+              x="1064"
+              y="63"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(24,160,96,0.50)"
+            >
+              MSA · dialect aware
+            </text>
+
+            <!-- label -->
+            <rect x="0" y="56" width="380" height="26" fill="url(#lf04)" />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(0,220,140,0.48)"
+              letter-spacing="1"
+            >
+              04
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(160,255,210,0.85)"
+            >
+              Fine-Tuned &amp; Domain-Specific Models
+            </text>
+          </svg>
+        </div>
+
+        <!-- ══ 05 · REASONING ══ -->
+        <div class="card c5">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="lf05" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#080008" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#080008" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="1176" height="82" fill="#080008" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#FF3060"
+              opacity=".06"
+            />
+
+            <!-- CHAIN OF THOUGHT — 5 steps spread wide -->
+            <text
+              x="588"
+              y="11"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(255,80,120,0.60)"
+            >
+              CHAIN-OF-THOUGHT REASONING — Explicit multi-step logic before
+              answering
+            </text>
+            <!-- step boxes: 5 of them, wide spacing -->
+            <!-- Step 1 -->
+            <rect
+              x="8"
+              y="15"
+              width="170"
+              height="52"
+              rx="5"
+              fill="#180818"
+              stroke="#6010A0"
+              stroke-width=".9"
+            />
+            <circle
+              cx="30"
+              cy="12"
+              r="7"
+              fill="#4010A0"
+              stroke="#8030D0"
+              stroke-width=".9"
+            />
+            <text
+              x="30"
+              y="16"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#C060FF"
+            >
+              1
+            </text>
+            <text
+              x="93"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(200,100,255,0.80)"
+            >
+              Understand the Prompt
+            </text>
+            <text
+              x="93"
+              y="45"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(180,80,235,0.68)"
+            >
+              Interpret / Plan
+            </text>
+            <text
+              x="93"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(170,70,225,0.62)"
+            >
+              + goals &amp; constraints
+            </text>
+            <line
+              x1="180"
+              y1="41"
+              x2="200"
+              y2="41"
+              stroke="#601090"
+              stroke-width="1.2"
+              stroke-dasharray="4,2"
+              opacity=".65"
+            />
+            <polygon
+              points="198,38 204,41 198,44"
+              fill="#601090"
+              opacity=".65"
+            />
+            <!-- Step 2 -->
+            <rect
+              x="206"
+              y="15"
+              width="170"
+              height="52"
+              rx="5"
+              fill="#180818"
+              stroke="#7015B0"
+              stroke-width=".9"
+            />
+            <circle
+              cx="228"
+              cy="12"
+              r="7"
+              fill="#5012B0"
+              stroke="#9038D8"
+              stroke-width=".9"
+            />
+            <text
+              x="228"
+              y="16"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#D070FF"
+            >
+              2
+            </text>
+            <text
+              x="291"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(210,110,255,0.80)"
+            >
+              VERIFY
+            </text>
+            <text
+              x="291"
+              y="45"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(190,90,245,0.68)"
+            >
+              Relevant facts
+            </text>
+            <text
+              x="291"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(180,80,235,0.62)"
+            >
+              &amp; known data
+            </text>
+            <line
+              x1="378"
+              y1="41"
+              x2="398"
+              y2="41"
+              stroke="#601090"
+              stroke-width="1.2"
+              stroke-dasharray="4,2"
+              opacity=".65"
+            />
+            <polygon
+              points="396,38 402,41 396,44"
+              fill="#601090"
+              opacity=".65"
+            />
+            <!-- Step 3 -->
+            <rect
+              x="404"
+              y="15"
+              width="170"
+              height="52"
+              rx="5"
+              fill="#180818"
+              stroke="#801AB0"
+              stroke-width=".9"
+            />
+            <circle
+              cx="426"
+              cy="12"
+              r="7"
+              fill="#6018C0"
+              stroke="#A040E0"
+              stroke-width=".9"
+            />
+            <text
+              x="426"
+              y="16"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#E080FF"
+            >
+              3
+            </text>
+            <text
+              x="489"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(220,120,255,0.80)"
+            >
+              REASON
+            </text>
+            <text
+              x="489"
+              y="45"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(200,100,250,0.68)"
+            >
+              Apply logical
+            </text>
+            <text
+              x="489"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(190,90,240,0.62)"
+            >
+              inference rules
+            </text>
+            <line
+              x1="576"
+              y1="41"
+              x2="596"
+              y2="41"
+              stroke="#601090"
+              stroke-width="1.2"
+              stroke-dasharray="4,2"
+              opacity=".65"
+            />
+            <polygon
+              points="594,38 600,41 594,44"
+              fill="#601090"
+              opacity=".65"
+            />
+            <!-- Step 4 -->
+            <rect
+              x="602"
+              y="15"
+              width="170"
+              height="52"
+              rx="5"
+              fill="#180818"
+              stroke="#9020C0"
+              stroke-width=".9"
+            />
+            <circle
+              cx="624"
+              cy="12"
+              r="7"
+              fill="#7020C0"
+              stroke="#B048F0"
+              stroke-width=".9"
+            />
+            <text
+              x="624"
+              y="16"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              fill="#F090FF"
+            >
+              4
+            </text>
+            <text
+              x="687"
+              y="32"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(230,130,255,0.80)"
+            >
+              EVALUATE
+            </text>
+            <text
+              x="687"
+              y="45"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(210,110,250,0.68)"
+            >
+              Check for
+            </text>
+            <text
+              x="687"
+              y="58"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(200,100,245,0.62)"
+            >
+              contradictions
+            </text>
+            <line
+              x1="774"
+              y1="41"
+              x2="794"
+              y2="41"
+              stroke="#601090"
+              stroke-width="1.2"
+              stroke-dasharray="4,2"
+              opacity=".65"
+            />
+            <polygon
+              points="792,38 798,41 792,44"
+              fill="#601090"
+              opacity=".65"
+            />
+            <!-- CONCLUSION box (wider) -->
+            <rect
+              x="800"
+              y="13"
+              width="370"
+              height="58"
+              rx="5"
+              fill="#120820"
+              stroke="#9020C0"
+              stroke-width="1.1"
+            />
+            <text
+              x="985"
+              y="26"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="9"
+              fill="rgba(220,120,255,0.68)"
+            >
+              CONCLUSION
+            </text>
+            <line
+              x1="806"
+              y1="30"
+              x2="1164"
+              y2="30"
+              stroke="#5010A0"
+              stroke-width=".6"
+              opacity=".5"
+            />
+            <text
+              x="810"
+              y="43"
+              font-family="monospace"
+              font-size="9.5"
+              fill="rgba(200,120,255,0.88)"
+            >
+              → GENERATE: RESPONSE ✓
+            </text>
+            <text
+              x="810"
+              y="56"
+              font-family="monospace"
+              font-size="9.5"
+              fill="rgba(190,110,245,0.82)"
+            ></text>
+            <circle
+              cx="1148"
+              cy="49"
+              r="11"
+              fill="#3010A0"
+              stroke="#8030D0"
+              stroke-width="1"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.88"
+                dur=".4s"
+                begin="2.2s"
+                fill="freeze"
+              />
+            </circle>
+            <text
+              x="1148"
+              y="53.5"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="13"
+              fill="#D080FF"
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;1"
+                dur=".4s"
+                begin="2.2s"
+                fill="freeze"
+              />
+              ✓
+            </text>
+            <!-- step pulse animation -->
+            <rect
+              x="8"
+              y="15"
+              width="170"
+              height="52"
+              rx="5"
+              fill="#FF3060"
+              opacity="0"
+            >
+              <animate
+                attributeName="x"
+                values="8;206;404;602;8"
+                dur="3.2s"
+                repeatCount="indefinite"
+                begin=".8s"
+                calcMode="discrete"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.09;0.09;0.09;0"
+                dur="3.2s"
+                repeatCount="indefinite"
+                begin=".8s"
+              />
+            </rect>
+            <text
+              x="985"
+              y="76"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(180,80,220,0.48)"
+            >
+              o1 · o3 · Claude 3.7 Sonnet · DeepSeek-R1
+            </text>
+            <!-- label -->
+            <rect x="0" y="56" width="340" height="26" fill="url(#lf05)" />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(255,80,120,0.48)"
+              letter-spacing="1"
+            >
+              05
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(255,200,230,0.85)"
+            >
+              Reasoning Models
+            </text>
+          </svg>
+        </div>
+
+        <!-- ══ 06 · PREDICTIVE ══ -->
+        <div class="card c6">
+          <div class="card-glow"></div>
+          <svg
+            viewBox="0 0 1176 82"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="lf06" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#080600" stop-opacity=".90" />
+                <stop offset="100%" stop-color="#080600" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="areaG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#FFB000" stop-opacity=".25" />
+                <stop offset="100%" stop-color="#FFB000" stop-opacity="0.02" />
+              </linearGradient>
+            </defs>
+            <rect width="1176" height="82" fill="#080600" />
+            <ellipse
+              cx="588"
+              cy="41"
+              rx="540"
+              ry="42"
+              fill="#FFD000"
+              opacity=".06"
+            />
+
+            <!-- axes -->
+            <line
+              x1="30"
+              y1="72"
+              x2="1140"
+              y2="72"
+              stroke="#2A1800"
+              stroke-width="1"
+            />
+            <line
+              x1="30"
+              y1="72"
+              x2="30"
+              y2="12"
+              stroke="#2A1800"
+              stroke-width="1"
+            />
+            <polygon points="1137,69 1143,72 1137,75" fill="#2A1800" />
+            <polygon points="27,15 30,10 33,15" fill="#2A1800" />
+            <text
+              x="1148"
+              y="75"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(200,160,0,0.45)"
+            >
+              time
+            </text>
+            <text
+              x="6"
+              y="13"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(200,160,0,0.45)"
+            >
+              value
+            </text>
+            <!-- grid -->
+            <line
+              x1="30"
+              y1="56"
+              x2="1140"
+              y2="56"
+              stroke="#2A1800"
+              stroke-width=".5"
+              opacity=".5"
+              stroke-dasharray="6,5"
+            />
+            <line
+              x1="30"
+              y1="40"
+              x2="1140"
+              y2="40"
+              stroke="#2A1800"
+              stroke-width=".5"
+              opacity=".5"
+              stroke-dasharray="6,5"
+            />
+            <line
+              x1="30"
+              y1="24"
+              x2="1140"
+              y2="24"
+              stroke="#2A1800"
+              stroke-width=".5"
+              opacity=".5"
+              stroke-dasharray="6,5"
+            />
+            <!-- y labels -->
+            <text
+              x="24"
+              y="58"
+              text-anchor="end"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.45)"
+            >
+              100K
+            </text>
+            <text
+              x="24"
+              y="42"
+              text-anchor="end"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.45)"
+            >
+              200K
+            </text>
+            <text
+              x="24"
+              y="26"
+              text-anchor="end"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.45)"
+            >
+              300K
+            </text>
+            <!-- x labels -->
+            <text
+              x="100"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.40)"
+            >
+              Jan
+            </text>
+            <text
+              x="240"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.40)"
+            >
+              Mar
+            </text>
+            <text
+              x="380"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.40)"
+            >
+              May
+            </text>
+            <text
+              x="520"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(180,140,0,0.40)"
+            >
+              Jul
+            </text>
+            <text
+              x="660"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(200,155,0,0.50)"
+            >
+              Sep ▼NOW
+            </text>
+            <text
+              x="800"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(220,170,0,0.58)"
+            >
+              Nov
+            </text>
+            <text
+              x="940"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(220,170,0,0.58)"
+            >
+              Jan+1
+            </text>
+            <text
+              x="1080"
+              y="80"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7"
+              fill="rgba(220,170,0,0.58)"
+            >
+              Mar+1
+            </text>
+
+            <!-- HISTORICAL DATA LINE (solid, amber) -->
+            <polyline
+              points="30,64 100,60 170,56 240,52 310,54 380,48 450,44 520,40 590,36 660,32"
+              stroke="#E0A000"
+              stroke-width="2.5"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <!-- area fill under historical -->
+            <polygon
+              points="30,72 30,64 100,60 170,56 240,52 310,54 380,48 450,44 520,40 590,36 660,32 660,72"
+              fill="url(#areaG)"
+            />
+            <!-- historical dots -->
+            <circle cx="30" cy="64" r="3.5" fill="#FFB000" opacity=".9" />
+            <circle cx="170" cy="56" r="3.5" fill="#FFB000" opacity=".9" />
+            <circle cx="310" cy="54" r="3.5" fill="#FFB000" opacity=".9" />
+            <circle cx="450" cy="44" r="3.5" fill="#FFB000" opacity=".9" />
+            <circle cx="590" cy="36" r="3.5" fill="#FFB000" opacity=".9" />
+
+            <!-- NOW divider -->
+            <line
+              x1="660"
+              y1="12"
+              x2="660"
+              y2="72"
+              stroke="#806000"
+              stroke-width="1.2"
+              stroke-dasharray="4,3"
+              opacity=".75"
+            />
+            <rect x="642" y="12" width="36" height="12" rx="2" fill="#3A2000" />
+            <text
+              x="660"
+              y="22"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="7.5"
+              fill="rgba(220,170,0,0.80)"
+            >
+              NOW
+            </text>
+
+            <!-- FORECAST LINE (dashed, bright gold) with CI band -->
+            <polygon
+              points="660,32 730,28 800,24 870,20 940,17 1010,14 1080,11 1140,9 1140,18 1080,20 1010,23 940,26 870,29 800,33 730,36 660,32"
+              fill="#FFD000"
+              opacity=".09"
+            />
+            <polyline
+              points="660,32 730,28 800,24 870,20 940,17 1010,14 1080,11 1140,9"
+              stroke="#FFD000"
+              stroke-width="2.2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-dasharray="8,4"
+              opacity=".90"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;-48"
+                dur="1.4s"
+                repeatCount="indefinite"
+                begin=".5s"
+              />
+            </polyline>
+            <!-- forecast dots -->
+            <circle cx="800" cy="24" r="3.5" fill="#FFD000" opacity="0">
+              <animate
+                attributeName="opacity"
+                values="0;0.9"
+                dur=".3s"
+                begin="1.0s"
+                fill="freeze"
+              />
+            </circle>
+            <circle cx="940" cy="17" r="3.5" fill="#FFD000" opacity="0">
+              <animate
+                attributeName="opacity"
+                values="0;0.9"
+                dur=".3s"
+                begin="1.4s"
+                fill="freeze"
+              />
+            </circle>
+            <circle cx="1080" cy="11" r="3.5" fill="#FFE040" opacity="0">
+              <animate
+                attributeName="opacity"
+                values="0;0.9"
+                dur=".3s"
+                begin="1.8s"
+                fill="freeze"
+              />
+            </circle>
+
+            <!-- model type pills (right) -->
+            <rect
+              x="820"
+              y="34"
+              width="100"
+              height="13"
+              rx="2.5"
+              fill="#1A0E00"
+              stroke="#806000"
+              stroke-width=".7"
+            />
+            <text
+              x="870"
+              y="44"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(225,170,0,0.85)"
+            >
+              Demand Forecasting
+            </text>
+            <rect
+              x="930"
+              y="34"
+              width="100"
+              height="13"
+              rx="2.5"
+              fill="#1A0E00"
+              stroke="#806000"
+              stroke-width=".7"
+            />
+            <text
+              x="980"
+              y="44"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(215,160,0,0.80)"
+            >
+              Predictions
+            </text>
+            <rect
+              x="1040"
+              y="34"
+              width="96"
+              height="13"
+              rx="2.5"
+              fill="#1A0E00"
+              stroke="#806000"
+              stroke-width=".7"
+            />
+            <text
+              x="1088"
+              y="44"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8.5"
+              fill="rgba(205,150,0,0.76)"
+            >
+              Anomaly Detections
+            </text>
+            <text
+              x="940"
+              y="60"
+              text-anchor="middle"
+              font-family="monospace"
+              font-size="8"
+              fill="rgba(180,140,0,0.55)"
+            >
+              XGBoost · LightGBM · LSTM · Prophet · TFT
+            </text>
+
+            <!-- label -->
+            <rect x="0" y="56" width="340" height="26" fill="url(#lf06)" />
+            <text
+              x="14"
+              y="74"
+              font-family="'Cinzel',serif"
+              font-size="10"
+              font-weight="600"
+              fill="rgba(255,200,0,0.48)"
+              letter-spacing="1"
+            >
+              06
+            </text>
+            <text
+              x="32"
+              y="74"
+              font-family="'Raleway',sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="rgba(255,230,150,0.85)"
+            >
+              Predictive Models
+            </text>
+          </svg>
+        </div>
+      </div>
+      <!-- end stack -->
+      <!-- FINALE -->
+      <div class="finale">
+        <div class="fline rev"></div>
+        <div class="fdiamond"></div>
+        <div class="fline rev" style="width: 28px"></div>
+        <div class="finale-text">
+          <strong>Soft Tech Group</strong> selects, fine-tunes and deploys the
+          <em>right model for every use case</em> — maximising accuracy, speed
+          and <em>measurable business impact.</em>
+        </div>
+        <div class="fline" style="width: 28px"></div>
+        <div class="fdiamond"></div>
+        <div class="fline"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 1 – Cover</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  /* ── FULL-BLEED BACKGROUND PHOTO ── */
+  .bg-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+
+  /* ── GRADIENT OVERLAYS ── */
+  .overlay-dark {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right,
+        rgba(0,0,0,0.93) 0%,
+        rgba(0,0,0,0.78) 38%,
+        rgba(0,0,0,0.30) 65%,
+        rgba(0,0,0,0.10) 100%
+      );
+  }
+
+  .overlay-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 45%;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  }
+
+  /* ── GOLD TOP BAR ── */
+  .gold-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      #8B6914 0%,
+      #D4A843 20%,
+      #F5D680 45%,
+      #EFC84A 55%,
+      #C9931C 80%,
+      #8B6914 100%
+    );
+    z-index: 10;
+  }
+
+  /* ── THIN GOLD BOTTOM RULE ── */
+  .gold-bar-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      #C9931C 15%,
+      #F5D680 50%,
+      #C9931C 85%,
+      transparent 100%
+    );
+    z-index: 10;
+  }
+
+  /* ── CORNER FILIGREE ── */
+  .corner {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    z-index: 8;
+  }
+  .corner-tl { top: 18px; left: 18px; border-top: 1.5px solid rgba(212,168,67,0.55); border-left: 1.5px solid rgba(212,168,67,0.55); }
+  .corner-tr { top: 18px; right: 18px; border-top: 1.5px solid rgba(212,168,67,0.55); border-right: 1.5px solid rgba(212,168,67,0.55); }
+  .corner-bl { bottom: 18px; left: 18px; border-bottom: 1.5px solid rgba(212,168,67,0.55); border-left: 1.5px solid rgba(212,168,67,0.55); }
+  .corner-br { bottom: 18px; right: 18px; border-bottom: 1.5px solid rgba(212,168,67,0.55); border-right: 1.5px solid rgba(212,168,67,0.55); }
+
+  /* ── CONTENT BLOCK ── */
+  .content {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 50px 60px 80px;
+    z-index: 5;
+  }
+
+  /* ── EYEBROW ── */
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .eyebrow-line {
+    flex: 0 0 48px;
+    height: 1px;
+    background: linear-gradient(to right, #C9A84C, transparent);
+  }
+
+  /* ── MAIN TITLE ── */
+  .title-block {
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.45s forwards;
+  }
+
+  .title-the {
+    font-family: 'EB Garamond', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 38px;
+    color: rgba(240,230,210,0.75);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    display: block;
+  }
+
+  .title-main {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 72px;
+    line-height: 0.92;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+    display: block;
+    text-shadow: 0 0 80px rgba(212,168,67,0.2);
+  }
+
+  .title-sub {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1;
+    color: #E8C96A;
+    letter-spacing: 0.02em;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ── ORNAMENT ── */
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0 26px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.65s forwards;
+  }
+
+  .orn-line {
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(to right, #C9A84C, transparent);
+  }
+
+  .orn-diamond {
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid #C9A84C;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  .orn-dot {
+    width: 4px;
+    height: 4px;
+    background: #C9A84C;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── SUBTITLE ── */
+  .subtitle {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: rgba(210,195,165,0.75);
+    line-height: 1.6;
+    margin-bottom: 36px;
+    max-width: 500px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  /* ── PILL TAGS ── */
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.7);
+    border: 1px solid rgba(201,168,76,0.22);
+    padding: 6px 14px;
+    border-radius: 1px;
+  }
+
+  /* ── ARABIC CALLIGRAPHY WATERMARK ── */
+  .calligraphy-watermark {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeIn 1.5s ease 0.3s forwards;
+  }
+
+  .calligraphy-watermark svg {
+    width: 580px;
+    height: 580px;
+    opacity: 0.12;
+    filter: drop-shadow(0 0 40px rgba(212,168,67,0.4));
+  }
+
+  /* ── BOTTOM CREDIT ── */
+  .credit {
+    position: absolute;
+    bottom: 22px;
+    right: 80px;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.35);
+    z-index: 6;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Background -->
+  <img class="bg-photo"
+    src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1600&q=95&fit=crop&crop=center"
+    alt="Dubai skyline at night" />
+
+  <!-- Overlays -->
+  <div class="overlay-dark"></div>
+  <div class="overlay-bottom"></div>
+
+  <!-- Bars & corners -->
+  <div class="gold-bar"></div>
+  <div class="gold-bar-bottom"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Arabic-inspired calligraphy watermark (SVG path art) -->
+  <div class="calligraphy-watermark">
+    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <!-- Decorative geometric / calligraphic mandala inspired by Islamic art -->
+      <g stroke="#D4A843" stroke-width="1.2" fill="none">
+        <!-- Outer ring -->
+        <circle cx="250" cy="250" r="230" stroke-width="0.8" opacity="0.6"/>
+        <circle cx="250" cy="250" r="210" stroke-width="0.4" opacity="0.4"/>
+
+        <!-- 8-point star -->
+        <polygon points="250,30 278,170 390,70 310,178 450,178 340,250 450,322 310,322 390,430 278,330 250,470 222,330 110,430 190,322 50,322 160,250 50,178 190,178 110,70 222,170"
+          stroke-width="1" opacity="0.7"/>
+
+        <!-- Inner geometric -->
+        <polygon points="250,100 340,190 340,310 250,400 160,310 160,190"
+          stroke-width="1.2" opacity="0.8"/>
+
+        <!-- Nested diamond -->
+        <polygon points="250,140 340,250 250,360 160,250"
+          stroke-width="1" opacity="0.6"/>
+
+        <!-- Radial lines -->
+        <line x1="250" y1="20" x2="250" y2="80" stroke-width="0.8"/>
+        <line x1="250" y1="420" x2="250" y2="480" stroke-width="0.8"/>
+        <line x1="20" y1="250" x2="80" y2="250" stroke-width="0.8"/>
+        <line x1="420" y1="250" x2="480" y2="250" stroke-width="0.8"/>
+        <line x1="71" y1="71" x2="114" y2="114" stroke-width="0.8"/>
+        <line x1="386" y1="386" x2="429" y2="429" stroke-width="0.8"/>
+        <line x1="429" y1="71" x2="386" y2="114" stroke-width="0.8"/>
+        <line x1="71" y1="429" x2="114" y2="386" stroke-width="0.8"/>
+
+        <!-- Centre jewel -->
+        <circle cx="250" cy="250" r="28" stroke-width="1.5" opacity="0.9"/>
+        <circle cx="250" cy="250" r="16" stroke-width="0.8" opacity="0.7"/>
+        <polygon points="250,232 258,250 250,268 242,250" stroke-width="1" opacity="0.9"/>
+
+        <!-- Outer petal ring -->
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(0 250 250)"   opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(45 250 250)"  opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(90 250 250)"  opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(135 250 250)" opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(180 250 250)" opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(225 250 250)" opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(270 250 250)" opacity="0.5"/>
+        <ellipse cx="250" cy="90"  rx="12" ry="28" transform="rotate(315 250 250)" opacity="0.5"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="eyebrow">
+      <span class="eyebrow-line"></span>
+      Soft Tech Group · Webinar 2026
+      <span class="eyebrow-line" style="background:linear-gradient(to left,#C9A84C,transparent)"></span>
+    </div>
+
+    <div class="title-block">
+      <span class="title-the">The</span>
+      <span class="title-main">AI Execution</span>
+      <span class="title-sub">Framework</span>
+    </div>
+
+    <div class="ornament">
+      <div class="orn-line"></div>
+      <div class="orn-dot"></div>
+      <div class="orn-diamond"></div>
+      <div class="orn-dot"></div>
+      <div class="orn-line" style="background:linear-gradient(to left,#C9A84C,transparent)"></div>
+    </div>
+
+    <p class="subtitle">
+      How Leaders Turn Intelligence Into Results —<br>
+      deploying AI across infrastructure, models,<br>
+      applications &amp; interfaces for real business impact.
+    </p>
+
+    <div class="tags">
+      <span class="tag">Infrastructure</span>
+      <span class="tag">Models</span>
+      <span class="tag">Applications</span>
+      <span class="tag">Interfaces</span>
+    </div>
+  </div>
+
+  <div class="credit">Soft Tech Group</div>
+</div>
+</body>
+</html>

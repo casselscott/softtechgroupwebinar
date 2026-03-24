@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 14 – Work With Us</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      .s {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        display: flex;
+        background: #f8f6f1;
+      }
+
+      /* LEFT HALF — cream/warm white */
+      .left {
+        width: 580px;
+        flex-shrink: 0;
+        background: #f8f6f1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 72px;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* RIGHT HALF — deep navy */
+      .right {
+        flex: 1;
+        background: #0d0e1a;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 64px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* gold 3px rule top */
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 90;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+
+      /* diagonal split line */
+      .split {
+        position: absolute;
+        top: 0;
+        left: 572px;
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          transparent 4%,
+          rgba(180, 150, 60, 0.35) 20%,
+          rgba(180, 150, 60, 0.5) 50%,
+          rgba(180, 150, 60, 0.35) 80%,
+          transparent 96%
+        );
+        z-index: 10;
+      }
+
+      /* LEFT content */
+      .eyebrow {
+        font-family: "Cinzel", serif;
+        font-size: 9px;
+        font-weight: 400;
+        letter-spacing: 0.55em;
+        text-transform: uppercase;
+        color: #b09040;
+        margin-bottom: 22px;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .headline {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 400;
+        font-size: 40px;
+        line-height: 1.08;
+        color: #0d0e1a;
+        opacity: 0;
+        animation: fadeUp 0.8s ease 0.25s forwards;
+      }
+      .headline strong {
+        font-weight: 700;
+        display: block;
+      }
+      .headline em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 20px;
+        color: #7a6030;
+        display: block;
+        margin-top: 10px;
+        letter-spacing: 0.01em;
+      }
+      .rule {
+        width: 48px;
+        height: 1px;
+        background: #b09040;
+        margin: 28px 0;
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.5s forwards;
+      }
+      .body-text {
+        font-family: "EB Garamond", serif;
+        font-size: 16px;
+        line-height: 1.75;
+        color: #4a4030;
+        font-weight: 400;
+        max-width: 400px;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.6s forwards;
+      }
+
+      /* who we partner with — 3 minimal lines */
+      .partners {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.8s forwards;
+      }
+      .partner-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .partner-num {
+        font-family: "Cinzel", serif;
+        font-size: 10px;
+        font-weight: 600;
+        color: #b09040;
+        letter-spacing: 0.1em;
+        min-width: 24px;
+      }
+      .partner-label {
+        font-family: "Raleway", sans-serif;
+        font-size: 13px;
+        font-weight: 300;
+        color: #0d0e1a;
+        letter-spacing: 0.04em;
+      }
+      .partner-dot {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #b09040;
+        flex-shrink: 0;
+      }
+
+      /* RIGHT content */
+      .right-inner {
+        opacity: 0;
+        animation: fadeIn 0.9s ease 0.4s forwards;
+      }
+
+      /* Large decorative number — background watermark */
+      .watermark {
+        position: absolute;
+        right: -30px;
+        bottom: -60px;
+        font-family: "Cinzel Decorative", serif;
+        font-size: 320px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.025);
+        line-height: 1;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* Right side: vertical stack of 3 service lines */
+      .service-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 48px;
+      }
+      .service-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 22px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        opacity: 0;
+      }
+      .service-item:first-child {
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      .service-item:nth-child(1) {
+        animation: slideR 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+      }
+      .service-item:nth-child(2) {
+        animation: slideR 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.72s forwards;
+      }
+      .service-item:nth-child(3) {
+        animation: slideR 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.89s forwards;
+      }
+      .service-item:nth-child(4) {
+        animation: slideR 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.06s forwards;
+      }
+
+      .svc-num {
+        font-family: "Cinzel", serif;
+        font-size: 11px;
+        font-weight: 400;
+        color: #c9a84c;
+        letter-spacing: 0.12em;
+        min-width: 28px;
+        padding-top: 2px;
+      }
+      .svc-content {
+      }
+      .svc-title {
+        font-family: "Cinzel", serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: #f2efe4;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+      }
+      .svc-desc {
+        font-family: "Raleway", sans-serif;
+        font-size: 11px;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.42);
+        letter-spacing: 0.02em;
+        line-height: 1.5;
+      }
+
+      /* CTA area */
+      .cta-area {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 1.3s forwards;
+      }
+      .btn-main {
+        font-family: "Cinzel", serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #0d0e1a;
+        background: #c9a84c;
+        border: none;
+        padding: 14px 30px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-main::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.18),
+          transparent
+        );
+        transform: translateX(-100%);
+        animation: shimmer 3s ease-in-out infinite 1.8s;
+      }
+      .btn-ghost {
+        font-family: "Cinzel", serif;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(201, 168, 76, 0.7);
+        background: transparent;
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        padding: 13px 24px;
+        cursor: pointer;
+      }
+      .cta-sep {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.22);
+      }
+
+      /* right side small logo area top */
+      .right-top {
+        position: absolute;
+        top: 32px;
+        right: 64px;
+        text-align: right;
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.3s forwards;
+      }
+      .logo-name {
+        font-family: "Cinzel", serif;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(201, 168, 76, 0.6);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+      }
+      .logo-sub {
+        font-family: "Raleway", sans-serif;
+        font-size: 9px;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.2);
+        letter-spacing: 0.15em;
+        margin-top: 2px;
+      }
+
+      /* thin horizontal rule right side */
+      .right-rule {
+        position: absolute;
+        top: 72px;
+        left: 64px;
+        right: 64px;
+        height: 1px;
+        background: rgba(201, 168, 76, 0.15);
+        opacity: 0;
+        animation: fadeIn 0.5s ease 0.6s forwards;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideR {
+        from {
+          opacity: 0;
+          transform: translateX(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        60% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="s">
+      <div class="top-gold"></div>
+      <div class="split"></div>
+
+      <!-- LEFT -->
+      <div class="left">
+        <span class="eyebrow">Strategic Partnership</span>
+        <h1 class="headline">
+          <strong>Are you looking to<br />Operationalise<br />AI?</strong>
+          <em>Why not build it with Soft Tech Group.</em>
+        </h1>
+        <div class="rule"></div>
+        <p class="body-text">
+          Soft Tech Group designs, builds and deploys production-ready AI — from
+          infrastructure to interface.
+        </p>
+        <div class="partners">
+          <div class="partner-row">
+            <span class="partner-num">01</span>
+            <span class="partner-dot"></span>
+            <span class="partner-label"
+              >Enterprises operationalising AI at scale</span
+            >
+          </div>
+          <div class="partner-row">
+            <span class="partner-num">02</span>
+            <span class="partner-dot"></span>
+            <span class="partner-label"
+              >Startups building AI-powered products</span
+            >
+          </div>
+          <div class="partner-row">
+            <span class="partner-num">03</span>
+            <span class="partner-dot"></span>
+            <span class="partner-label"
+              >Technology teams needing expert delivery</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right">
+        <div class="watermark">AI</div>
+        <div class="right-top">
+          <div class="logo-name">Soft Tech Group</div>
+          <div class="logo-sub">AI · Infrastructure · Applications</div>
+        </div>
+        <div class="right-rule"></div>
+
+        <div class="right-inner">
+          <div class="service-list">
+            <div class="service-item">
+              <span class="svc-num">01</span>
+              <div class="svc-content">
+                <div class="svc-title">Infrastructure &amp; Models</div>
+                <div class="svc-desc">
+                  Custom LLMs · fine-tuning · vector databases · GPU
+                  infrastructure
+                </div>
+              </div>
+            </div>
+            <div class="service-item">
+              <span class="svc-num">02</span>
+              <div class="svc-content">
+                <div class="svc-title">Orchestration &amp; Agents</div>
+                <div class="svc-desc">
+                  LangChain · MCP · RAG pipelines · agentic workflows
+                </div>
+              </div>
+            </div>
+            <div class="service-item">
+              <span class="svc-num">03</span>
+              <div class="svc-content">
+                <div class="svc-title">Applications &amp; Interfaces</div>
+                <div class="svc-desc">
+                  Chat interfaces · dashboards · automation · web &amp; mobile
+                </div>
+              </div>
+            </div>
+            <div class="service-item">
+              <span class="svc-num">04</span>
+              <div class="svc-content">
+                <div class="svc-title">Integration &amp; Deployment</div>
+                <div class="svc-desc">
+                  APIs · ERP · CRM · 99.9% SLA · production monitoring
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-area">
+            <button class="btn-main">Schedule Consultation</button>
+            <span class="cta-sep">—</span>
+            <button class="btn-ghost">View Case Studies</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

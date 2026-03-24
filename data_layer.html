@@ -1,0 +1,2963 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 5 – Data Layer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;1,400&family=Raleway:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+        background: #020810;
+      }
+
+      .slide {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+        background: #020810;
+        font-family: "Raleway", sans-serif;
+      }
+
+      .top-gold {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 50;
+        background: linear-gradient(
+          90deg,
+          #7a5810,
+          #c9921c 22%,
+          #f5d470 50%,
+          #c9921c 78%,
+          #7a5810
+        );
+      }
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(30, 70, 160, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(30, 70, 160, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .bg-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 70% 60% at 50% 55%,
+          rgba(0, 100, 200, 0.1) 0%,
+          transparent 65%
+        );
+      }
+
+      /* ── HEADER ── */
+      .header {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s ease 0.1s forwards;
+      }
+      .layer-badge {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 4px;
+      }
+      .badge-line {
+        display: inline-block;
+        width: 22px;
+        height: 1px;
+        background: #c9a84c;
+      }
+      .slide-title {
+        font-family: "Cinzel Decorative", serif;
+        font-weight: 900;
+        font-size: 24px;
+        line-height: 1.05;
+        color: #f2efe8;
+      }
+      .slide-title em {
+        font-family: "EB Garamond", serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 16px;
+        color: #7eb3f5;
+        display: block;
+        margin-top: 1px;
+      }
+      .header-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 11px;
+        line-height: 1.6;
+        color: rgba(175, 160, 128, 0.55);
+        max-width: 340px;
+        text-align: right;
+      }
+      .header-desc b {
+        color: rgba(200, 185, 155, 0.76);
+        font-weight: 500;
+      }
+
+      .h-rule {
+        position: absolute;
+        top: 96px;
+        left: 52px;
+        right: 52px;
+        height: 1px;
+        z-index: 10;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.3) 20%,
+          rgba(201, 168, 76, 0.5) 50%,
+          rgba(201, 168, 76, 0.3) 80%,
+          transparent
+        );
+        opacity: 0;
+        animation: fadeIn 0.6s ease 0.4s forwards;
+      }
+
+      /* ── CARD STACK — 5 rows ── */
+      /* 720 - 96(header) - 8(top margin) - 58(finale) - 6(bottom margin) = 552px ÷ 5 = 110.4px per card */
+      /* 5 cards × 110px + 4 gaps × 4px = 566px → fits in 552... use 106px cards + 4px gaps */
+      .card-stack {
+        position: absolute;
+        top: 105px;
+        left: 52px;
+        right: 52px;
+        bottom: 70px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      /* Each card: full width, fixed height, horizontal layout */
+      .card {
+        flex: 1; /* equal height shares */
+        border-radius: 10px;
+        border: 1px solid rgba(100, 160, 255, 0.15);
+        background: linear-gradient(160deg, #07101e 0%, #040a14 100%);
+        display: flex;
+        flex-direction: row; /* HORIZONTAL: visual | divider | text */
+        overflow: hidden;
+        position: relative;
+        opacity: 0;
+        min-height: 0;
+      }
+
+      .card.c1 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+      }
+      .card.c2 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.65s forwards;
+      }
+      .card.c3 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.9s forwards;
+      }
+      .card.c4 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.15s forwards;
+      }
+      .card.c5 {
+        animation: cardSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.4s forwards;
+      }
+
+      /* glow flash */
+      .card-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        z-index: 20;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .card.c1 .card-glow {
+        animation: glowFlash 0.55s ease 0.8s forwards;
+        border: 1.5px solid rgba(0, 200, 255, 0.65);
+      }
+      .card.c2 .card-glow {
+        animation: glowFlash 0.55s ease 1.05s forwards;
+        border: 1.5px solid rgba(50, 220, 120, 0.65);
+      }
+      .card.c3 .card-glow {
+        animation: glowFlash 0.55s ease 1.3s forwards;
+        border: 1.5px solid rgba(255, 200, 50, 0.6);
+      }
+      .card.c4 .card-glow {
+        animation: glowFlash 0.55s ease 1.55s forwards;
+        border: 1.5px solid rgba(130, 80, 255, 0.65);
+      }
+      .card.c5 .card-glow {
+        animation: glowFlash 0.55s ease 1.8s forwards;
+        border: 1.5px solid rgba(0, 220, 160, 0.65);
+      }
+
+      /* LEFT: SVG visual — fixed width 340px */
+      .card-vis {
+        flex: 0 0 340px;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      .card-vis svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* CENTRE: colour accent stripe */
+      .card-stripe {
+        flex: 0 0 3px;
+        height: 100%;
+        opacity: 0.7;
+      }
+
+      /* RIGHT: text content — fills remaining width */
+      .card-content {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 18px 0 14px;
+        gap: 16px;
+      }
+
+      /* number badge */
+      .card-num-badge {
+        flex: 0 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-num-badge span {
+        font-family: "Cinzel", serif;
+        font-size: 18px;
+        font-weight: 600;
+        opacity: 0.22;
+        line-height: 1;
+      }
+
+      /* text block */
+      .card-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .card-title {
+        font-family: "Raleway", sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        color: #c8dcff;
+        line-height: 1.2;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .card-desc {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 10.5px;
+        color: rgba(160, 185, 230, 0.65);
+        line-height: 1.5;
+        display: block;
+      }
+
+      /* bullet tags row */
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 6px;
+      }
+      .tag {
+        font-family: "Cinzel", serif;
+        font-size: 7px;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 3px;
+      }
+
+      /* ── FINALE ── */
+      .finale {
+        position: absolute;
+        bottom: 8px;
+        left: 52px;
+        right: 52px;
+        height: 54px;
+        z-index: 20;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          rgba(10, 20, 50, 0) 0%,
+          rgba(14, 28, 64, 0.92) 12%,
+          rgba(18, 34, 72, 0.96) 50%,
+          rgba(14, 28, 64, 0.92) 88%,
+          rgba(10, 20, 50, 0) 100%
+        );
+        border: 1px solid rgba(201, 168, 76, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        animation: finaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 2.2s forwards;
+      }
+      .finale::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(201, 168, 76, 0.05) 50%,
+          transparent 100%
+        );
+      }
+      .fdiamond {
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid #c9a84c;
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .fline {
+        height: 1px;
+        width: 50px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+        flex-shrink: 0;
+      }
+      .fline.rev {
+        background: linear-gradient(
+          to left,
+          transparent,
+          rgba(201, 168, 76, 0.5)
+        );
+      }
+      .finale-text {
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 12.5px;
+        color: rgba(220, 205, 175, 0.84);
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+      .finale-text strong {
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: #c9a84c;
+        letter-spacing: 0.08em;
+      }
+      .finale-text em {
+        font-style: italic;
+        color: rgba(180, 210, 255, 0.8);
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes cardSlide {
+        0% {
+          opacity: 0;
+          transform: translateX(-28px);
+          filter: brightness(0.5);
+        }
+        60% {
+          opacity: 1;
+          filter: brightness(1.12);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+          filter: brightness(1);
+        }
+      }
+      @keyframes glowFlash {
+        0% {
+          opacity: 0;
+        }
+        30% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes finaleIn {
+        0% {
+          opacity: 0;
+          transform: translateY(14px) scaleX(0.93);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(-2px) scaleX(1.01);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scaleX(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="top-gold"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+
+      <div class="header">
+        <div>
+          <div class="layer-badge">
+            <span class="badge-line"></span>Layer 02 · Data<span
+              class="badge-line"
+              style="background: linear-gradient(to left, #c9a84c, transparent)"
+            ></span>
+          </div>
+          <h2 class="slide-title">The Data Layer<em>AI runs on data</em></h2>
+        </div>
+        <div class="header-desc">
+          <b>High-quality, structured data</b> is the fuel. Each component
+          ensures data is clean, labelled and retrieval-ready before it reaches
+          any model.
+        </div>
+      </div>
+      <div class="h-rule"></div>
+
+      <div class="card-stack">
+        <!-- ══════════════════════
+         01 · DATA PIPELINES
+    ══════════════════════ -->
+        <div class="card c1">
+          <div class="card-glow"></div>
+
+          <!-- VISUAL: animated node flow diagram -->
+          <div class="card-vis">
+            <svg
+              viewBox="0 0 340 108"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <path id="pA" d="M58 54 Q120 54 148 54" />
+                <path id="pB" d="M58 80 Q120 80 148 80" />
+                <path id="pC" d="M200 54 Q258 54 278 54" />
+                <radialGradient id="ng1" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00CCFF" stop-opacity=".55" />
+                  <stop offset="100%" stop-color="#0040A0" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="og1" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00D890" stop-opacity=".55" />
+                  <stop offset="100%" stop-color="#004040" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="340" height="108" fill="#030C18" />
+              <ellipse
+                cx="170"
+                cy="54"
+                rx="140"
+                ry="50"
+                fill="#0040A0"
+                opacity=".07"
+              />
+
+              <!-- source A top -->
+              <circle
+                cx="38"
+                cy="34"
+                r="20"
+                fill="#081828"
+                stroke="#1A5090"
+                stroke-width="1.2"
+              />
+              <circle
+                cx="38"
+                cy="34"
+                r="13"
+                fill="#06101E"
+                stroke="#2070C0"
+                stroke-width=".8"
+              />
+              <circle
+                cx="38"
+                cy="34"
+                r="6"
+                fill="#0E2040"
+                stroke="#3080E0"
+                stroke-width=".6"
+              />
+              <circle cx="38" cy="34" r="3" fill="#60B0FF" opacity=".9" />
+              <circle cx="38" cy="34" r="20" fill="url(#ng1)" opacity=".4" />
+              <text
+                x="38"
+                y="66"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(70,155,255,0.65)"
+              >
+                SRC A
+              </text>
+
+              <!-- source B bottom -->
+              <circle
+                cx="38"
+                cy="80"
+                r="15"
+                fill="#081828"
+                stroke="#1A5090"
+                stroke-width="1"
+              />
+              <circle
+                cx="38"
+                cy="80"
+                r="9"
+                fill="#06101E"
+                stroke="#2070C0"
+                stroke-width=".7"
+              />
+              <circle cx="38" cy="80" r="4" fill="#60B0FF" opacity=".8" />
+              <circle cx="38" cy="80" r="15" fill="url(#ng1)" opacity=".35" />
+              <text
+                x="38"
+                y="104"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(70,150,250,0.60)"
+              >
+                SRC B
+              </text>
+
+              <!-- transform box -->
+              <rect
+                x="148"
+                y="34"
+                width="52"
+                height="40"
+                rx="7"
+                fill="#0A1E3C"
+                stroke="#1A5090"
+                stroke-width="1"
+              />
+              <rect
+                x="153"
+                y="39"
+                width="42"
+                height="30"
+                rx="5"
+                fill="#071428"
+              />
+              <circle
+                cx="170"
+                cy="54"
+                r="8"
+                fill="none"
+                stroke="#2878C0"
+                stroke-width="1.4"
+              />
+              <circle cx="170" cy="54" r="3.5" fill="#1848A0" opacity=".7" />
+              <rect
+                x="168"
+                y="44"
+                width="4"
+                height="4"
+                rx=".5"
+                fill="#2878C0"
+                opacity=".85"
+              />
+              <rect
+                x="168"
+                y="62"
+                width="4"
+                height="4"
+                rx=".5"
+                fill="#2878C0"
+                opacity=".85"
+              />
+              <rect
+                x="158"
+                y="52"
+                width="4"
+                height="4"
+                rx=".5"
+                fill="#2878C0"
+                opacity=".85"
+              />
+              <rect
+                x="178"
+                y="52"
+                width="4"
+                height="4"
+                rx=".5"
+                fill="#2878C0"
+                opacity=".85"
+              />
+              <text
+                x="174"
+                y="86"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(60,140,220,0.60)"
+              >
+                TRANSFORM
+              </text>
+
+              <!-- output -->
+              <circle
+                cx="298"
+                cy="54"
+                r="22"
+                fill="#081A20"
+                stroke="#1A6050"
+                stroke-width="1.2"
+              />
+              <circle
+                cx="298"
+                cy="54"
+                r="15"
+                fill="#061018"
+                stroke="#228060"
+                stroke-width=".8"
+              />
+              <circle
+                cx="298"
+                cy="54"
+                r="7"
+                fill="#103828"
+                stroke="#30A070"
+                stroke-width=".6"
+              />
+              <circle cx="298" cy="54" r="3" fill="#30D090" opacity=".9" />
+              <circle cx="298" cy="54" r="22" fill="url(#og1)" opacity=".4" />
+              <text
+                x="298"
+                y="88"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(40,185,130,0.65)"
+              >
+                OUTPUT
+              </text>
+
+              <!-- pipes -->
+              <path
+                d="M58 34 Q120 34 148 44"
+                stroke="#0E3060"
+                stroke-width="7"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M58 34 Q120 34 148 44"
+                stroke="#1A5090"
+                stroke-width="5"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M58 34 Q120 34 148 44"
+                stroke="rgba(100,180,255,0.18)"
+                stroke-width=".8"
+                fill="none"
+              />
+
+              <path
+                d="M53 80 Q120 80 148 64"
+                stroke="#0E3060"
+                stroke-width="6"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M53 80 Q120 80 148 64"
+                stroke="#1A5090"
+                stroke-width="4.5"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M53 80 Q120 80 148 64"
+                stroke="rgba(100,180,255,0.15)"
+                stroke-width=".8"
+                fill="none"
+              />
+
+              <path
+                d="M200 54 Q248 54 276 54"
+                stroke="#0E3A50"
+                stroke-width="7"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M200 54 Q248 54 276 54"
+                stroke="#186870"
+                stroke-width="5"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path
+                d="M200 54 Q248 54 276 54"
+                stroke="rgba(40,200,160,0.18)"
+                stroke-width=".8"
+                fill="none"
+              />
+
+              <!-- animated packets -->
+              <circle r="4.5" fill="#00DDFF" opacity=".9">
+                <animateMotion dur="1.8s" repeatCount="indefinite" begin=".8s">
+                  <mpath xlink:href="#pA" />
+                </animateMotion>
+              </circle>
+              <circle r="3.5" fill="#00AAEE" opacity=".7">
+                <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.6s">
+                  <mpath xlink:href="#pA" />
+                </animateMotion>
+              </circle>
+              <circle r="4.5" fill="#00DDCC" opacity=".9">
+                <animateMotion dur="2.0s" repeatCount="indefinite" begin="1.0s">
+                  <mpath xlink:href="#pB" />
+                </animateMotion>
+              </circle>
+              <circle r="4.5" fill="#30D890" opacity=".9">
+                <animateMotion dur="1.3s" repeatCount="indefinite" begin="1.2s">
+                  <mpath xlink:href="#pC" />
+                </animateMotion>
+              </circle>
+              <circle r="3.5" fill="#20C070" opacity=".7">
+                <animateMotion dur="1.3s" repeatCount="indefinite" begin="2.0s">
+                  <mpath xlink:href="#pC" />
+                </animateMotion>
+              </circle>
+            </svg>
+          </div>
+
+          <!-- colour stripe -->
+          <div
+            class="card-stripe"
+            style="background: linear-gradient(to bottom, #00c8ff, #0060a0)"
+          ></div>
+
+          <!-- TEXT -->
+          <div class="card-content">
+            <div class="card-num-badge">
+              <span style="color: #00c8ff">01</span>
+            </div>
+            <div class="card-text">
+              <span class="card-title">Data Pipelines</span>
+              <span class="card-desc"
+                >Ingest, transform and load data across sources using ETL / ELT
+                workflows. Supports streaming, batch and real-time processing —
+                connecting raw data sources to clean, structured outputs in the
+                data lake or warehouse.</span
+              >
+              <div class="card-tags">
+                <span
+                  class="tag"
+                  style="
+                    color: #40b0ff;
+                    border: 1px solid rgba(64, 176, 255, 0.28);
+                    background: rgba(64, 176, 255, 0.07);
+                  "
+                  >ETL / ELT</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #40b0ff;
+                    border: 1px solid rgba(64, 176, 255, 0.25);
+                    background: rgba(64, 176, 255, 0.07);
+                  "
+                  >Streaming</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #40b0ff;
+                    border: 1px solid rgba(64, 176, 255, 0.25);
+                    background: rgba(64, 176, 255, 0.07);
+                  "
+                  >Batch</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #40b0ff;
+                    border: 1px solid rgba(64, 176, 255, 0.25);
+                    background: rgba(64, 176, 255, 0.07);
+                  "
+                  >Real-time</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #40b0ff;
+                    border: 1px solid rgba(64, 176, 255, 0.22);
+                    background: rgba(64, 176, 255, 0.07);
+                  "
+                  >Kafka · Spark · Airflow</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════
+         02 · DATA CLEANING
+    ══════════════════════ -->
+        <div class="card c2">
+          <div class="card-glow"></div>
+          <div class="card-vis">
+            <svg
+              viewBox="0 0 340 108"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <rect width="340" height="108" fill="#030E0A" />
+              <ellipse
+                cx="170"
+                cy="54"
+                rx="140"
+                ry="50"
+                fill="#20C060"
+                opacity=".06"
+              />
+
+              <!-- RAW column label -->
+              <text
+                x="60"
+                y="14"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="9"
+                font-weight="bold"
+                fill="rgba(220,80,40,0.80)"
+              >
+                RAW DATA
+              </text>
+              <!-- raw rows -->
+              <rect
+                x="8"
+                y="18"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#1A0C08"
+                stroke="#3A1808"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="27"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(255,100,60,0.80)"
+              >
+                NULL ██ 1972-xx ▓
+              </text>
+              <rect
+                x="8"
+                y="31"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#1A0C08"
+                stroke="#3A1808"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="40"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(220,80,40,0.75)"
+              >
+                &lt;&lt;err&gt;&gt; N/A ░ ??
+              </text>
+              <rect
+                x="8"
+                y="44"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#201408"
+                stroke="#4A2408"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="53"
+                font-family="monospace"
+                font-size="8"
+                fill="#FF6030"
+              >
+                ⚠ DUPLICATE REC
+              </text>
+              <rect
+                x="8"
+                y="57"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#1A0C08"
+                stroke="#3A1808"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="66"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(255,100,60,0.75)"
+              >
+                NaN ░░ &lt;null&gt; ██
+              </text>
+              <rect
+                x="8"
+                y="70"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#201408"
+                stroke="#4A2408"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="79"
+                font-family="monospace"
+                font-size="8"
+                fill="#FF6030"
+              >
+                ⚠ TYPE MISMATCH
+              </text>
+              <rect
+                x="8"
+                y="83"
+                width="100"
+                height="11"
+                rx="1.5"
+                fill="#1A0C08"
+                stroke="#3A1808"
+                stroke-width=".4"
+              />
+              <text
+                x="12"
+                y="92"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(220,80,40,0.70)"
+              >
+                -999 ░ malformed
+              </text>
+              <!-- scan line -->
+              <rect
+                x="8"
+                y="18"
+                width="100"
+                height="5"
+                rx="1"
+                fill="#00FF60"
+                opacity="0"
+              >
+                <animate
+                  attributeName="y"
+                  values="18;86;18"
+                  dur="2.5s"
+                  repeatCount="indefinite"
+                  begin="1.0s"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.14;0"
+                  dur="2.5s"
+                  repeatCount="indefinite"
+                  begin="1.0s"
+                />
+              </rect>
+
+              <!-- FUNNEL -->
+              <polygon
+                points="122,28 148,18 148,38"
+                fill="#1A3428"
+                stroke="#20A060"
+                stroke-width=".8"
+              />
+              <polygon
+                points="122,28 96,18  96,38"
+                fill="#1A3428"
+                stroke="#20A060"
+                stroke-width=".8"
+              />
+              <polygon
+                points="96,18 148,18 142,38 102,38"
+                fill="#122820"
+                stroke="#188050"
+                stroke-width=".8"
+              />
+              <polygon
+                points="102,38 142,38 138,52 106,52"
+                fill="#0E2018"
+                stroke="#146040"
+                stroke-width=".7"
+              />
+              <polygon
+                points="106,52 138,52 122,68"
+                fill="#0A1810"
+                stroke="#102C30"
+                stroke-width=".7"
+              />
+              <text
+                x="122"
+                y="12"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,180,100,0.65)"
+              >
+                FILTER
+              </text>
+              <line
+                x1="102"
+                y1="25"
+                x2="142"
+                y2="25"
+                stroke="#30A060"
+                stroke-width=".7"
+                opacity=".6"
+              />
+              <line
+                x1="106"
+                y1="31"
+                x2="138"
+                y2="31"
+                stroke="#30A060"
+                stroke-width=".6"
+                opacity=".5"
+              />
+
+              <!-- CLEAN column -->
+              <text
+                x="242"
+                y="14"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="9"
+                font-weight="bold"
+                fill="rgba(40,200,100,0.80)"
+              >
+                CLEAN DATA
+              </text>
+              <rect
+                x="162"
+                y="18"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="27"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,210,110,0.85)"
+              >
+                ✓ 2024-01-15 42.5 active
+              </text>
+              <rect
+                x="162"
+                y="31"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="40"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,200,100,0.80)"
+              >
+                ✓ user_8821 class_A 0.94
+              </text>
+              <rect
+                x="162"
+                y="44"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="53"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,210,110,0.85)"
+              >
+                ✓ 198.50 USD region MENA
+              </text>
+              <rect
+                x="162"
+                y="57"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="66"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,200,100,0.80)"
+              >
+                ✓ 2024-01-18 55.0 true
+              </text>
+              <rect
+                x="162"
+                y="70"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="79"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,210,110,0.85)"
+              >
+                ✓ score 0.87 float ok
+              </text>
+              <rect
+                x="162"
+                y="83"
+                width="170"
+                height="11"
+                rx="1.5"
+                fill="#081A0C"
+                stroke="#1A4020"
+                stroke-width=".4"
+              />
+              <text
+                x="166"
+                y="92"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,200,100,0.80)"
+              >
+                ✓ idx_4401 cat_B ready
+              </text>
+
+              <!-- stats bar -->
+              <rect
+                x="8"
+                y="97"
+                width="164"
+                height="8"
+                rx="2"
+                fill="#040E08"
+                stroke="#1A3020"
+                stroke-width=".5"
+              />
+              <text
+                x="14"
+                y="104"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(255,80,40,0.65)"
+              >
+                Raw:10K
+              </text>
+              <text
+                x="80"
+                y="104"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(255,200,0,0.65)"
+              >
+                Removed:1.2K
+              </text>
+              <text
+                x="145"
+                y="104"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(40,200,100,0.70)"
+              >
+                ✓8.7K
+              </text>
+            </svg>
+          </div>
+          <div
+            class="card-stripe"
+            style="background: linear-gradient(to bottom, #30e890, #108040)"
+          ></div>
+          <div class="card-content">
+            <div class="card-num-badge">
+              <span style="color: #30e890">02</span>
+            </div>
+            <div class="card-text">
+              <span class="card-title">Data Cleaning &amp; Preprocessing</span>
+              <span class="card-desc"
+                >Finds and removes missing values, duplicate entries,
+                inconsistencies, and unusual data points from raw datasets. It
+                also standardizes the data structure and applies validation
+                rules to ensure the data is accurate and consistent.</span
+              >
+              <div class="card-tags">
+                <span
+                  class="tag"
+                  style="
+                    color: #30d880;
+                    border: 1px solid rgba(48, 216, 128, 0.28);
+                    background: rgba(48, 216, 128, 0.07);
+                  "
+                  >Deduplication</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d880;
+                    border: 1px solid rgba(48, 216, 128, 0.25);
+                    background: rgba(48, 216, 128, 0.07);
+                  "
+                  >Normalisation</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d880;
+                    border: 1px solid rgba(48, 216, 128, 0.25);
+                    background: rgba(48, 216, 128, 0.07);
+                  "
+                  >Outlier Removal</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d880;
+                    border: 1px solid rgba(48, 216, 128, 0.22);
+                    background: rgba(48, 216, 128, 0.07);
+                  "
+                  >Schema Validation</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════
+         03 · LABELLING
+    ══════════════════════ -->
+        <div class="card c3">
+          <div class="card-glow"></div>
+          <div class="card-vis">
+            <svg
+              viewBox="0 0 340 108"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <rect width="340" height="108" fill="#080600" />
+              <ellipse
+                cx="170"
+                cy="54"
+                rx="140"
+                ry="50"
+                fill="#D09020"
+                opacity=".06"
+              />
+
+              <!-- mini annotation scene -->
+              <!-- sky / scene bg -->
+              <rect
+                x="8"
+                y="8"
+                width="210"
+                height="92"
+                rx="5"
+                fill="#0A0C0E"
+                stroke="#2A2820"
+                stroke-width=".7"
+              />
+              <rect x="10" y="10" width="206" height="42" fill="#0C1420" />
+              <rect x="10" y="52" width="206" height="46" fill="#0A0E0A" />
+              <!-- car -->
+              <rect
+                x="18"
+                y="58"
+                width="54"
+                height="28"
+                rx="3"
+                fill="#162030"
+                stroke="#204050"
+                stroke-width=".5"
+              />
+              <rect
+                x="26"
+                y="52"
+                width="38"
+                height="18"
+                rx="2"
+                fill="#1A2838"
+                stroke="#243850"
+                stroke-width=".4"
+              />
+              <ellipse cx="30" cy="86" rx="8" ry="8" fill="#101820" />
+              <ellipse cx="30" cy="86" rx="4" ry="4" fill="#1A2838" />
+              <ellipse cx="62" cy="86" rx="8" ry="8" fill="#101820" />
+              <ellipse cx="62" cy="86" rx="4" ry="4" fill="#1A2838" />
+              <!-- person -->
+              <rect
+                x="110"
+                y="54"
+                width="18"
+                height="38"
+                rx="1.5"
+                fill="#182030"
+                stroke="#2A3040"
+                stroke-width=".5"
+              />
+              <circle
+                cx="119"
+                cy="48"
+                r="8"
+                fill="#1A2535"
+                stroke="#2A3545"
+                stroke-width=".5"
+              />
+              <!-- building -->
+              <rect
+                x="154"
+                y="14"
+                width="56"
+                height="84"
+                rx="2"
+                fill="#121820"
+                stroke="#1E2A30"
+                stroke-width=".4"
+              />
+              <rect
+                x="158"
+                y="20"
+                width="10"
+                height="8"
+                fill="#1E3040"
+                opacity=".8"
+              />
+              <rect
+                x="174"
+                y="20"
+                width="10"
+                height="8"
+                fill="#1E3040"
+                opacity=".8"
+              />
+              <rect
+                x="158"
+                y="34"
+                width="10"
+                height="8"
+                fill="#FFD060"
+                opacity=".5"
+              />
+              <rect
+                x="174"
+                y="34"
+                width="10"
+                height="8"
+                fill="#1E3040"
+                opacity=".8"
+              />
+              <rect
+                x="158"
+                y="48"
+                width="10"
+                height="8"
+                fill="#1E3040"
+                opacity=".8"
+              />
+              <rect
+                x="174"
+                y="48"
+                width="10"
+                height="8"
+                fill="#FFD060"
+                opacity=".45"
+              />
+
+              <!-- BBOX CAR – yellow — label sits INSIDE box at bottom-left corner -->
+              <rect
+                x="14"
+                y="50"
+                width="62"
+                height="42"
+                rx="1.5"
+                fill="none"
+                stroke="#FFD030"
+                stroke-width="1.6"
+                opacity=".92"
+              />
+              <line
+                x1="14"
+                y1="50"
+                x2="22"
+                y2="50"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="14"
+                y1="50"
+                x2="14"
+                y2="58"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="76"
+                y1="50"
+                x2="68"
+                y2="50"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="76"
+                y1="50"
+                x2="76"
+                y2="58"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="14"
+                y1="92"
+                x2="22"
+                y2="92"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="14"
+                y1="92"
+                x2="14"
+                y2="84"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="76"
+                y1="92"
+                x2="68"
+                y2="92"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <line
+                x1="76"
+                y1="92"
+                x2="76"
+                y2="84"
+                stroke="#FFD030"
+                stroke-width="2.5"
+              />
+              <!-- label: anchored INSIDE bottom of bbox, clear of left edge -->
+              <rect
+                x="15"
+                y="79"
+                width="60"
+                height="12"
+                rx="2"
+                fill="#FFD030"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.95"
+                  dur=".35s"
+                  begin="1.5s"
+                  fill="freeze"
+                />
+              </rect>
+              <text
+                x="45"
+                y="89"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                font-weight="bold"
+                fill="#1A0800"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1"
+                  dur=".35s"
+                  begin="1.5s"
+                  fill="freeze"
+                />
+                VEHICLE · 0.96
+              </text>
+
+              <!-- BBOX PERSON – pink — label inside top of bbox -->
+              <rect
+                x="106"
+                y="40"
+                width="30"
+                height="54"
+                rx="1.5"
+                fill="none"
+                stroke="#FF4080"
+                stroke-width="1.6"
+                opacity=".92"
+              />
+              <line
+                x1="106"
+                y1="40"
+                x2="114"
+                y2="40"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="106"
+                y1="40"
+                x2="106"
+                y2="48"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="136"
+                y1="40"
+                x2="128"
+                y2="40"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="136"
+                y1="40"
+                x2="136"
+                y2="48"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="106"
+                y1="94"
+                x2="114"
+                y2="94"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="106"
+                y1="94"
+                x2="106"
+                y2="86"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="136"
+                y1="94"
+                x2="128"
+                y2="94"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <line
+                x1="136"
+                y1="94"
+                x2="136"
+                y2="86"
+                stroke="#FF4080"
+                stroke-width="2.5"
+              />
+              <!-- label: inside bbox, top strip -->
+              <rect
+                x="107"
+                y="41"
+                width="58"
+                height="12"
+                rx="2"
+                fill="#FF4080"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.95"
+                  dur=".35s"
+                  begin="1.9s"
+                  fill="freeze"
+                />
+              </rect>
+              <text
+                x="136"
+                y="51"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                font-weight="bold"
+                fill="#1A0010"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1"
+                  dur=".35s"
+                  begin="1.9s"
+                  fill="freeze"
+                />
+                PERSON · 0.99
+              </text>
+
+              <!-- BBOX BUILDING – cyan — label inside top of bbox, safely below y=10 -->
+              <rect
+                x="152"
+                y="12"
+                width="60"
+                height="88"
+                rx="1.5"
+                fill="none"
+                stroke="#00C8FF"
+                stroke-width="1.6"
+                opacity=".92"
+              />
+              <line
+                x1="152"
+                y1="12"
+                x2="160"
+                y2="12"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="152"
+                y1="12"
+                x2="152"
+                y2="20"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="212"
+                y1="12"
+                x2="204"
+                y2="12"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="212"
+                y1="12"
+                x2="212"
+                y2="20"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="152"
+                y1="100"
+                x2="160"
+                y2="100"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="152"
+                y1="100"
+                x2="152"
+                y2="92"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="212"
+                y1="100"
+                x2="204"
+                y2="100"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <line
+                x1="212"
+                y1="100"
+                x2="212"
+                y2="92"
+                stroke="#00C8FF"
+                stroke-width="2.5"
+              />
+              <!-- label: inside bbox, top strip — safely within card bounds -->
+              <rect
+                x="153"
+                y="13"
+                width="58"
+                height="12"
+                rx="2"
+                fill="#00C8FF"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.92"
+                  dur=".35s"
+                  begin="2.3s"
+                  fill="freeze"
+                />
+              </rect>
+              <text
+                x="182"
+                y="23"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                font-weight="bold"
+                fill="#001820"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1"
+                  dur=".35s"
+                  begin="2.3s"
+                  fill="freeze"
+                />
+                BUILDING · 0.88
+              </text>
+
+              <!-- NLP strip -->
+              <rect
+                x="224"
+                y="8"
+                width="108"
+                height="92"
+                rx="5"
+                fill="#08080C"
+                stroke="#1E1E28"
+                stroke-width=".7"
+              />
+              <text
+                x="230"
+                y="20"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(200,180,100,0.65)"
+              >
+                NLP ANNOTATION:
+              </text>
+              <text
+                x="230"
+                y="34"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(200,190,160,0.75)"
+              >
+                "The
+              </text>
+              <rect
+                x="258"
+                y="27"
+                width="38"
+                height="10"
+                rx="2"
+                fill="#FF4080"
+                opacity=".30"
+              />
+              <text
+                x="277"
+                y="35"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="#FF88A0"
+              >
+                vehicle
+              </text>
+              <text
+                x="300"
+                y="34"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(200,190,160,0.75)"
+              >
+                in
+              </text>
+              <rect
+                x="230"
+                y="40"
+                width="36"
+                height="10"
+                rx="2"
+                fill="#FFD030"
+                opacity=".30"
+              />
+              <text
+                x="248"
+                y="48"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="#FFD878"
+              >
+                Dubai
+              </text>
+              <text
+                x="270"
+                y="47"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(200,190,160,0.75)"
+              >
+                near
+              </text>
+              <text
+                x="230"
+                y="61"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(200,190,160,0.75)"
+              >
+                the
+              </text>
+              <rect
+                x="253"
+                y="54"
+                width="72"
+                height="10"
+                rx="2"
+                fill="#00C8FF"
+                opacity=".24"
+              />
+              <text
+                x="289"
+                y="62"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="#70D8FF"
+              >
+                tower block"
+              </text>
+              <!-- legend -->
+              <rect
+                x="230"
+                y="72"
+                width="28"
+                height="8"
+                rx="1.5"
+                fill="#FF4080"
+                opacity=".35"
+              />
+              <text
+                x="262"
+                y="79"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(180,160,120,0.75)"
+              >
+                VEHICLE
+              </text>
+              <rect
+                x="230"
+                y="84"
+                width="28"
+                height="8"
+                rx="1.5"
+                fill="#FFD030"
+                opacity=".35"
+              />
+              <text
+                x="262"
+                y="91"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(180,160,120,0.75)"
+              >
+                LOCATION
+              </text>
+              <rect
+                x="296"
+                y="84"
+                width="28"
+                height="8"
+                rx="1.5"
+                fill="#00C8FF"
+                opacity=".28"
+              />
+              <text
+                x="328"
+                y="91"
+                text-anchor="end"
+                font-family="monospace"
+                font-size="7"
+                fill="rgba(180,160,120,0.75)"
+              >
+                OBJECT
+              </text>
+            </svg>
+          </div>
+          <div
+            class="card-stripe"
+            style="background: linear-gradient(to bottom, #ffd030, #a06010)"
+          ></div>
+          <div class="card-content">
+            <div class="card-num-badge">
+              <span style="color: #ffd030">03</span>
+            </div>
+            <div class="card-text">
+              <span class="card-title">Labelling &amp; Annotation</span>
+              <span class="card-desc"
+                >Applies bounding boxes and segmentation masks to images, and
+                uses Named Entity Recognition to identify and label key
+                information in text. Human-in-the-loop quality assurance ensures
+                the labels remain accurate and reliable.
+              </span>
+              <div class="card-tags">
+                <span
+                  class="tag"
+                  style="
+                    color: #ffd040;
+                    border: 1px solid rgba(255, 208, 64, 0.28);
+                    background: rgba(255, 208, 64, 0.07);
+                  "
+                  >Bounding Boxes</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #ffd040;
+                    border: 1px solid rgba(255, 208, 64, 0.25);
+                    background: rgba(255, 208, 64, 0.07);
+                  "
+                  >NER Tagging</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #ffd040;
+                    border: 1px solid rgba(255, 208, 64, 0.25);
+                    background: rgba(255, 208, 64, 0.07);
+                  "
+                  >Image Segmentation</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #ffd040;
+                    border: 1px solid rgba(255, 208, 64, 0.22);
+                    background: rgba(255, 208, 64, 0.07);
+                  "
+                  >Human-in-Loop Quality Assurance</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════
+         04 · DATABASES
+    ══════════════════════ -->
+        <div class="card c4">
+          <div class="card-glow"></div>
+          <div class="card-vis">
+            <svg
+              viewBox="0 0 340 108"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <linearGradient id="dbT4" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#1E3060" />
+                  <stop offset="100%" stop-color="#122040" />
+                </linearGradient>
+                <linearGradient id="dbB4" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0E1A38" />
+                  <stop offset="100%" stop-color="#080E20" />
+                </linearGradient>
+              </defs>
+              <rect width="340" height="108" fill="#030812" />
+              <ellipse
+                cx="170"
+                cy="54"
+                rx="140"
+                ry="50"
+                fill="#3050D0"
+                opacity=".08"
+              />
+
+              <!-- SQL cylinder left -->
+              <text
+                x="58"
+                y="12"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="9"
+                fill="rgba(80,145,255,0.70)"
+                letter-spacing=".5"
+              >
+                RELATIONAL / SQL
+              </text>
+              <ellipse
+                cx="58"
+                cy="28"
+                rx="42"
+                ry="12"
+                fill="url(#dbT4)"
+                stroke="#2A4898"
+                stroke-width="1"
+              />
+              <rect x="16" y="28" width="84" height="36" fill="url(#dbB4)" />
+              <line
+                x1="16"
+                y1="28"
+                x2="16"
+                y2="64"
+                stroke="#162848"
+                stroke-width=".6"
+              />
+              <line
+                x1="100"
+                y1="28"
+                x2="100"
+                y2="64"
+                stroke="#0E1C38"
+                stroke-width=".6"
+              />
+              <ellipse
+                cx="58"
+                cy="64"
+                rx="42"
+                ry="12"
+                fill="#0C1830"
+                stroke="#1A2E58"
+                stroke-width=".8"
+              />
+              <line
+                x1="20"
+                y1="38"
+                x2="96"
+                y2="38"
+                stroke="#1E3868"
+                stroke-width=".6"
+                opacity=".8"
+              />
+              <line
+                x1="20"
+                y1="46"
+                x2="96"
+                y2="46"
+                stroke="#1E3868"
+                stroke-width=".6"
+                opacity=".8"
+              />
+              <line
+                x1="20"
+                y1="54"
+                x2="96"
+                y2="54"
+                stroke="#1E3868"
+                stroke-width=".6"
+                opacity=".8"
+              />
+              <line
+                x1="56"
+                y1="30"
+                x2="56"
+                y2="62"
+                stroke="#1E3868"
+                stroke-width=".5"
+                opacity=".6"
+              />
+              <rect
+                x="18"
+                y="30"
+                width="80"
+                height="12"
+                rx="1"
+                fill="#1A3060"
+                opacity=".55"
+              />
+              <text
+                x="35"
+                y="39"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(80,160,255,0.85)"
+              >
+                id
+              </text>
+              <text
+                x="60"
+                y="39"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(80,160,255,0.85)"
+              >
+                label
+              </text>
+              <text
+                x="24"
+                y="51"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(140,185,255,0.70)"
+              >
+                001 cat_A
+              </text>
+              <text
+                x="24"
+                y="61"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(120,165,245,0.65)"
+              >
+                002 cat_B
+              </text>
+              <rect
+                x="18"
+                y="43"
+                width="80"
+                height="10"
+                fill="#2050C0"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.22;0"
+                  dur="2.5s"
+                  repeatCount="indefinite"
+                  begin="1.8s"
+                />
+              </rect>
+
+              <!-- NoSQL cylinder right -->
+              <text
+                x="220"
+                y="12"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="9"
+                fill="rgba(40,185,125,0.70)"
+                letter-spacing=".5"
+              >
+                DOCUMENT / NoSQL
+              </text>
+              <ellipse
+                cx="220"
+                cy="28"
+                rx="42"
+                ry="12"
+                fill="#1A3840"
+                stroke="#206050"
+                stroke-width="1"
+              />
+              <rect x="178" y="28" width="84" height="36" fill="#081820" />
+              <line
+                x1="178"
+                y1="28"
+                x2="178"
+                y2="64"
+                stroke="#102A28"
+                stroke-width=".6"
+              />
+              <line
+                x1="262"
+                y1="28"
+                x2="262"
+                y2="64"
+                stroke="#081A18"
+                stroke-width=".6"
+              />
+              <ellipse
+                cx="220"
+                cy="64"
+                rx="42"
+                ry="12"
+                fill="#061014"
+                stroke="#102820"
+                stroke-width=".8"
+              />
+              <text
+                x="182"
+                y="39"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,175,120,0.75)"
+              >
+                {id: "usr_88"
+              </text>
+              <text
+                x="182"
+                y="50"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,165,105,0.70)"
+              >
+                score: 0.94
+              </text>
+              <text
+                x="182"
+                y="61"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,175,120,0.75)"
+              >
+                tags: ["AI"]}
+              </text>
+
+              <!-- SQL query band -->
+              <rect
+                x="8"
+                y="76"
+                width="322"
+                height="28"
+                rx="4"
+                fill="#060C18"
+                stroke="#1E3060"
+                stroke-width=".7"
+              />
+              <text
+                x="16"
+                y="87"
+                font-family="monospace"
+                font-size="9"
+                fill="rgba(80,150,255,0.70)"
+              >
+                SELECT * FROM training_data WHERE label IS NOT NULL
+              </text>
+              <text
+                x="16"
+                y="99"
+                font-family="monospace"
+                font-size="9"
+                fill="rgba(80,150,255,0.70)"
+              >
+                AND quality_score &gt; 0.85 ORDER BY ts DESC LIMIT 1000;
+              </text>
+              <rect
+                x="304"
+                y="92"
+                width="8"
+                height="10"
+                rx=".8"
+                fill="#4080FF"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.85;0"
+                  dur="1s"
+                  repeatCount="indefinite"
+                  begin="2.0s"
+                />
+              </rect>
+            </svg>
+          </div>
+          <div
+            class="card-stripe"
+            style="background: linear-gradient(to bottom, #8060ff, #3020a0)"
+          ></div>
+          <div class="card-content">
+            <div class="card-num-badge">
+              <span style="color: #8060ff">04</span>
+            </div>
+            <div class="card-text">
+              <span class="card-title">Databases</span>
+              <span class="card-desc"
+                >Relational databases such as PostgreSQL, BigQuery, and
+                Snowflake are used to store structured training data with
+                Atomicity, Consistency, Isolation, and Durability compliance.
+                Databases like MongoDB handle flexible and unstructured
+                data. Redis is used for fast data caching, while Amazon Simple
+                Storage Service provides scalable object storage. Together,
+                these systems enable unified queries that can return a large
+                number of datasets in seconds.</span
+              >
+              <div class="card-tags">
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.28);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >PostgreSQL</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.25);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >MongoDB</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.25);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >Redis</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.22);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >BigQuery</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.22);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >Snowflake</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #9070ff;
+                    border: 1px solid rgba(144, 112, 255, 0.2);
+                    background: rgba(144, 112, 255, 0.07);
+                  "
+                  >AWS S3</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════
+         05 · VECTOR DB
+    ══════════════════════ -->
+        <div class="card c5">
+          <div class="card-glow"></div>
+          <div class="card-vis">
+            <svg
+              viewBox="0 0 340 108"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <radialGradient id="qG5" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00FFB0" stop-opacity=".85" />
+                  <stop offset="100%" stop-color="#00A070" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="340" height="108" fill="#030E0C" />
+              <ellipse
+                cx="170"
+                cy="54"
+                rx="140"
+                ry="50"
+                fill="#00D890"
+                opacity=".07"
+              />
+
+              <!-- axes -->
+              <line
+                x1="18"
+                y1="96"
+                x2="218"
+                y2="96"
+                stroke="#1A3828"
+                stroke-width=".9"
+              />
+              <line
+                x1="18"
+                y1="96"
+                x2="18"
+                y2="10"
+                stroke="#1A3828"
+                stroke-width=".9"
+              />
+              <polygon points="215,93 220,96 215,99" fill="#1A3828" />
+              <polygon points="15,13 18,8 21,13" fill="#1A3828" />
+              <text
+                x="224"
+                y="99"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,180,120,0.50)"
+              >
+                dim₁
+              </text>
+              <text
+                x="4"
+                y="10"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,180,120,0.50)"
+              >
+                d₂
+              </text>
+
+              <!-- CLUSTER A — cyan -->
+              <ellipse
+                cx="66"
+                cy="38"
+                rx="28"
+                ry="22"
+                fill="none"
+                stroke="#30A0A0"
+                stroke-width=".7"
+                stroke-dasharray="4,3"
+                opacity=".45"
+              />
+              <circle
+                cx="56"
+                cy="34"
+                r="7"
+                fill="#0E3028"
+                stroke="#2090A0"
+                stroke-width="1"
+              />
+              <circle cx="56" cy="34" r="3.5" fill="#30C8C0" opacity=".9" />
+              <circle
+                cx="76"
+                cy="28"
+                r="6.5"
+                fill="#0E3028"
+                stroke="#2090A0"
+                stroke-width=".9"
+              />
+              <circle cx="76" cy="28" r="3" fill="#30C8C0" opacity=".85" />
+              <circle
+                cx="72"
+                cy="50"
+                r="6"
+                fill="#0E3028"
+                stroke="#2090A0"
+                stroke-width=".9"
+              />
+              <circle cx="72" cy="50" r="2.8" fill="#30C8C0" opacity=".80" />
+              <circle
+                cx="52"
+                cy="52"
+                r="5.5"
+                fill="#0E3028"
+                stroke="#2090A0"
+                stroke-width=".8"
+              />
+              <circle cx="52" cy="52" r="2.5" fill="#30C8C0" opacity=".75" />
+              <text
+                x="62"
+                y="72"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,200,200,0.60)"
+              >
+                TECH DOCS
+              </text>
+
+              <!-- CLUSTER B — amber -->
+              <ellipse
+                cx="160"
+                cy="32"
+                rx="26"
+                ry="20"
+                fill="none"
+                stroke="#A07020"
+                stroke-width=".7"
+                stroke-dasharray="4,3"
+                opacity=".45"
+              />
+              <circle
+                cx="150"
+                cy="26"
+                r="7"
+                fill="#201808"
+                stroke="#A06010"
+                stroke-width="1"
+              />
+              <circle cx="150" cy="26" r="3.5" fill="#E0A030" opacity=".9" />
+              <circle
+                cx="168"
+                cy="36"
+                r="6.5"
+                fill="#201808"
+                stroke="#A06010"
+                stroke-width=".9"
+              />
+              <circle cx="168" cy="36" r="3" fill="#E0A030" opacity=".85" />
+              <circle
+                cx="148"
+                cy="44"
+                r="6"
+                fill="#201808"
+                stroke="#A06010"
+                stroke-width=".9"
+              />
+              <circle cx="148" cy="44" r="2.8" fill="#E0A030" opacity=".80" />
+              <circle
+                cx="172"
+                cy="22"
+                r="5.5"
+                fill="#201808"
+                stroke="#A06010"
+                stroke-width=".8"
+              />
+              <circle cx="172" cy="22" r="2.5" fill="#E0A030" opacity=".78" />
+              <text
+                x="158"
+                y="64"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(200,160,40,0.60)"
+              >
+                PRODUCTS
+              </text>
+
+              <!-- CLUSTER C — purple -->
+              <ellipse
+                cx="100"
+                cy="76"
+                rx="24"
+                ry="18"
+                fill="none"
+                stroke="#7030C0"
+                stroke-width=".7"
+                stroke-dasharray="4,3"
+                opacity=".45"
+              />
+              <circle
+                cx="90"
+                cy="72"
+                r="6.5"
+                fill="#180820"
+                stroke="#6020A0"
+                stroke-width="1"
+              />
+              <circle cx="90" cy="72" r="3" fill="#A040E0" opacity=".9" />
+              <circle
+                cx="110"
+                cy="68"
+                r="6"
+                fill="#180820"
+                stroke="#6020A0"
+                stroke-width=".9"
+              />
+              <circle cx="110" cy="68" r="2.8" fill="#A040E0" opacity=".85" />
+              <circle
+                cx="112"
+                cy="84"
+                r="5.5"
+                fill="#180820"
+                stroke="#6020A0"
+                stroke-width=".8"
+              />
+              <circle cx="112" cy="84" r="2.5" fill="#A040E0" opacity=".80" />
+              <circle
+                cx="88"
+                cy="84"
+                r="5"
+                fill="#180820"
+                stroke="#6020A0"
+                stroke-width=".8"
+              />
+              <circle cx="88" cy="84" r="2.2" fill="#A040E0" opacity=".75" />
+              <text
+                x="100"
+                y="102"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(160,80,220,0.60)"
+              >
+                BEHAVIOUR
+              </text>
+
+              <!-- QUERY VECTOR pulsing -->
+              <circle cx="110" cy="50" r="12" fill="url(#qG5)">
+                <animate
+                  attributeName="r"
+                  values="12;16;12"
+                  dur="2s"
+                  repeatCount="indefinite"
+                  begin="2.0s"
+                />
+              </circle>
+              <circle
+                cx="110"
+                cy="50"
+                r="7"
+                fill="#1A3A28"
+                stroke="#00D890"
+                stroke-width="1.5"
+              />
+              <circle cx="110" cy="50" r="3" fill="#00FFB0" opacity=".96" />
+              <rect
+                x="82"
+                y="40"
+                width="48"
+                height="12"
+                rx="2.5"
+                fill="#00D890"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.90"
+                  dur=".3s"
+                  begin="2.1s"
+                  fill="freeze"
+                />
+              </rect>
+              <text
+                x="106"
+                y="49.5"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                font-weight="bold"
+                fill="#001A0C"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1"
+                  dur=".3s"
+                  begin="2.1s"
+                  fill="freeze"
+                />
+                QUERY VEC
+              </text>
+
+              <!-- similarity rays -->
+              <line
+                x1="110"
+                y1="44"
+                x2="70"
+                y2="40"
+                stroke="#00E890"
+                stroke-width="1"
+                stroke-dasharray="4,3"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.75;0.45"
+                  dur=".4s"
+                  begin="2.2s"
+                  fill="freeze"
+                />
+              </line>
+              <line
+                x1="110"
+                y1="44"
+                x2="154"
+                y2="34"
+                stroke="#E0A030"
+                stroke-width="1"
+                stroke-dasharray="4,3"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.65;0.38"
+                  dur=".4s"
+                  begin="2.4s"
+                  fill="freeze"
+                />
+              </line>
+              <line
+                x1="110"
+                y1="56"
+                x2="102"
+                y2="68"
+                stroke="#A040E0"
+                stroke-width="1"
+                stroke-dasharray="4,3"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.65;0.38"
+                  dur=".4s"
+                  begin="2.6s"
+                  fill="freeze"
+                />
+              </line>
+              <circle
+                cx="72"
+                cy="50"
+                r="10"
+                fill="none"
+                stroke="#00E890"
+                stroke-width="1.2"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.85;0.45"
+                  dur=".4s"
+                  begin="2.3s"
+                  fill="freeze"
+                />
+              </circle>
+
+              <!-- kNN result right panel -->
+              <rect
+                x="232"
+                y="8"
+                width="100"
+                height="92"
+                rx="5"
+                fill="#06120A"
+                stroke="#1A3828"
+                stroke-width=".7"
+              />
+              <text
+                x="282"
+                y="22"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="8"
+                fill="rgba(40,200,120,0.60)"
+              >
+                k-NN SEARCH
+              </text>
+              <line
+                x1="238"
+                y1="26"
+                x2="326"
+                y2="26"
+                stroke="#1A3020"
+                stroke-width=".5"
+              />
+              <text
+                x="238"
+                y="38"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,200,130,0.80)"
+              >
+                cosine 0.97
+              </text>
+              <text
+                x="238"
+                y="51"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,185,115,0.75)"
+              >
+                cosine 0.94
+              </text>
+              <text
+                x="238"
+                y="64"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,170,105,0.70)"
+              >
+                cosine 0.91
+              </text>
+              <line
+                x1="238"
+                y1="70"
+                x2="326"
+                y2="70"
+                stroke="#1A3020"
+                stroke-width=".5"
+              />
+              <text
+                x="238"
+                y="81"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,190,120,0.65)"
+              >
+                ~2ms · 1.5M vecs
+              </text>
+              <text
+                x="238"
+                y="94"
+                font-family="monospace"
+                font-size="7.5"
+                fill="rgba(40,175,110,0.60)"
+              >
+                RAG-ready
+              </text>
+            </svg>
+          </div>
+          <div
+            class="card-stripe"
+            style="background: linear-gradient(to bottom, #00d890, #006840)"
+          ></div>
+          <div class="card-content">
+            <div class="card-num-badge">
+              <span style="color: #00d890">05</span>
+            </div>
+            <div class="card-text">
+              <span class="card-title">Vector Databases</span>
+              <span class="card-desc"
+                >Stores high-dimensional embeddings for semantic similarity
+                search. Powers Retrieval-Augmented Generation (RAG) — a query
+                vector finds the top-k nearest neighbours in milliseconds across
+                1.5M+ indexed documents with cosine scores of 0.91–0.97.</span
+              >
+              <div class="card-tags">
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.28);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >Pinecone</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.25);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >Weaviate</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.25);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >Qdrant</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.22);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >pgvector</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.22);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >k-NN Search</span
+                >
+                <span
+                  class="tag"
+                  style="
+                    color: #30d890;
+                    border: 1px solid rgba(48, 216, 144, 0.2);
+                    background: rgba(48, 216, 144, 0.07);
+                  "
+                  >RAG Pipeline</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end stack -->
+
+      <!-- FINALE -->
+      <div class="finale">
+        <div class="fline rev"></div>
+        <div class="fdiamond"></div>
+        <div class="fline rev" style="width: 28px"></div>
+        <div class="finale-text">
+          <strong>Soft Tech Group</strong> delivers
+          <em>production-ready AI data</em> — accurately annotated, refined
+          &amp; structured for <em>optimal model performance.</em>
+        </div>
+        <div class="fline" style="width: 28px"></div>
+        <div class="fdiamond"></div>
+        <div class="fline"></div>
+      </div>
+    </div>
+  </body>
+</html>
